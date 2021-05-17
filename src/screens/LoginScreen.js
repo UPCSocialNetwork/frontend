@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import BaseButton from '../components/BaseButton';
 import BaseInput from '../components/BaseInput';
 import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
+
+const { height } = Dimensions.get('window');
 
 function LoginScreen() {
   const [loaded] = useFonts({
@@ -50,12 +52,12 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
+    marginTop: height * 0.15,
   },
   title: {
     fontFamily: 'InterBold',
     fontWeight: 'bold',
     fontSize: 47,
-    marginTop: 50,
     color: Colors.secondary,
   },
   subtitle: {
