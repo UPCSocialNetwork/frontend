@@ -1,8 +1,17 @@
 import React from 'react';
-import BaseButton from '../components/BaseButton';
 import { View, StyleSheet, Text } from 'react-native';
+import { useFonts } from 'expo-font';
 
 function IntroScreen() {
+  const [loaded] = useFonts({
+    InterBold: require('../assets/fonts/Inter-Bold.ttf'),
+    InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
+    InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+  });
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <View style={styles.backgroundView}>
       <Text style={styles.Text}>On{`\n`}Campus</Text>
@@ -19,9 +28,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', // scondary (vert)
   },
   Text: {
+    fontFamily: 'InterBold',
     marginBottom: 30,
-    fontStyle: 'normal',
-    fontWeight: 'bold',
     fontSize: 75,
     color: '#fff',
   },
