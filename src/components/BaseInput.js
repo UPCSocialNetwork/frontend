@@ -1,36 +1,46 @@
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet } from 'react-native';
+import { useFonts } from 'expo-font';
+
 import Colors from '../constants/Colors';
 
-function BaseInput() {
-  const [value, onChangeText, placeholder, secureTextEntry] = React.useState(null);
-  const { inputStyle, containerStyle } = styles;
+function BaseInput({ value, onChangeText, placeholder, secureTextEntry }) {
+  const [loaded] = useFonts({
+    InterBold: require('../assets/fonts/Inter-Bold.ttf'),
+    InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
+    InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+  });
+  if (!loaded) {
+    return null;
+  }
+
+  const { inputStyle } = styles;
 
   return (
-    <View style={containerStyle}>
-      <TextInput
-        secureTextEntry={secureTextEntry}
-        placeholder={placeholder}
-        autoCorrect={false}
-        style={inputStyle}
-        value={value}
-        onChangeText={onChangeText}
-      />
-    </View>
+    <TextInput
+      secureTextEntry={secureTextEntry}
+      placeholder={placeholder}
+      autoCorrect={false}
+      style={inputStyle}
+      value={value}
+      onChangeText={onChangeText}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   inputStyle: {
-    backgroundColor: Colors.black,
-    width: '80%',
-    height: 40,
+    fontFamily: 'InterMedium',
+    width: 320,
+    height: 55,
+    borderRadius: 8,
+    borderWidth: 1,
     borderColor: Colors.lightBlack,
-    paddingRight: 5,
-    paddingLeft: 5,
-    fontSize: 18,
+    paddingRight: 20,
+    paddingLeft: 20,
+    fontSize: 14,
     lineHeight: 23,
-    flex: 2,
+    marginTop: 25,
   },
   containerStyle: {
     height: 40,

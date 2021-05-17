@@ -1,8 +1,19 @@
 import React from 'react';
 import { StyleSheet, View, TouchableNativeFeedback, Text } from 'react-native';
+import { useFonts } from 'expo-font';
+
 import Colors from '../constants/Colors';
 
 function BaseButton({ OnPress, title }) {
+  const [loaded] = useFonts({
+    InterBold: require('../assets/fonts/Inter-Bold.ttf'),
+    InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
+    InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+  });
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <TouchableNativeFeedback>
       <View style={styles.button}>
@@ -22,6 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   text: {
+    fontFamily: 'InterMedium',
     fontWeight: '500',
     fontSize: 18,
     lineHeight: 22,
