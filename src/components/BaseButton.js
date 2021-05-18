@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
 
-function BaseButton({ OnPress, title }) {
+function BaseButton({ OnPress, title, btnColor }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -16,7 +16,7 @@ function BaseButton({ OnPress, title }) {
 
   return (
     <TouchableNativeFeedback>
-      <View style={styles.button}>
+      <View style={[styles.button, { backgroundColor: btnColor }]}>
         <Text style={styles.text}>{title}</Text>
       </View>
     </TouchableNativeFeedback>
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     width: 320,
     height: 55,
     borderRadius: 8,
-    backgroundColor: Colors.primary,
   },
   text: {
     fontFamily: 'InterMedium',

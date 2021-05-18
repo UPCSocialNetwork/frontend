@@ -4,7 +4,7 @@ export default {
   lightBlack: '#BDBDBD',
   black: '#000',
   white: '#fff',
-
+  yellow: '#FFCB44',
   test1: '#FFF733',
   test2: '#33FFDB',
 };
