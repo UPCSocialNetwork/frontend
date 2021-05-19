@@ -6,6 +6,7 @@ export default {
   white: '#fff',
   lightGrey: '#FBFBFB',
   yellow: '#FFCB44',
+  red: '#FF545E',
   test1: '#FFF733',
   test2: '#33FFDB',
 };

@@ -1,15 +1,32 @@
-import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BaseInput from '../components/BaseInput';
 import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
+import Window from '../constants/Layout';
+
+// errorValidUserPassword: 'That username and password combination is incorrect.',
+// errorOutput: 'Please provide username and password.',
 
 const { height } = Dimensions.get('window');
 
 function LoginScreen() {
+  const [data, setData] = React.useState({
+    errorMsg: 'Please provide username and password.',
+    username: '',
+    password: '',
+    secureTextEntry: true,
+    isValidUser: true,
+    isValidPassword: true,
+    isValidSignIn: true,
+    isnotEmpty: true,
+  });
+
+  // Fonts
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -19,6 +36,75 @@ function LoginScreen() {
     return null;
   }
 
+  const textInputChange = (val) => {
+    if (!(val.indexOf(' ') >= 0)) {
+      setData({
+        ...data,
+        username: val,
+        isValidUser: true,
+      });
+    } else {
+      setData({
+        ...data,
+        username: val,
+        errorMsg: 'That username and password combination is incorrect.',
+        isValidUser: false,
+      });
+    }
+  };
+
+  const handlePasswordChange = (val) => {
+    if (!(val.indexOf(' ') >= 0)) {
+      setData({
+        ...data,
+        password: val,
+        isValidPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        password: val,
+        errorMsg: 'That username and password combination is incorrect.',
+        isValidPassword: false,
+      });
+    }
+  };
+
+  const validUserHandler = (val) => {
+    console.log(val);
+    if (val.trim().length >= 4) {
+      setData({
+        ...data,
+        isValidUser: true,
+      });
+    } else {
+      setData({
+        ...data,
+        isValidUser: false,
+      });
+    }
+  };
+
+  const LoginHandler = () => {
+    if (!data.isnotEmpty) {
+      setData({
+        ...data,
+        errorMsg: 'Please provide username and password.',
+      });
+    } else if (!data.isValidSignIn) {
+      setData({
+        ...data,
+        errorMsg: 'That username and password combination is incorrect.',
+      });
+    } else {
+      setData({
+        ...data,
+        isValidSignIn: true,
+        isnotEmpty: true,
+      });
+    }
+  };
+
   return (
     <KeyboardAwareScrollView style={styles.backgroundView}>
       <View style={styles.headerContainer} resetScrollToCoords={{ x: 0, y: 0 }} scrollEnabled={false}>
@@ -26,16 +112,38 @@ function LoginScreen() {
         <Text style={styles.subtitle}>Accés a l'aplicació</Text>
       </View>
       <View style={styles.mainContainer}>
-        <View style={styles.textInputs}>
-          <BaseInput placeholder="Correu electrònic" />
-          <BaseInput placeholder="Contrasenya" secureTextEntry />
-          <TouchableOpacity>
-            <Text style={styles.forgetPasswordText}>Has oblidat la teva contrasenya?</Text>
-          </TouchableOpacity>
+        <View style={styles.textErrorInputs}>
+          {data.isValidUser && data.isValidPassword ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorText}>{data.errorMsg}</Text>
+            </Animatable.View>
+          )}
+          {data.isnotEmpty ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorText}>{data.errorMsg}</Text>
+            </Animatable.View>
+          )}
         </View>
-
+        <TextInput
+          placeholder="Nom d'usuari"
+          autoCorrect={false}
+          style={styles.inputStyle}
+          autoCapitalize="none"
+          onChangeText={(val) => textInputChange(val)}
+        />
+        <TextInput
+          secureTextEntry={data.secureTextEntry ? true : false}
+          placeholder="Contrasenya"
+          autoCorrect={false}
+          style={styles.inputStyle}
+          autoCapitalize="none"
+          onChangeText={(val) => handlePasswordChange(val)}
+        />
+        <TouchableOpacity>
+          <Text style={styles.forgetPasswordText}>Has oblidat la teva contrasenya?</Text>
+        </TouchableOpacity>
         <View style={styles.loginButton}>
-          <BaseButton title="Accedeix" />
+          <BaseButton title="Accedeix" btnColor={Colors.primary} />
           <Text style={styles.noaccountText}>No tens compte?</Text>
           <TouchableOpacity>
             <Text style={styles.registerText}>Regístra't aquí!</Text>
@@ -70,17 +178,41 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: 'column',
+    alignContent: 'center',
     alignItems: 'center',
   },
-  textInputs: {
-    marginTop: 5, // 25 base
+  textErrorInputs: {
+    marginTop: 10, // 25 base
+    alignItems: 'center',
+    paddingRight: 20,
+    paddingLeft: 20,
+  },
+  errorText: {
+    fontFamily: 'InterMedium',
+    fontSize: 13,
+    marginTop: 15,
+    alignSelf: 'center',
+    color: Colors.red,
+  },
+  inputStyle: {
+    fontFamily: 'InterMedium',
+    width: Window.width * 0.85,
+    height: 55,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.lightBlack,
+    paddingRight: 20,
+    paddingLeft: 20,
+    fontSize: 14,
+    lineHeight: 23,
+    marginTop: 25,
   },
   forgetPasswordText: {
     fontFamily: 'InterMedium',
     color: Colors.secondary,
     fontWeight: 'bold',
     marginStart: 2,
-    marginTop: 10,
+    marginTop: 15,
     fontSize: 13,
     textDecorationLine: 'underline',
   },
