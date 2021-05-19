@@ -4,6 +4,7 @@ import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
+import axios from 'axios';
 
 const DATA = [
   { id: 'sa', nom: 'Futbol' },
@@ -153,6 +154,14 @@ const styles = StyleSheet.create({
     height: 37,
     borderRadius: 8,
     backgroundColor: Colors.yellow,
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 4,
   },
   text: {
     fontFamily: 'InterMedium',
@@ -160,7 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 17,
     textAlign: 'center',
-    color: Colors.white,
+    color: Colors.secondary,
   },
 });
 
