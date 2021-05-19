@@ -15,11 +15,11 @@ function BaseButton({ OnPress, title, btnColor }) {
   }
 
   return (
-    <TouchableNativeFeedback>
-      <View style={[styles.button, { backgroundColor: btnColor }]}>
-        <Text style={styles.text}>{title}</Text>
-      </View>
-    </TouchableNativeFeedback>
+    //<TouchableNativeFeedback style={styles.touchable}>
+    <View style={[styles.button, { backgroundColor: btnColor }]}>
+      <Text style={styles.text}>{title}</Text>
+    </View>
+    //</TouchableNativeFeedback>
   );
 }
 
@@ -38,6 +38,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: 'center',
     color: Colors.white,
+  },
+  touchable: {
+    borderRadius: 8,
   },
 });
 

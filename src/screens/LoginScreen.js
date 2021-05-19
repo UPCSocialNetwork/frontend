@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  TouchableHighlight,
+  TouchableNativeFeedback,
+} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
@@ -8,7 +17,7 @@ import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-function LoginScreen() {
+export default function LoginScreen() {
   const [data, setData] = React.useState({
     errorMsg: 'Please provide username and password.',
     username: '',
@@ -18,7 +27,16 @@ function LoginScreen() {
     isValidPassword: true,
     isValidSignIn: true,
     isnotEmpty: true,
+    btnPressed: false,
+    password: 'password',
   });
+
+  const handleClick = () => {
+    setData({
+      ...data,
+      password: data.password == 'patata' ? 'password' : 'patata',
+    });
+  };
 
   // Fonts
   const [loaded] = useFonts({
@@ -127,7 +145,7 @@ function LoginScreen() {
         />
         <TextInput
           secureTextEntry={data.secureTextEntry ? true : false}
-          placeholder="Contrasenya"
+          placeholder={data.password}
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
@@ -137,7 +155,9 @@ function LoginScreen() {
           <Text style={styles.forgetPasswordText}>Has oblidat la teva contrasenya?</Text>
         </TouchableOpacity>
         <View style={styles.loginButton}>
-          <BaseButton title="Accedeix" btnColor={Colors.primary} />
+          <TouchableOpacity onPress={handleClick} activeOpacity={0.5}>
+            <BaseButton title="Accedeix" btnColor={Colors.primary} />
+          </TouchableOpacity>
           <Text style={styles.noaccountText}>No tens compte?</Text>
           <TouchableOpacity>
             <Text style={styles.registerText}>Regístra't aquí!</Text>
@@ -225,5 +245,3 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
 });
-
-export default LoginScreen;
