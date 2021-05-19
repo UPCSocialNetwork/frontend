@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, TouchableNativeFeedback, Text } from 'react-native';
 import { useFonts } from 'expo-font';
-
 import Colors from '../constants/Colors';
+import Window from '../constants/Layout';
 
 function BaseButton({ OnPress, title, btnColor }) {
   const [loaded] = useFonts({
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 320,
+    width: Window.width * 0.85,
     height: 55,
     borderRadius: 8,
   },

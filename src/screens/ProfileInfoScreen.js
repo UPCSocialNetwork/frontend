@@ -1,12 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, Dimensions, ScrollView, FlatList } from 'react-native';
-import colors from '../constants/Colors';
+import { View, StyleSheet, TouchableNativeFeedback, Image, Text, ScrollView, FlatList } from 'react-native';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
-import { Inter_600SemiBold } from '@expo-google-fonts/inter';
 import Colors from '../constants/Colors';
-
-const { height, width } = Dimensions.get('window');
+import Window from '../constants/Layout';
 
 const DATA = [
   { id: 'sa', nom: 'Futbol' },
@@ -65,7 +62,11 @@ function ProfileInfoScreen() {
         />
       </View>
       <View style={styles.btn}>
-        <BaseButton title="Veure assignatures de l'estudiant" btnColor={Colors.yellow} />
+        <TouchableNativeFeedback>
+          <View style={styles.button}>
+            <Text style={styles.text}>Veure assignatures de l'estudiant</Text>
+          </View>
+        </TouchableNativeFeedback>
       </View>
       <View style={styles.btn}>
         <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
@@ -77,11 +78,11 @@ function ProfileInfoScreen() {
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    marginTop: height * 0.1,
+    marginTop: Window.height * 0.1,
   },
   imageProfile: {
-    width: width * 0.4,
-    height: width * 0.4,
+    width: Window.width * 0.4,
+    height: Window.width * 0.4,
     marginTop: 15,
   },
   nom: {
@@ -100,12 +101,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: Colors.lightBlack,
-    width: width * 0.85,
+    width: Window.width * 0.85,
     height: 105,
   },
   scroll: {
     alignSelf: 'center',
-    width: width * 0.8,
+    width: Window.width * 0.8,
   },
   textArea: {
     fontSize: 16,
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     fontFamily: 'InterBold',
   },
   list: {
-    width: width * 0.85,
+    width: Window.width * 0.85,
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   btn: {
     alignSelf: 'center',
     alignItems: 'center',
-    marginTop: 30,
+    marginTop: 55,
   },
   item: {
     backgroundColor: Colors.lightGrey,
@@ -144,6 +145,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 4,
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: Window.width * 0.688,
+    height: 37,
+    borderRadius: 8,
+    backgroundColor: Colors.yellow,
+  },
+  text: {
+    fontFamily: 'InterMedium',
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 17,
+    textAlign: 'center',
+    color: Colors.white,
   },
 });
 
