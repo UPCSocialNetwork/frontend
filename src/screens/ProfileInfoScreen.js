@@ -46,7 +46,7 @@ function ProfileInfoScreen() {
         <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
       </View>
       <View style={styles.border}>
-        <ScrollView style={styles.scroll}>
+        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
           <Text style={styles.textArea}>
             {
               'When set, the scroll view will adjust the scroll position so that the first child that is currently visible and at or beyond minIndexForVisible will not change position. This is useful for lists that are loading content in both directions, e.g. a chat thread, where new messages coming in might otherwise cause the scroll position to jump. A value of 0 is common, but other values such as 1 can be used to skip loading spinners or other content that should not maintain position.'
@@ -55,8 +55,14 @@ function ProfileInfoScreen() {
         </ScrollView>
       </View>
       <Text style={styles.interessosTitle}>{'Interessos'}</Text>
-      <View style={styles.horInteressos}>
-        <FlatList horizontal renderItem={renderItem} data={DATA} />
+      <View style={styles.list}>
+        <FlatList
+          horizontal
+          renderItem={renderItem}
+          data={DATA}
+          contentContainerStyle={{ paddingBottom: 5 }}
+          showsHorizontalScrollIndicator={false}
+        />
       </View>
       <View style={styles.btn}>
         <BaseButton title="Veure assignatures de l'estudiant" btnColor={Colors.yellow} />
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontFamily: 'InterBold',
   },
-  horInteressos: {
+  list: {
     width: width * 0.85,
     alignSelf: 'center',
     alignItems: 'center',
@@ -126,10 +132,18 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   item: {
-    backgroundColor: Colors.lightBlack,
+    backgroundColor: Colors.lightGrey,
     padding: 10,
-    marginHorizontal: 4,
+    marginHorizontal: 7,
     borderRadius: 8,
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 4,
   },
 });
 
