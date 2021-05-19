@@ -23,6 +23,8 @@ const Item = ({ nom }) => (
   </View>
 );
 
+const url = 'http://localhost:3000/estudiant/getAll';
+
 function ProfileInfoScreen() {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -35,6 +37,18 @@ function ProfileInfoScreen() {
   }
 
   const renderItem = ({ item }) => <Item nom={item.nom} />;
+
+  /*
+  axios
+    .get('http://localhost:3000/estudiant/getAll')
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(`Error -> ${error}`);
+      //console.error(`Error -> ${error}`);
+    });
+  */
 
   return (
     <View>
