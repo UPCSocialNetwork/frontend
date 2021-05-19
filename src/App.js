@@ -4,5 +4,5 @@ import LoginScreen from './screens/LoginScreen';
 import ProfileInfoScreen from './screens/ProfileInfoScreen';
 
 export default function App() {
-  return <ProfileInfoScreen />;
+  return <LoginScreen />;
 }

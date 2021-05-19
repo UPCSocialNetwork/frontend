@@ -3,16 +3,10 @@ import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-nativ
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
-import BaseInput from '../components/BaseInput';
 import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-
-// errorValidUserPassword: 'That username and password combination is incorrect.',
-// errorOutput: 'Please provide username and password.',
-
-const { height } = Dimensions.get('window');
 
 function LoginScreen() {
   const [data, setData] = React.useState({
@@ -160,7 +154,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: height * 0.15,
+    marginTop: Window.height * 0.15,
   },
   title: {
     fontFamily: 'InterBold',
