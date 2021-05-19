@@ -12,6 +12,8 @@ import Window from '../constants/Layout';
 // errorValidUserPassword: 'That username and password combination is incorrect.',
 // errorOutput: 'Please provide username and password.',
 
+const { height } = Dimensions.get('window');
+
 function LoginScreen() {
   const [data, setData] = React.useState({
     errorMsg: 'Please provide username and password.',
@@ -141,7 +143,7 @@ function LoginScreen() {
           <Text style={styles.forgetPasswordText}>Has oblidat la teva contrasenya?</Text>
         </TouchableOpacity>
         <View style={styles.loginButton}>
-          <BaseButton title="Accedeix" />
+          <BaseButton title="Accedeix" btnColor={Colors.primary} />
           <Text style={styles.noaccountText}>No tens compte?</Text>
           <TouchableOpacity>
             <Text style={styles.registerText}>Regístra't aquí!</Text>
@@ -158,12 +160,12 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
+    marginTop: height * 0.15,
   },
   title: {
     fontFamily: 'InterBold',
     fontWeight: 'bold',
     fontSize: 47,
-    marginTop: 50,
     color: Colors.secondary,
   },
   subtitle: {
