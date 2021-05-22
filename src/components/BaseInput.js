@@ -3,8 +3,9 @@ import { TextInput, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
+import Window from '../constants/Layout';
 
-function BaseInput({ value, onChangeText, placeholder, secureTextEntry }) {
+function BaseInput({ value, onEndEditing, onChangeText, placeholder, secureTextEntry }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -24,6 +25,7 @@ function BaseInput({ value, onChangeText, placeholder, secureTextEntry }) {
       style={inputStyle}
       value={value}
       onChangeText={onChangeText}
+      onEndEditing={onEndEditing}
     />
   );
 }
@@ -31,7 +33,7 @@ function BaseInput({ value, onChangeText, placeholder, secureTextEntry }) {
 const styles = StyleSheet.create({
   inputStyle: {
     fontFamily: 'InterMedium',
-    width: 320,
+    width: Window.width * 0.85,
     height: 55,
     borderRadius: 8,
     borderWidth: 1,
@@ -41,12 +43,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 23,
     marginTop: 25,
-  },
-  containerStyle: {
-    height: 40,
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
 });
 
