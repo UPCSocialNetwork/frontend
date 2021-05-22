@@ -11,7 +11,7 @@ function ProfileInfoScreen() {
   useEffect(() => {
     const nomEstudiant = () => {
       const request = axios
-        .get('http://localhost:3000/estudiant/getAll')
+        .get('http://172.19.153.54:3000/estudiant/getAll')
         .then((response) => {
           setNomEstudiant(response.data.estudiant[0].nomComplet);
           return request;
@@ -22,12 +22,7 @@ function ProfileInfoScreen() {
     };
     nomEstudiant();
   }, []);
-
-  if (nomEstudiant != 'hi') {
-    return <VarTest nomEstudiant={nomEstudiant}></VarTest>;
-  } else {
-    return <VarTest nomEstudiant="mal"></VarTest>;
-  }
+  return <VarTest nomEstudiant={nomEstudiant}></VarTest>;
 }
 
 export default ProfileInfoScreen;

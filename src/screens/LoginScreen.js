@@ -12,7 +12,7 @@ import Window from '../constants/Layout';
 // errorValidUserPassword: 'That username and password combination is incorrect.',
 // errorOutput: 'Please provide username and password.',
 
-const { height } = Dimensions.get('window');
+//const { height } = Dimensions.get('window');
 
 function LoginScreen() {
   const [data, setData] = React.useState({
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: height * 0.15,
+    marginTop: Window.height * 0.15,
   },
   title: {
     fontFamily: 'InterBold',
