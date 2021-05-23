@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  TouchableHighlight,
-  TouchableNativeFeedback,
-} from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
@@ -25,19 +16,9 @@ export default function LoginScreen() {
     secureTextEntry: true,
     isValidUser: true,
     isValidPassword: true,
-    isValidSignIn: true,
+    isValidSignIn: false,
     isnotEmpty: true,
-    btnPressed: false,
-    password: 'password',
   });
-
-  const handleClick = () => {
-    setData({
-      ...data,
-      password: data.password == 'patata' ? 'password' : 'patata',
-    });
-  };
-
   // Fonts
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -48,7 +29,7 @@ export default function LoginScreen() {
     return null;
   }
 
-  const textInputChange = (val) => {
+  const userInputChange = (val) => {
     if (!(val.indexOf(' ') >= 0)) {
       setData({
         ...data,
@@ -98,9 +79,11 @@ export default function LoginScreen() {
   };
 
   const LoginHandler = () => {
-    if (!data.isnotEmpty) {
+    if (data.password == '' || data.username == '') {
+      console.log('stop1');
       setData({
         ...data,
+        isnotEmpty: false,
         errorMsg: 'Please provide username and password.',
       });
     } else if (!data.isValidSignIn) {
@@ -125,7 +108,7 @@ export default function LoginScreen() {
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.textErrorInputs}>
-          {data.isValidUser && data.isValidPassword ? null : (
+          {data.isValidUser && data.isValidPassword && data.isValidSignIn ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorText}>{data.errorMsg}</Text>
             </Animatable.View>
@@ -141,11 +124,11 @@ export default function LoginScreen() {
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
-          onChangeText={(val) => textInputChange(val)}
+          onChangeText={(val) => userInputChange(val)}
         />
         <TextInput
           secureTextEntry={data.secureTextEntry ? true : false}
-          placeholder={data.password}
+          placeholder="Contrasenya"
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
@@ -155,9 +138,13 @@ export default function LoginScreen() {
           <Text style={styles.forgetPasswordText}>Has oblidat la teva contrasenya?</Text>
         </TouchableOpacity>
         <View style={styles.loginButton}>
-          <TouchableOpacity onPress={handleClick} activeOpacity={0.5}>
-            <BaseButton title="Accedeix" btnColor={Colors.primary} />
-          </TouchableOpacity>
+          <BaseButton
+            onPress={() => {
+              LoginHandler();
+            }}
+            title="Accedeix"
+            btnColor={Colors.primary}
+          />
           <Text style={styles.noaccountText}>No tens compte?</Text>
           <TouchableOpacity>
             <Text style={styles.registerText}>Regístra't aquí!</Text>
