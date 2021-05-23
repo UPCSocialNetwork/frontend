@@ -8,7 +8,7 @@ import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const [data, setData] = React.useState({
     errorMsg: 'Please provide username and password.',
     username: '',
@@ -16,7 +16,7 @@ export default function LoginScreen() {
     secureTextEntry: true,
     isValidUser: true,
     isValidPassword: true,
-    isValidSignIn: false,
+    isValidSignIn: true,
     isnotEmpty: true,
   });
   // Fonts
@@ -146,7 +146,11 @@ export default function LoginScreen() {
             btnColor={Colors.primary}
           />
           <Text style={styles.noaccountText}>No tens compte?</Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('RegisterMail');
+            }}
+          >
             <Text style={styles.registerText}>Regístra't aquí!</Text>
           </TouchableOpacity>
         </View>
@@ -218,7 +222,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   loginButton: {
-    marginTop: 150,
+    marginTop: 100,
     marginBottom: 20,
     alignItems: 'center',
   },
