@@ -11,12 +11,13 @@ import Window from '../constants/Layout';
 
 export default function RegisterPasswordScreen({ navigation }) {
   const [data, setData] = useState({
-    errorMsg: 'Passwords does not match',
+    errorMsg: 'Please follow the rules.',
+    repeatPassword: '',
     isValidPassword: true,
     matchPassword: true,
   });
 
-  const [newUser, setNewUser] = useState(navigation.getParam());
+  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
 
   // Fonts
   const [loaded] = useFonts({
@@ -28,15 +29,15 @@ export default function RegisterPasswordScreen({ navigation }) {
     return null;
   }
 
-  const passwordInputChange = (val) => {
-    if (!(val.indexOf(' ') >= 0)) {
+  const passwordInputChange1 = (val) => {
+    if (!(val.indexOf(' ') >= 0) && val.length >= 8) {
       setData({
         ...data,
         isValidPassword: true,
       });
       setNewUser({
         ...newUser,
-        password: val,
+        contrasenya: val,
       });
     } else {
       setData({
@@ -45,19 +46,36 @@ export default function RegisterPasswordScreen({ navigation }) {
       });
       setNewUser({
         ...newUser,
-        password: val,
+        contrasenya: val,
       });
     }
   };
 
-  const registerPasswordHandler = (pageNumber) => {
-    if (newUser.password == '' || !data.isValidMail) {
+  const passwordInputChange2 = (val) => {
+    if (!(val.indexOf(' ') >= 0) && val.length >= 8) {
+      setData({
+        ...data,
+        repeatPassword: val,
+        isValidPassword: true,
+      });
+    } else {
+      setData({
+        ...data,
+        repeatPassword: val,
+        isValidPassword: false,
+      });
+    }
+  };
+
+  const registerPasswordHandler = () => {
+    if (newUser.contrasenya == '' || newUser.contrasenya != data.repeatPassword || !data.isValidPassword) {
       setData({
         ...data,
         isValidPassword: false,
       });
     } else {
-      navigation.navigate('Intro');
+      //alert('nice Password');
+      navigation.navigate('RegisterCentre', { newUser });
     }
   };
 
@@ -86,7 +104,7 @@ export default function RegisterPasswordScreen({ navigation }) {
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
-          onChangeText={(val) => passwordInputChange(val)}
+          onChangeText={(val) => passwordInputChange1(val)}
         />
         <TextInput
           secureTextEntry={true}
@@ -94,13 +112,13 @@ export default function RegisterPasswordScreen({ navigation }) {
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
-          onChangeText={(val) => passwordInputChange(val)}
+          onChangeText={(val) => passwordInputChange2(val)}
         />
         <Text style={styles.infoMailText}>La contrasenya ha de tenir com a mínim 8 caràcters.</Text>
         <View style={styles.registerButton}>
           <BaseButton
             onPress={() => {
-              registerPasswordHandler(1);
+              registerPasswordHandler();
             }}
             title="Següent"
             btnColor={Colors.primary}

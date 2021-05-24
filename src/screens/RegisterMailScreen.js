@@ -15,11 +15,21 @@ export default function RegisterMailScreen({ navigation }) {
     isValidMail: true,
   });
 
+  const validMail = {
+    upc: 'estudiant.upc.edu',
+  };
+
   const [newUser, setNewUser] = useState({
+    nomUsuari: '',
     mail: '',
-    password: '',
-    centre: '',
-    grau: '',
+    contrasenya: '',
+    descripcio: '',
+    centreID: '',
+    grauID: '',
+    mentorID: '',
+    interessos: '',
+    LlistaAssignatures: [''],
+    LlistaXatGrupTancat: [''],
   });
 
   // Fonts
@@ -54,8 +64,8 @@ export default function RegisterMailScreen({ navigation }) {
     }
   };
 
-  const registerMailHandler = (pageNumber) => {
-    if (newUser.mail == '' || !data.isValidMail) {
+  const registerMailHandler = () => {
+    if (newUser.mail == '' || !data.isValidMail || newUser.mail.split('@')[1] != validMail.upc) {
       setData({
         ...data,
         isValidMail: false,
@@ -92,12 +102,13 @@ export default function RegisterMailScreen({ navigation }) {
           onChangeText={(val) => mailInputChange(val)}
         />
         <Text style={styles.infoMailText}>
-          Recorda que has d'utilitzar el correu d'estudiant del teu centre universitari.
+          Recorda que has d'utilitzar el correu d'estudiant del teu centre universitari i que enviarem un correu de
+          verificació per activar el teu compte.
         </Text>
         <View style={styles.registerButton}>
           <BaseButton
             onPress={() => {
-              registerMailHandler(1);
+              registerMailHandler();
             }}
             title="Següent"
             btnColor={Colors.primary}

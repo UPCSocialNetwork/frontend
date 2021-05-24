@@ -63,24 +63,8 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-  const validUserHandler = (val) => {
-    console.log(val);
-    if (val.trim().length >= 4) {
-      setData({
-        ...data,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        isValidUser: false,
-      });
-    }
-  };
-
   const LoginHandler = () => {
     if (data.password == '' || data.username == '') {
-      console.log('stop1');
       setData({
         ...data,
         isnotEmpty: false,
