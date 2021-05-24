@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
-import Window from '../constants/Layout';
+//import Window from '../constants/Layout';
+const Window = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }) {
   const [data, setData] = React.useState({

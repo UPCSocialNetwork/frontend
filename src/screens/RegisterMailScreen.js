@@ -16,7 +16,7 @@ export default function RegisterMailScreen({ navigation }) {
   });
 
   const validMail = {
-    upc: 'estudiant.upc.edu',
+    upc: 'test',
   };
 
   const [newUser, setNewUser] = useState({
@@ -28,8 +28,8 @@ export default function RegisterMailScreen({ navigation }) {
     grauID: '',
     mentorID: '',
     interessos: '',
-    LlistaAssignatures: [''],
-    LlistaXatGrupTancat: [''],
+    LlistaAssignatures: [],
+    LlistaXatGrupTancat: [],
   });
 
   // Fonts
