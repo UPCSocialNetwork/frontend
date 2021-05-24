@@ -25,24 +25,65 @@ const Item = ({ nom }) => (
 );
 
 const axiosInstance = axios.create({
-  baseURL: Path.apiURL + '/estudiant',
+  baseURL: Path.apiURL + '/estudiant/cesar.gutierrez', // TOCAR ESTO....................................
 });
 
 function ProfileInfoScreen() {
-  const [nomEstudiant, setNomEstudiant] = useState([]);
-
-  const getNomEstudiant = () => {
-    axiosInstance
-      .get('/getAll')
-      .then((response) => {
-        setNomEstudiant(response.data.estudiant[0].nomComplet);
-      })
-      .catch(function (err) {});
-  };
+  const [userData, setUserData] = useState([
+    {
+      nomUsuari: '',
+      mail: '',
+      descripcio: '',
+      centreID: '',
+      grauID: '',
+      interessos: [''],
+      LlistaAssignatures: [''],
+    },
+  ]);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [render, setRender] = useState(false);
 
   useEffect(() => {
-    getNomEstudiant();
+    const getUserData = () => {
+      axiosInstance
+        .get()
+        .then((response) => {
+          setUserData({
+            ...userData,
+            mail: response.data.estudiant.mail,
+            descripcio: response.data.estudiant.descripcio,
+            centreID: response.data.estudiant.centreID,
+            grauID: response.data.estudiant.grauID,
+            interessos: response.data.estudiant.interessos,
+            LlistaAssignatures: response.data.estudiant.LlistaAssignatures,
+          });
+          setDataLoaded(true);
+        })
+        .catch(function (err) {});
+    };
+    getUserData();
   }, []);
+
+  useEffect(() => {
+    if (userData.interessos) {
+      const mapArrays = () => {
+        if (userData.interessos) {
+          var num = 0;
+          var aux = userData.interessos.map(function (obj) {
+            var rObj = { index: obj, key: num };
+            ++num;
+            return rObj;
+          });
+          setUserData({
+            ...userData,
+            interessos: aux,
+          });
+          setRender(true);
+        }
+      };
+      mapArrays();
+    }
+  }, [dataLoaded]);
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -55,46 +96,47 @@ function ProfileInfoScreen() {
     return null;
   }
 
-  const renderItem = ({ item }) => <Item nom={item.nom} />;
+  const renderItem = ({ item }) => <Item nom={item.index} />;
 
-  return (
-    <View>
-      <View style={styles.header}>
-        <Text style={styles.nom}>{nomEstudiant}</Text>
-        <Text style={styles.mail}>cesar.gutierrez@estudiantat.upc.edu</Text>
-        <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
+  if (render) {
+    return (
+      <View>
+        <View style={styles.header}>
+          <Text style={styles.nom}>{userData.nomUsuari}</Text>
+          <Text style={styles.mail}>{userData.mail}</Text>
+          <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
+        </View>
+        <View style={styles.border}>
+          <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+            <Text style={styles.textArea}>{userData.descripcio}</Text>
+          </ScrollView>
+        </View>
+        <Text style={styles.interessosTitle}>{'Interessos'}</Text>
+        <View style={styles.list}>
+          <FlatList
+            horizontal
+            keyExtractor={(item) => item.key.toString()}
+            renderItem={renderItem}
+            data={userData.interessos}
+            contentContainerStyle={{ paddingBottom: 5 }}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+        <View style={styles.btn}>
+          <TouchableNativeFeedback>
+            <View style={styles.button}>
+              <Text style={styles.text}>Veure assignatures de l'estudiant</Text>
+            </View>
+          </TouchableNativeFeedback>
+        </View>
+        <View style={styles.btn}>
+          <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
+        </View>
       </View>
-      <View style={styles.border}>
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={styles.textArea}>
-            {
-              'When set, the scroll view will adjust the scroll position so that the first child that is currently visible and at or beyond minIndexForVisible will not change position. This is useful for lists that are loading content in both directions, e.g. a chat thread, where new messages coming in might otherwise cause the scroll position to jump. A value of 0 is common, but other values such as 1 can be used to skip loading spinners or other content that should not maintain position.'
-            }
-          </Text>
-        </ScrollView>
-      </View>
-      <Text style={styles.interessosTitle}>{'Interessos'}</Text>
-      <View style={styles.list}>
-        <FlatList
-          horizontal
-          renderItem={renderItem}
-          data={DATA}
-          contentContainerStyle={{ paddingBottom: 5 }}
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
-      <View style={styles.btn}>
-        <TouchableNativeFeedback>
-          <View style={styles.button}>
-            <Text style={styles.text}>Veure assignatures de l'estudiant</Text>
-          </View>
-        </TouchableNativeFeedback>
-      </View>
-      <View style={styles.btn}>
-        <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
-      </View>
-    </View>
-  );
+    );
+  } else {
+    return null;
+  }
 }
 
 const styles = StyleSheet.create({
