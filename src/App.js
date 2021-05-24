@@ -1,8 +1,8 @@
 import React from 'react';
 import IntroScreen from './screens/IntroScreen';
 import LoginScreen from './screens/LoginScreen';
-import ProfileInfoScreen1 from './screens/ProfileInfoScreen_sec';
+import ProfileInfoScreen from './screens/ProfileInfoScreen';
 
 export default function App() {
-  return <ProfileInfoScreen1 />;
+  return <ProfileInfoScreen />;
 }
