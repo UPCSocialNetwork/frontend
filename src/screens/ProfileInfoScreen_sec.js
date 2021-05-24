@@ -23,17 +23,17 @@ const Item = ({ nom }) => (
   </View>
 );
 
-const url = 'http://localhost:3000/estudiant/getAll';
+//const url = 'http://localhost:3000/estudiant/getAll';
 
-function ProfileInfoScreen() {
+function ProfileInfoScreen1() {
   const [nomEstudiant, setNomEstudiant] = useState([]);
 
   useEffect(() => {
     const nomEstudiant = () => {
       const request = axios
-        .get('http://localhost:3000/estudiant/getAll')
+        .get('http://172.19.144.10:3000/estudiant/getAll')
         .then((response) => {
-          setNomEstudiant(response.data.estudiant[0].mail);
+          setNomEstudiant(response.data.estudiant[0].nomComplet);
           return request;
         })
         .catch(function (err) {});
@@ -194,4 +194,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileInfoScreen;
+export default ProfileInfoScreen1;

@@ -11,7 +11,7 @@ function ProfileInfoScreen() {
   useEffect(() => {
     const nomEstudiant = () => {
       const request = axios
-        .get('http://172.19.153.54:3000/estudiant/getAll')
+        .get('http://172.19.144.10:3000/estudiant/getAll')
         .then((response) => {
           setNomEstudiant(response.data.estudiant[0].nomComplet);
           return request;
