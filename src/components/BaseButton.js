@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, TouchableNativeFeedback, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-function BaseButton({ OnPress, title, btnColor }) {
+function BaseButton({ onPress, title, btnColor }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -15,11 +15,11 @@ function BaseButton({ OnPress, title, btnColor }) {
   }
 
   return (
-    <TouchableNativeFeedback>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.5} style={styles.touchable}>
       <View style={[styles.button, { backgroundColor: btnColor }]}>
         <Text style={styles.text}>{title}</Text>
       </View>
-    </TouchableNativeFeedback>
+    </TouchableOpacity>
   );
 }
 
@@ -38,6 +38,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: 'center',
     color: Colors.white,
+  },
+  touchable: {
+    borderRadius: 8,
   },
 });
 

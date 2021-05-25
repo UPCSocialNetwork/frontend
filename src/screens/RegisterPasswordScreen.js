@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
+import BackHeader from '../components/BackHeader';
 import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-export default function LoginScreen({ navigation }) {
-  const [data, setData] = React.useState({
-    errorMsg: 'Please provide username and password.',
-    username: '',
-    password: '',
-    secureTextEntry: true,
-    isValidUser: true,
+export default function RegisterPasswordScreen({ navigation }) {
+  const [data, setData] = useState({
+    errorMsg: 'Please follow the rules.',
+    repeatPassword: '',
     isValidPassword: true,
-    isValidSignIn: true,
-    isnotEmpty: true,
+    matchPassword: true,
   });
+
+  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
+
   // Fonts
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -29,114 +29,100 @@ export default function LoginScreen({ navigation }) {
     return null;
   }
 
-  const userInputChange = (val) => {
-    if (!(val.indexOf(' ') >= 0)) {
+  const passwordInputChange1 = (val) => {
+    if (!(val.indexOf(' ') >= 0) && val.length >= 8) {
       setData({
         ...data,
-        username: val,
-        isValidUser: true,
+        isValidPassword: true,
+      });
+      setNewUser({
+        ...newUser,
+        contrasenya: val,
       });
     } else {
       setData({
         ...data,
-        username: val,
-        errorMsg: 'That username and password combination is incorrect.',
-        isValidUser: false,
+        isValidPassword: false,
+      });
+      setNewUser({
+        ...newUser,
+        contrasenya: val,
       });
     }
   };
 
-  const handlePasswordChange = (val) => {
-    if (!(val.indexOf(' ') >= 0)) {
+  const passwordInputChange2 = (val) => {
+    if (!(val.indexOf(' ') >= 0) && val.length >= 8) {
       setData({
         ...data,
-        password: val,
+        repeatPassword: val,
         isValidPassword: true,
       });
     } else {
       setData({
         ...data,
-        password: val,
-        errorMsg: 'That username and password combination is incorrect.',
+        repeatPassword: val,
         isValidPassword: false,
       });
     }
   };
 
-  const LoginHandler = () => {
-    if (data.password == '' || data.username == '') {
+  const registerPasswordHandler = () => {
+    if (newUser.contrasenya == '' || newUser.contrasenya != data.repeatPassword || !data.isValidPassword) {
       setData({
         ...data,
-        isnotEmpty: false,
-        errorMsg: 'Please provide username and password.',
-      });
-    } else if (!data.isValidSignIn) {
-      setData({
-        ...data,
-        errorMsg: 'That username and password combination is incorrect.',
+        isValidPassword: false,
       });
     } else {
-      setData({
-        ...data,
-        isValidSignIn: true,
-        isnotEmpty: true,
-      });
+      //alert('nice Password');
+      navigation.navigate('RegisterCentre', { newUser });
     }
   };
 
   return (
     <KeyboardAwareScrollView style={styles.backgroundView}>
+      <BackHeader
+        onPress={() => {
+          navigation.goBack();
+        }}
+      ></BackHeader>
       <View style={styles.headerContainer} resetScrollToCoords={{ x: 0, y: 0 }} scrollEnabled={false}>
         <Text style={styles.title}>OnCampus</Text>
-        <Text style={styles.subtitle}>Accés a l'aplicació</Text>
+        <Text style={styles.subtitle}>Escriu la teva contrasenya</Text>
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.textErrorInputs}>
-          {data.isValidUser && data.isValidPassword && data.isValidSignIn ? null : (
-            <Animatable.View animation="fadeInLeft" duration={500}>
-              <Text style={styles.errorText}>{data.errorMsg}</Text>
-            </Animatable.View>
-          )}
-          {data.isnotEmpty ? null : (
+          {data.isValidPassword ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorText}>{data.errorMsg}</Text>
             </Animatable.View>
           )}
         </View>
         <TextInput
-          placeholder="Nom d'usuari"
+          secureTextEntry={true}
+          placeholder="Nova contrasenya"
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
-          onChangeText={(val) => userInputChange(val)}
+          onChangeText={(val) => passwordInputChange1(val)}
         />
         <TextInput
-          secureTextEntry={data.secureTextEntry ? true : false}
-          placeholder="Contrasenya"
+          secureTextEntry={true}
+          placeholder="Repeteix la contrasenya"
           autoCorrect={false}
           style={styles.inputStyle}
           autoCapitalize="none"
-          onChangeText={(val) => handlePasswordChange(val)}
+          onChangeText={(val) => passwordInputChange2(val)}
         />
-        <TouchableOpacity>
-          <Text style={styles.forgetPasswordText}>Has oblidat la teva contrasenya?</Text>
-        </TouchableOpacity>
-        <View style={styles.loginButton}>
+        <Text style={styles.infoMailText}>La contrasenya ha de tenir com a mínim 8 caràcters.</Text>
+        <View style={styles.registerButton}>
           <BaseButton
             onPress={() => {
-              LoginHandler();
+              registerPasswordHandler();
             }}
-            title="Accedeix"
+            title="Següent"
             btnColor={Colors.primary}
           />
-          <Text style={styles.noaccountText}>No tens compte?</Text>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('RegisterMail');
-            }}
-          >
-            <Text style={styles.registerText}>Regístra't aquí!</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </KeyboardAwareScrollView>
@@ -149,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: Window.height * 0.15,
+    marginTop: Window.height * 0.05,
   },
   title: {
     fontFamily: 'InterBold',
@@ -185,6 +171,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     fontFamily: 'InterMedium',
+    fontWeight: 'bold',
     width: Window.width * 0.85,
     height: 55,
     borderRadius: 8,
@@ -194,29 +181,20 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     fontSize: 14,
     lineHeight: 23,
-    marginTop: 25,
+    marginTop: 30,
   },
-  forgetPasswordText: {
+  infoMailText: {
     fontFamily: 'InterMedium',
     color: Colors.secondary,
-    fontWeight: 'bold',
-    marginStart: 2,
+    width: Window.width * 0.85,
+    paddingLeft: 5,
+    paddingLeft: 5,
     marginTop: 15,
-    fontSize: 13,
-    textDecorationLine: 'underline',
+    fontSize: 14,
   },
-  loginButton: {
-    marginTop: 100,
+  registerButton: {
+    marginTop: 70,
     marginBottom: 20,
     alignItems: 'center',
-  },
-  noaccountText: {
-    fontFamily: 'InterMedium',
-    marginTop: 12,
-  },
-  registerText: {
-    marginTop: 4,
-    fontFamily: 'InterBold',
-    color: Colors.primary,
   },
 });
