@@ -4,29 +4,7 @@ import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-import Path from '../constants/apiUrl';
-import axios from 'axios';
-
-const DATA = [
-  { id: 'sa', nom: 'Futbol' },
-  { id: 'adsd', nom: 'Basquet' },
-  { id: 'dsf', nom: 'Golf' },
-  { id: 'fdsf', nom: 'Tenis' },
-  { id: 'fdsf1', nom: 'Cricket' },
-  { id: 'fdsf2', nom: 'Leer' },
-  { id: 'fdsf3', nom: 'Abecedario' },
-  { id: 'fdsf4', nom: 'Saltar a la comba' },
-];
-
-const Item = ({ nom }) => (
-  <View style={styles.item}>
-    <Text style={styles.nomItem}>{nom}</Text>
-  </View>
-);
-
-const axiosInstance = axios.create({
-  baseURL: Path.apiURL + '/estudiant/cesar.gutierrez', // TOCAR ESTO....................................
-});
+import axios from '../constants/axios';
 
 function ProfileInfoScreen() {
   const [userData, setUserData] = useState([
@@ -40,50 +18,29 @@ function ProfileInfoScreen() {
       LlistaAssignatures: [''],
     },
   ]);
-  const [dataLoaded, setDataLoaded] = useState(false);
-  const [render, setRender] = useState(false);
 
   useEffect(() => {
-    const getUserData = () => {
-      axiosInstance
-        .get()
-        .then((response) => {
-          setUserData({
-            ...userData,
-            mail: response.data.estudiant.mail,
-            descripcio: response.data.estudiant.descripcio,
-            centreID: response.data.estudiant.centreID,
-            grauID: response.data.estudiant.grauID,
-            interessos: response.data.estudiant.interessos,
-            LlistaAssignatures: response.data.estudiant.LlistaAssignatures,
-          });
-          setDataLoaded(true);
-        })
-        .catch(function (err) {});
-    };
+    async function getUserData() {
+      let response = null;
+      try {
+        response = await axios.get('estudiant/cesar.gutierrez');
+        let est = response.data.estudiant;
+        setUserData({
+          ...userData,
+          nomUsuari: est.nomUsuari,
+          mail: est.mail,
+          descripcio: est.descripcio,
+          centreID: est.centreID,
+          grauID: est.grauID,
+          interessos: est.interessos,
+          LlistaAssignatures: est.LlistaAssignatures,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     getUserData();
   }, []);
-
-  useEffect(() => {
-    if (userData.interessos) {
-      const mapArrays = () => {
-        if (userData.interessos) {
-          var num = 0;
-          var aux = userData.interessos.map(function (obj) {
-            var rObj = { index: obj, key: num };
-            ++num;
-            return rObj;
-          });
-          setUserData({
-            ...userData,
-            interessos: aux,
-          });
-          setRender(true);
-        }
-      };
-      mapArrays();
-    }
-  }, [dataLoaded]);
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -96,53 +53,77 @@ function ProfileInfoScreen() {
     return null;
   }
 
-  const renderItem = ({ item }) => <Item nom={item.index} />;
+  const Item = ({ nom }) => (
+    <View style={styles.item}>
+      <Text style={styles.nomItem}>{nom}</Text>
+    </View>
+  );
 
-  if (render) {
-    return (
-      <View>
-        <View style={styles.header}>
-          <Text style={styles.nom}>{userData.nomUsuari}</Text>
-          <Text style={styles.mail}>{userData.mail}</Text>
-          <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
+  const renderItem = ({ item }) => <Item nom={item} />;
+
+  return (
+    <ScrollView>
+      <View style={styles.header}>
+        <Text style={styles.nom}>{userData.nomUsuari}</Text>
+        <Text style={styles.mail}>{userData.mail}</Text>
+        <View style={styles.centreGrau}>
+          <Text style={styles.textCentre}>
+            {userData.centreID} - {userData.grauID}
+          </Text>
         </View>
-        <View style={styles.border}>
-          <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-            <Text style={styles.textArea}>{userData.descripcio}</Text>
-          </ScrollView>
-        </View>
-        <Text style={styles.interessosTitle}>{'Interessos'}</Text>
-        <View style={styles.list}>
-          <FlatList
-            horizontal
-            keyExtractor={(item) => item.key.toString()}
-            renderItem={renderItem}
-            data={userData.interessos}
-            contentContainerStyle={{ paddingBottom: 5 }}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-        <View style={styles.btn}>
-          <TouchableNativeFeedback>
-            <View style={styles.button}>
-              <Text style={styles.text}>Veure assignatures de l'estudiant</Text>
-            </View>
-          </TouchableNativeFeedback>
-        </View>
-        <View style={styles.btn}>
-          <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
-        </View>
+        <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
       </View>
-    );
-  } else {
-    return null;
-  }
+      <View style={styles.border}>
+        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+          <Text style={styles.textArea}>{userData.descripcio}</Text>
+        </ScrollView>
+      </View>
+      <Text style={styles.interessosTitle}>{'Interessos'}</Text>
+      <View style={styles.list}>
+        <FlatList
+          horizontal
+          keyExtractor={(index) => index.toString()}
+          renderItem={renderItem}
+          data={userData.interessos}
+          contentContainerStyle={{ paddingBottom: 5 }}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+      <View style={styles.btn}>
+        <TouchableNativeFeedback>
+          <View style={styles.button}>
+            <Text style={styles.text}>Veure assignatures de l'estudiant</Text>
+          </View>
+        </TouchableNativeFeedback>
+      </View>
+      <View style={styles.btnLast}>
+        <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginTop: Window.height * 0.1,
+  },
+  centreGrau: {
+    flexDirection: 'row',
+    width: Window.width * 0.7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    backgroundColor: Colors.primary,
+    padding: 7,
+    marginHorizontal: 7,
+    borderRadius: 12,
+  },
+  textCentre: {
+    color: Colors.white,
+    fontFamily: 'InterMedium',
+    fontSize: 12,
+    textAlign: 'center',
   },
   imageProfile: {
     width: Window.width * 0.4,
@@ -153,11 +134,15 @@ const styles = StyleSheet.create({
     fontFamily: 'InterBold',
     fontSize: 20,
     lineHeight: 19,
+    textAlign: 'center',
+    width: Window.width * 0.8,
   },
   mail: {
     fontFamily: 'InterRegular',
     fontSize: 16,
     lineHeight: 19,
+    textAlign: 'center',
+    width: Window.width * 0.8,
   },
   border: {
     marginTop: 20,
@@ -194,7 +179,12 @@ const styles = StyleSheet.create({
   btn: {
     alignSelf: 'center',
     alignItems: 'center',
-    marginTop: 55,
+    marginTop: 40,
+  },
+  btnLast: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginTop: 40,
   },
   item: {
     backgroundColor: Colors.lightGrey,
