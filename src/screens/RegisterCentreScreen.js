@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Modal, TouchableOpacity } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -7,13 +8,23 @@ import ModalPicker from '../components/ModalPicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 
+import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterCentreScreen({ navigation }) {
   const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [choosenData, setChoosenData] = useState('Selecciona el teu centre ...');
+  const [isCentreModalVisible, setCentreModalVisible] = useState(false);
+  const [isGrauModalVisible, setGrauModalVisible] = useState(false);
+  const [errorText, setErrorText] = useState({
+    errorMsg: 'Selecciona les opcions correctament.',
+    errorStatus: false,
+  });
+  const [choosenCentre, setChoosenCentre] = useState('Selecciona el teu centre ...');
+  const [choosenGrau, setChoosenGrau] = useState('Selecciona el teu grau ...');
+
+  const [Centre, setCentre] = useState([]);
+  const [Grau, setGrau] = useState([]);
 
   // Fonts
   const [loaded] = useFonts({
@@ -21,25 +32,63 @@ export default function RegisterCentreScreen({ navigation }) {
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
+
+  useEffect(() => {
+    async function fetchData() {
+      let responseCentre = null;
+      let responseGrau = null;
+      try {
+        responseCentre = await axios.get('/centre/getAll');
+        responseGrau = await axios.get('/grau/getAll');
+        setCentre(responseCentre.data.centreUniversitari);
+        setGrau(responseGrau.data.grau);
+      } catch (error) {
+        console.log(error);
+      }
+      return responseCentre + responseGrau;
+    }
+    fetchData();
+  }, []);
+
   if (!loaded) {
     return null;
   }
 
-  const changeModalVisibility = (bool) => {
-    setModalVisible(bool);
+  const isCentreChoosen = () => {
+    if (choosenCentre != 'Selecciona el teu centre ...') {
+      changeModalVisibility('grau', true);
+      setErrorText({ ...errorText, errorStatus: false });
+    } else {
+      setErrorText({ ...errorText, errorStatus: true });
+    }
   };
 
-  const setData = (option) => {
-    setChoosenData(option);
+  const changeModalVisibility = (type, bool) => {
+    if (type == 'centre') setCentreModalVisible(bool);
+    else setGrauModalVisible(bool);
   };
 
   const registerCentreGrauHandler = () => {
-    alert('Bona elecció');
-    //navigation.navigate('Intro');
+    if (choosenCentre != 'Selecciona el teu centre ...' && choosenGrau != 'Selecciona el teu grau ...') {
+      setNewUser({
+        ...newUser,
+        centreID: choosenCentre,
+        grauID: choosenGrau,
+      });
+      setErrorText({ ...errorText, errorStatus: false });
+      alert(choosenCentre + '\n' + choosenGrau);
+      //navigation.navigate('RegisterAssig', { newUser });
+    } else {
+      setErrorText({ ...errorText, errorStatus: true });
+    }
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.backgroundView}>
+    <KeyboardAwareScrollView
+      style={styles.backgroundView}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+    >
       <BackHeader
         onPress={() => {
           navigation.goBack();
@@ -50,34 +99,70 @@ export default function RegisterCentreScreen({ navigation }) {
         <Text style={styles.subtitle}>Selecciona el teu centre i grau</Text>
       </View>
       <View style={styles.mainContainer}>
-        <TouchableOpacity activeOpacity={0.6} style={styles.dropdownCentre} onPress={() => changeModalVisibility(true)}>
+        <View style={styles.textErrorInputs}>
+          {!errorText.errorStatus ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorText}>{errorText.errorMsg}</Text>
+            </Animatable.View>
+          )}
+        </View>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          style={styles.dropdownCentre}
+          onPress={() => changeModalVisibility('centre', true)}
+        >
           <View style={styles.dropdownIcon}></View>
-          <Text style={styles.dropdownText}>{choosenData}</Text>
+          <View style={styles.dropdownTextContainer}>
+            <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
+              {choosenCentre}
+            </Text>
+          </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
             <Icon style={{ marginEnd: 25 }} name="caret-down" size={25} color={Colors.secondary} />
           </View>
           <Modal
             transparent={true}
             animationType="fade"
-            visible={isModalVisible}
-            onRequestClose={() => changeModalVisibility(false)}
+            visible={isCentreModalVisible}
+            onRequestClose={() => changeModalVisibility('centre', false)}
           >
-            <ModalPicker onPress={() => changeModalVisibility(false)}></ModalPicker>
+            <ModalPicker
+              onPress={() => changeModalVisibility('centre', false)}
+              setChoosenData={setChoosenCentre}
+              DataList={Centre}
+              type="centre"
+            ></ModalPicker>
           </Modal>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.6} style={styles.dropdownCentre} onPress={() => changeModalVisibility(true)}>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          style={styles.dropdownCentre}
+          onPress={() => isCentreChoosen()}
+          // changeModalVisibility('grau', true);
+        >
           <View style={styles.dropdownIcon}></View>
-          <Text style={styles.dropdownText}>Escull el teu grau ...</Text>
+          <View style={styles.dropdownTextContainer}>
+            <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
+              {choosenGrau}
+            </Text>
+          </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
             <Icon style={{ marginEnd: 25 }} name="caret-down" size={25} color={Colors.secondary} />
           </View>
           <Modal
             transparent={true}
             animationType="fade"
-            visible={isModalVisible}
-            onRequestClose={() => changeModalVisibility(false)}
+            visible={isGrauModalVisible}
+            onRequestClose={() => {
+              changeModalVisibility('grau', false);
+            }}
           >
-            <ModalPicker setData={setData} onPress={() => changeModalVisibility(false)}></ModalPicker>
+            <ModalPicker
+              onPress={() => changeModalVisibility('grau', false)}
+              setChoosenData={setChoosenGrau}
+              DataList={Grau}
+              type="grau"
+            ></ModalPicker>
           </Modal>
         </TouchableOpacity>
         <View style={styles.registerButton}>
@@ -100,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: Window.height * 0.05,
+    marginTop: 30,
   },
   title: {
     fontFamily: 'InterBold',
@@ -121,6 +206,19 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
   },
+  textErrorInputs: {
+    marginTop: 10, // 25 base
+    alignItems: 'center',
+    paddingRight: 20,
+    paddingLeft: 20,
+  },
+  errorText: {
+    fontFamily: 'InterMedium',
+    fontSize: 13,
+    marginTop: 15,
+    alignSelf: 'center',
+    color: Colors.red,
+  },
   dropdownCentre: {
     width: Window.width * 0.85,
     flexDirection: 'row',
@@ -138,6 +236,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginLeft: 18,
     backgroundColor: Colors.darkBlue,
+  },
+  dropdownTextContainer: {
+    width: Window.width * 0.6,
   },
   dropdownText: {
     fontFamily: 'InterMedium',

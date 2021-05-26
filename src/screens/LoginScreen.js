@@ -10,7 +10,7 @@ import Colors from '../constants/Colors';
 const Window = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }) {
-  const [data, setData] = React.useState({
+  const [data, setData] = useState({
     errorMsg: 'Please provide username and password.',
     username: '',
     password: '',
@@ -86,7 +86,11 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.backgroundView}>
+    <KeyboardAwareScrollView
+      style={styles.backgroundView}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+    >
       <View style={styles.headerContainer} resetScrollToCoords={{ x: 0, y: 0 }} scrollEnabled={false}>
         <Text style={styles.title}>OnCampus</Text>
         <Text style={styles.subtitle}>Accés a l'aplicació</Text>
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: Window.height * 0.15,
+    marginTop: Window.height * 0.1,
   },
   title: {
     fontFamily: 'InterBold',

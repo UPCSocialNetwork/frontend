@@ -80,7 +80,11 @@ export default function RegisterPasswordScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.backgroundView}>
+    <KeyboardAwareScrollView
+      style={styles.backgroundView}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+    >
       <BackHeader
         onPress={() => {
           navigation.goBack();
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: Window.height * 0.05,
+    marginTop: 30,
   },
   title: {
     fontFamily: 'InterBold',
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textErrorInputs: {
-    marginTop: 10, // 25 base
+    marginTop: 10,
     alignItems: 'center',
     paddingRight: 20,
     paddingLeft: 20,

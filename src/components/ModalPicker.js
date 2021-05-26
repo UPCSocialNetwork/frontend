@@ -1,38 +1,55 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-export default function ModalPicker({ onPress, setData }) {
-  const OPTIONS = ['EPSEVG', 'FIB', 'ETSEIB', 'ESCAI', 'TLCE'];
-
+export default function ModalPicker({ onPress, setChoosenData, DataList, type }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
+
   if (!loaded) {
     return null;
   }
 
   const onPressItem = (option) => {
     onPress(false);
-    setData(option);
+    setChoosenData(option);
   };
 
-  const option = OPTIONS.map((item, index) => {
-    return (
-      <TouchableOpacity style={styles.option} key={index} onPress={() => onPressItem(item)}>
-        <Text style={styles.text}> {item} </Text>
-      </TouchableOpacity>
-    );
-  });
+  const renderItemCentre = ({ item }) => (
+    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nomSigles)}>
+      <View style={styles.optionCard}>
+        <Text style={styles.text}>
+          {' '}
+          {item.nomSigles} - {item.nomComplet}{' '}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderItemGrau = ({ item }) => (
+    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nom)}>
+      <View style={styles.optionCard}>
+        <Text style={styles.text}>{item.nom}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <View style={styles.modal}>
-        <ScrollView>{option}</ScrollView>
+        <FlatList
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          data={DataList}
+          renderItem={type == 'centre' ? renderItemCentre : renderItemGrau}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        ></FlatList>
       </View>
     </TouchableOpacity>
   );
@@ -46,17 +63,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modal: {
-    backgroundColor: Colors.lightBlue,
-    borderRadius: 10,
+    backgroundColor: Colors.white,
     width: Window.width * 0.9,
     height: Window.height * 0.8,
+    borderRadius: 8,
   },
   option: {
-    alignItems: 'flex-start',
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  optionCard: {
+    backgroundColor: Colors.lightBlue,
+    width: Window.width * 0.85,
+    borderRadius: 50,
+    margin: 7,
   },
   text: {
-    margin: 20,
-    fontSize: 20,
-    fontWeight: 'bold',
+    textAlign: 'center',
+    padding: 10,
+    alignSelf: 'center',
+    fontSize: 15,
   },
 });
