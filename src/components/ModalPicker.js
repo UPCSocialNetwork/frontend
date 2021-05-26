@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-export default function ModalPicker({ onPress, setChoosenData, DataList, type }) {
+export default function ModalPicker({ onPress, setChoosenData, userInfo, dataList, type }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -15,13 +15,23 @@ export default function ModalPicker({ onPress, setChoosenData, DataList, type })
     return null;
   }
 
-  const onPressItem = (option) => {
+  const onPressItem = (option, type) => {
+    if (type == 'centre') {
+      setChoosenData({
+        ...userInfo,
+        centreID: option,
+      });
+    } else {
+      setChoosenData({
+        ...userInfo,
+        grauID: option,
+      });
+    }
     onPress(false);
-    setChoosenData(option);
   };
 
   const renderItemCentre = ({ item }) => (
-    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nomSigles)}>
+    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nomSigles, 'centre')}>
       <View style={styles.optionCard}>
         <Text style={styles.text}>
           {' '}
@@ -32,7 +42,7 @@ export default function ModalPicker({ onPress, setChoosenData, DataList, type })
   );
 
   const renderItemGrau = ({ item }) => (
-    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nom)}>
+    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nom, 'grau')}>
       <View style={styles.optionCard}>
         <Text style={styles.text}>{item.nom}</Text>
       </View>
@@ -44,7 +54,7 @@ export default function ModalPicker({ onPress, setChoosenData, DataList, type })
       <View style={styles.modal}>
         <FlatList
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-          data={DataList}
+          data={dataList}
           renderItem={type == 'centre' ? renderItemCentre : renderItemGrau}
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}

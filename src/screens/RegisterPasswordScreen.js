@@ -74,7 +74,7 @@ export default function RegisterPasswordScreen({ navigation }) {
         isValidPassword: false,
       });
     } else {
-      //alert('nice Password');
+      //alert(newUser.mail);
       navigation.navigate('RegisterCentre', { newUser });
     }
   };

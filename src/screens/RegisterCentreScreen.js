@@ -34,6 +34,14 @@ export default function RegisterCentreScreen({ navigation }) {
   });
 
   useEffect(() => {
+    // Init centre and grau
+    setNewUser({
+      ...newUser,
+      centreID: 'Selecciona el teu centre ...',
+      grauID: 'Selecciona el teu grau ...',
+    });
+
+    // Consultas
     async function fetchData() {
       let responseCentre = null;
       let responseGrau = null;
@@ -55,7 +63,7 @@ export default function RegisterCentreScreen({ navigation }) {
   }
 
   const isCentreChoosen = () => {
-    if (choosenCentre != 'Selecciona el teu centre ...') {
+    if (newUser.centreID != 'Selecciona el teu centre ...') {
       changeModalVisibility('grau', true);
       setErrorText({ ...errorText, errorStatus: false });
     } else {
@@ -69,15 +77,9 @@ export default function RegisterCentreScreen({ navigation }) {
   };
 
   const registerCentreGrauHandler = () => {
-    if (choosenCentre != 'Selecciona el teu centre ...' && choosenGrau != 'Selecciona el teu grau ...') {
-      setNewUser({
-        ...newUser,
-        centreID: choosenCentre,
-        grauID: choosenGrau,
-      });
+    if (newUser.centreID != 'Selecciona el teu centre ...' && newUser.grauID != 'Selecciona el teu grau ...') {
       setErrorText({ ...errorText, errorStatus: false });
-      alert(choosenCentre + '\n' + choosenGrau);
-      //navigation.navigate('RegisterAssig', { newUser });
+      navigation.navigate('RegisterAssig', { newUser });
     } else {
       setErrorText({ ...errorText, errorStatus: true });
     }
@@ -114,7 +116,7 @@ export default function RegisterCentreScreen({ navigation }) {
           <View style={styles.dropdownIcon}></View>
           <View style={styles.dropdownTextContainer}>
             <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
-              {choosenCentre}
+              {newUser.centreID}
             </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -128,8 +130,9 @@ export default function RegisterCentreScreen({ navigation }) {
           >
             <ModalPicker
               onPress={() => changeModalVisibility('centre', false)}
-              setChoosenData={setChoosenCentre}
-              DataList={Centre}
+              setChoosenData={setNewUser}
+              userInfo={newUser}
+              dataList={Centre}
               type="centre"
             ></ModalPicker>
           </Modal>
@@ -143,7 +146,7 @@ export default function RegisterCentreScreen({ navigation }) {
           <View style={styles.dropdownIcon}></View>
           <View style={styles.dropdownTextContainer}>
             <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
-              {choosenGrau}
+              {newUser.grauID}
             </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
@@ -159,8 +162,9 @@ export default function RegisterCentreScreen({ navigation }) {
           >
             <ModalPicker
               onPress={() => changeModalVisibility('grau', false)}
-              setChoosenData={setChoosenGrau}
-              DataList={Grau}
+              setChoosenData={setNewUser}
+              userInfo={newUser}
+              dataList={Grau}
               type="grau"
             ></ModalPicker>
           </Modal>
