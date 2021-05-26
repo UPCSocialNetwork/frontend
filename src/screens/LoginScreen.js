@@ -124,7 +124,8 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.loginButton}>
           <BaseButton
             onPress={() => {
-              LoginHandler();
+              //LoginHandler();
+              navigation.navigate('ProfileInfoScreen');
             }}
             title="Accedeix"
             btnColor={Colors.primary}

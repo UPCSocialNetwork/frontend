@@ -12,6 +12,7 @@ import RegisterMentor1 from '../screens/RegisterMentor1Screen';
 import RegisterMentor2 from '../screens/RegisterMentor2Screen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
 */
+import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 
 const screens = {
   Intro: {
@@ -28,6 +29,9 @@ const screens = {
   },
   RegisterCentre: {
     screen: RegisterCentre,
+  },
+  ProfileInfoScreen: {
+    screen: ProfileInfoScreen,
   },
 };
 

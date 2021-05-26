@@ -5,8 +5,9 @@ import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import axios from '../constants/axios';
+import BackHeader from '../components/BackHeader';
 
-function ProfileInfoScreen() {
+function ProfileInfoScreen({ navigation }) {
   const [userData, setUserData] = useState([
     {
       nomUsuari: '',
@@ -18,6 +19,9 @@ function ProfileInfoScreen() {
       LlistaAssignatures: [''],
     },
   ]);
+
+  const random = Math.floor(Math.random() * 100);
+  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
 
   useEffect(() => {
     async function getUserData() {
@@ -63,6 +67,11 @@ function ProfileInfoScreen() {
 
   return (
     <ScrollView>
+      <BackHeader
+        onPress={() => {
+          navigation.goBack();
+        }}
+      ></BackHeader>
       <View style={styles.header}>
         <Text style={styles.nom}>{userData.nomUsuari}</Text>
         <Text style={styles.mail}>{userData.mail}</Text>
@@ -71,7 +80,7 @@ function ProfileInfoScreen() {
             {userData.centreID} - {userData.grauID}
           </Text>
         </View>
-        <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
+        <Image style={styles.imageProfile} source={{ uri: url }} />
       </View>
       <View style={styles.border}>
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -106,7 +115,7 @@ function ProfileInfoScreen() {
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    marginTop: Window.height * 0.1,
+    marginTop: 10,
   },
   centreGrau: {
     flexDirection: 'row',
@@ -129,6 +138,7 @@ const styles = StyleSheet.create({
     width: Window.width * 0.4,
     height: Window.width * 0.4,
     marginTop: 15,
+    borderRadius: 100,
   },
   nom: {
     fontFamily: 'InterBold',
@@ -185,6 +195,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 40,
+    marginBottom: 30,
   },
   item: {
     backgroundColor: Colors.lightGrey,
