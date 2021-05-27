@@ -5,7 +5,7 @@ import Colors from '../constants/Colors';
 function ChatList({}) {
   return (
     <View style={styles.card}>
-      <Text>Hola chicos!</Text>
+      <Text>Hola chicos</Text>
     </View>
   );
 }

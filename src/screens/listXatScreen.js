@@ -15,9 +15,27 @@ import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ChatList from '../components/ChatList';
+import { useEffect } from 'react/cjs/react.development';
+import axios from '../constants/axios';
 
 export default function listXatScreen({ navigation }) {
-  const [nomUsuari, setNomUsuari] = useState('cesar.gutierrez');
+  const [nomUsuari, setNomUsuari] = useState('cesar.martos');
+  const [chatData, setChatData] = useState([]);
+
+  useEffect(() => {
+    async function getChatData() {
+      let response = null;
+      try {
+        response = await axios.get('estudiant/xats/' + nomUsuari);
+        let chats = response.data.xatsFinals;
+        console.log(chats);
+        setChatData(chats);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    getChatData();
+  }, []);
 
   const random = Math.floor(Math.random() * 100);
   const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
