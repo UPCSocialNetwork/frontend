@@ -11,4 +11,5 @@ export default {
   red: '#FF545E',
   test1: '#FFF733',
   test2: '#33FFDB',
+  blueGrey: '#58616A',
 };

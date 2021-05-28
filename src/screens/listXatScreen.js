@@ -1,15 +1,6 @@
 import { Inter_900Black } from '@expo-google-fonts/inter';
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
-  TouchableOpacityBase,
-} from 'react-native';
+import { View, StyleSheet, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
@@ -19,7 +10,7 @@ import { useEffect } from 'react/cjs/react.development';
 import axios from '../constants/axios';
 
 export default function listXatScreen({ navigation }) {
-  const [nomUsuari, setNomUsuari] = useState('cesar.martos');
+  const [nomUsuari, setNomUsuari] = useState('cesar');
   const [chatData, setChatData] = useState([]);
 
   useEffect(() => {
@@ -27,8 +18,9 @@ export default function listXatScreen({ navigation }) {
       let response = null;
       try {
         response = await axios.get('estudiant/xats/' + nomUsuari);
+        //console.log(response);
         let chats = response.data.xatsFinals;
-        console.log(chats);
+        //console.log(chats);
         setChatData(chats);
       } catch (e) {
         console.error(e);
@@ -37,8 +29,11 @@ export default function listXatScreen({ navigation }) {
     getChatData();
   }, []);
 
-  const random = Math.floor(Math.random() * 100);
-  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
+  const randomUrl = () => {
+    const random = Math.floor(Math.random() * 100);
+    const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
+    return url;
+  };
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -51,11 +46,13 @@ export default function listXatScreen({ navigation }) {
     return null;
   }
 
+  const renderItem = ({ item }) => <ChatList nom={item[0]} message={item[1]} time={item[2]} imageSrc={randomUrl()} />;
+
   return (
-    <ScrollView style={styles.scroll}>
+    <View style={styles.scroll}>
       <View style={styles.header}>
         <View style={styles.imageView}>
-          <Image style={styles.imageProfile} source={{ uri: url }} />
+          <Image style={styles.imageProfile} source={{ uri: randomUrl() }} />
           <View style={styles.circle}></View>
         </View>
         <View style={styles.textView}>
@@ -76,9 +73,15 @@ export default function listXatScreen({ navigation }) {
       </View>
       <View style={styles.selectPicker}></View>
       <View style={styles.allChats}>
-        <ChatList></ChatList>
+        <FlatList
+          keyExtractor={(index) => index.toString()}
+          renderItem={renderItem}
+          data={chatData}
+          contentContainerStyle={{ paddingBottom: 5 }}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -152,6 +155,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   allChats: {
-    marginTop: 30,
+    marginTop: 15,
   },
 });
