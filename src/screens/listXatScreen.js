@@ -18,22 +18,22 @@ export default function listXatScreen({ navigation }) {
       let response = null;
       try {
         response = await axios.get('estudiant/xats/' + nomUsuari);
-        //console.log(response);
         let chats = response.data.xatsFinals;
-        //console.log(chats);
         setChatData(chats);
       } catch (e) {
         console.error(e);
       }
     }
     getChatData();
-  }, []);
+  });
 
   const randomUrl = () => {
     const random = Math.floor(Math.random() * 100);
     const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
     return url;
   };
+
+  const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -46,13 +46,13 @@ export default function listXatScreen({ navigation }) {
     return null;
   }
 
-  const renderItem = ({ item }) => <ChatList nom={item[0]} message={item[1]} time={item[2]} imageSrc={randomUrl()} />;
+  const renderItem = ({ item }) => <ChatList nom={item[0]} message={item[1]} time={item[2]} imageSrc={url_aux} />;
 
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
         <View style={styles.imageView}>
-          <Image style={styles.imageProfile} source={{ uri: randomUrl() }} />
+          <Image style={styles.imageProfile} source={{ uri: url_aux }} />
           <View style={styles.circle}></View>
         </View>
         <View style={styles.textView}>
@@ -71,7 +71,16 @@ export default function listXatScreen({ navigation }) {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={styles.selectPicker}></View>
+      <View style={styles.selectPicker}>
+        <View style={styles.btnsView}>
+          <TouchableOpacity style={styles.btnChats}>
+            <Text style={styles.textXats}>Xats</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnGrups}>
+            <Text style={styles.textGrups}>Grups</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <View style={styles.allChats}>
         <FlatList
           keyExtractor={(index) => index.toString()}
@@ -149,12 +158,58 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: Colors.lightBlue,
   },
+  selectPicker: {
+    height: 100,
+    justifyContent: 'center',
+  },
+  btnsView: {
+    backgroundColor: Colors.grey,
+    borderRadius: 8,
+    width: Window.width * 0.85,
+    height: 52,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  btnChats: {
+    width: '47%',
+    height: '70%',
+    backgroundColor: Colors.white,
+    alignSelf: 'center',
+    borderRadius: 8,
+    justifyContent: 'center',
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 1,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  btnGrups: {
+    width: '47%',
+    height: '70%',
+    backgroundColor: Colors.grey,
+    alignSelf: 'center',
+    borderRadius: 8,
+    justifyContent: 'center',
+  },
+  textXats: {
+    color: Colors.secondary,
+    fontSize: 16,
+    fontFamily: 'InterBold',
+    textAlign: 'center',
+  },
+  textGrups: {
+    color: Colors.secondary,
+    fontSize: 16,
+    fontFamily: 'InterBold',
+    textAlign: 'center',
+  },
   listXats: {
     marginTop: 20,
     backgroundColor: Colors.red,
     width: '100%',
-  },
-  allChats: {
-    marginTop: 15,
   },
 });

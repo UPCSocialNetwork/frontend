@@ -12,4 +12,5 @@ export default {
   test1: '#FFF733',
   test2: '#33FFDB',
   blueGrey: '#58616A',
+  grey: '#E5E5E5',
 };
