@@ -1,4 +1,3 @@
-import { Inter_900Black } from '@expo-google-fonts/inter';
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../constants/Colors';
@@ -12,26 +11,47 @@ import axios from '../constants/axios';
 export default function listXatScreen({ navigation }) {
   const [nomUsuari, setNomUsuari] = useState('cesar');
   const [chatData, setChatData] = useState([]);
+  const [listType, setListType] = useState('privs');
+
+  const pressPickerPrivs = () => {
+    setListType('privs');
+  };
+
+  const pressPickerGrups = () => {
+    setListType('grups');
+  };
 
   useEffect(() => {
     async function getChatData() {
       let response = null;
-      try {
-        response = await axios.get('estudiant/xats/' + nomUsuari);
-        let chats = response.data.xatsFinals;
-        setChatData(chats);
-      } catch (e) {
-        console.error(e);
+      if (listType === 'privs') {
+        try {
+          response = await axios.get('estudiant/xats/' + nomUsuari);
+          let chats = response.data.xatsFinals;
+          setChatData(chats);
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        try {
+          response = await axios.get('estudiant/grups/' + nomUsuari);
+          let chats = response.data.xatsFinals;
+          setChatData(chats);
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
     getChatData();
   });
 
+  /*
   const randomUrl = () => {
     const random = Math.floor(Math.random() * 100);
     const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
     return url;
   };
+  */
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
@@ -45,8 +65,6 @@ export default function listXatScreen({ navigation }) {
   if (!loaded) {
     return null;
   }
-
-  const renderItem = ({ item }) => <ChatList nom={item[0]} message={item[1]} time={item[2]} imageSrc={url_aux} />;
 
   return (
     <View style={styles.scroll}>
@@ -73,23 +91,21 @@ export default function listXatScreen({ navigation }) {
       </View>
       <View style={styles.selectPicker}>
         <View style={styles.btnsView}>
-          <TouchableOpacity style={styles.btnChats}>
+          <TouchableOpacity
+            style={listType === 'privs' ? [styles.btnChats] : [styles.btnGrups]}
+            onPress={pressPickerPrivs}
+          >
             <Text style={styles.textXats}>Xats</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnGrups}>
+          <TouchableOpacity
+            style={listType === 'grups' ? [styles.btnChats] : [styles.btnGrups]}
+            onPress={pressPickerGrups}
+          >
             <Text style={styles.textGrups}>Grups</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.allChats}>
-        <FlatList
-          keyExtractor={(index) => index.toString()}
-          renderItem={renderItem}
-          data={chatData}
-          contentContainerStyle={{ paddingBottom: 5 }}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+      <ChatList chatData={chatData} listType={listType}></ChatList>
     </View>
   );
 }
