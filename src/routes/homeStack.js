@@ -13,8 +13,12 @@ import RegisterMentor2 from '../screens/RegisterMentor2Screen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
 */
 import ProfileInfoScreen from '../screens/ProfileInfoScreen';
+import listXatScreen from '../screens/listXatScreen';
 
 const screens = {
+  listXatScreen: {
+    screen: listXatScreen,
+  },
   Intro: {
     screen: Intro,
   },

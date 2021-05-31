@@ -20,6 +20,13 @@ function ProfileInfoScreen({ navigation }) {
     },
   ]);
 
+  const [loaded] = useFonts({
+    InterBold: require('../assets/fonts/Inter-Bold.ttf'),
+    InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
+    InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+    InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
+  });
+
   const random = Math.floor(Math.random() * 100);
   const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
 
@@ -45,13 +52,6 @@ function ProfileInfoScreen({ navigation }) {
     }
     getUserData();
   }, []);
-
-  const [loaded] = useFonts({
-    InterBold: require('../assets/fonts/Inter-Bold.ttf'),
-    InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
-    InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
-    InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
-  });
 
   if (!loaded) {
     return null;
