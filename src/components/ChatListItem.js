@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
 const formatTime = (time) => {
+  if (time === 404) return null;
   var now = new Date();
   var time = new Date(time);
   var diff_time = now - time;
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   tempsViewParent: {
+    marginLeft: Window.width * 0.02,
     width: Window.width * 0.19,
     justifyContent: 'center',
   },
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
   optionsView: {
     flex: 1,
     justifyContent: 'center',
-    marginLeft: Window.width * 0.05,
+    marginLeft: Window.width * 0.02,
   },
   optionsIcon: {
     fontSize: 15,
