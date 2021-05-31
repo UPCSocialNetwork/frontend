@@ -9,7 +9,7 @@ import { useEffect } from 'react/cjs/react.development';
 import axios from '../constants/axios';
 
 export default function listXatScreen({ navigation }) {
-  const [nomUsuari, setNomUsuari] = useState('cesar');
+  const [nomUsuari, setNomUsuari] = useState('cesar.gutierrez');
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
 
@@ -43,7 +43,7 @@ export default function listXatScreen({ navigation }) {
       }
     }
     getChatData();
-  });
+  }, [listType]);
 
   /*
   const randomUrl = () => {
@@ -112,6 +112,7 @@ export default function listXatScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   scroll: {
+    flex: 1,
     backgroundColor: Colors.white,
   },
   header: {

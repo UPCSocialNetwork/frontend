@@ -5,6 +5,17 @@ import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
+const formatNom = (nom) => {
+  var nouNom;
+  if (nom != '') {
+    nouNom = nom.split('.')[0];
+    nouNom = nouNom.charAt(0).toUpperCase() + nouNom.slice(1) + ': ';
+  } else {
+    nouNom = '';
+  }
+  return nouNom;
+};
+
 const formatTime = (time) => {
   if (time === 404) return null;
   var now = new Date();
@@ -45,7 +56,7 @@ const formatTime = (time) => {
   }
 };
 
-function ChatListItem({ nom, message, time, imageSrc }) {
+function ChatListItem({ titol, message, time, nom, imageSrc }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -57,7 +68,7 @@ function ChatListItem({ nom, message, time, imageSrc }) {
     return null;
   }
 
-  if (nom && message && time) {
+  if (titol && message && time) {
     return (
       <TouchableOpacity>
         <View style={styles.card}>
@@ -69,9 +80,10 @@ function ChatListItem({ nom, message, time, imageSrc }) {
           <View style={styles.userViewParent}>
             <View style={styles.userView}>
               <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                {nom}
+                {titol}
               </Text>
               <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+                {formatNom(nom)}
                 {message}
               </Text>
             </View>
@@ -127,6 +139,7 @@ const styles = StyleSheet.create({
     fontFamily: 'InterSemiBold',
     fontSize: 16,
     color: Colors.secondary,
+    width: '95%',
   },
   message: {
     fontFamily: 'InterRegular',
