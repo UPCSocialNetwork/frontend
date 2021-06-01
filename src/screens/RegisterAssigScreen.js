@@ -12,19 +12,7 @@ import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterAssigScreen({ navigation }) {
-  //const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
-  const [newUser, setNewUser] = useState({
-    nomUsuari: '',
-    mail: '',
-    contrasenya: '',
-    descripcio: '',
-    centreID: 'EPSEVG',
-    grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-    mentorID: '',
-    interessos: '',
-    LlistaAssignatures: [],
-    LlistaXatGrupTancat: [],
-  });
+  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
   const [errorText, setErrorText] = useState({
     errorMsg: 'Selecciona com a mínim una assignatura',
     errorStatus: false,
@@ -62,6 +50,7 @@ export default function RegisterAssigScreen({ navigation }) {
             (assig = {
               nomComplet: assig.nomComplet,
               nomSigles: assig.nomSigles,
+              quad: assig.quadrimestre,
               chosen: isChosen(assig.nomComplet),
             }),
         );
@@ -86,9 +75,8 @@ export default function RegisterAssigScreen({ navigation }) {
     return null;
   }
 
-  const isCentreChosen = () => {
-    if (newUser.centreID != 'Selecciona el teu centre ...') {
-      changeModalVisibility('grau', true);
+  const isAssigChosen = () => {
+    if (newUser.LlistaAssignatures.length > 0) {
       setErrorText({ ...errorText, errorStatus: false });
     } else {
       setErrorText({ ...errorText, errorStatus: true });
@@ -96,14 +84,16 @@ export default function RegisterAssigScreen({ navigation }) {
   };
 
   const registerAssigHandler = () => {
-    /*
-    if (newUser.centreID != 'Selecciona el teu centre ...' && newUser.grauID != 'Selecciona el teu grau ...') {
+    let notprimer = newUser.LlistaAssignatures.find((assig) => {
+      return assig.quad != 1 && assig.quad != 2;
+    });
+    if (newUser.LlistaAssignatures.length > 0) {
       setErrorText({ ...errorText, errorStatus: false });
-      navigation.navigate('RegisterAssig', { newUser });
+      if (notprimer) navigation.navigate('RegisterMentor2', { newUser });
+      else navigation.navigate('RegisterMentor1', { newUser });
     } else {
       setErrorText({ ...errorText, errorStatus: true });
     }
-    */
   };
 
   const setChosen = (item, action) => {
@@ -112,6 +102,7 @@ export default function RegisterAssigScreen({ navigation }) {
       chosenAux.push({
         nomComplet: item.nomComplet,
         nomSigles: item.nomSigles,
+        quad: item.quad,
         grauID: newUser.grauID,
       });
       setNewUser({
@@ -147,6 +138,7 @@ export default function RegisterAssigScreen({ navigation }) {
             setChosen(item, item.chosen);
             setChange(change === 'plus' ? 'trash' : 'plus');
             setListAssignatura(auxList);
+            isAssigChosen();
           }
         }}
       >
@@ -221,13 +213,7 @@ export default function RegisterAssigScreen({ navigation }) {
               </View>
             </View>
             <View style={styles.registerButton}>
-              <BaseButton
-                onPress={() => {
-                  registerAssigHandler();
-                }}
-                title="Següent"
-                btnColor={Colors.primary}
-              />
+              <BaseButton onPress={registerAssigHandler} title="Següent" btnColor={Colors.primary} />
             </View>
           </View>
         </View>
