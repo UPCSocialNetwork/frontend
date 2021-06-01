@@ -111,8 +111,6 @@ const styles = StyleSheet.create({
     height: 75,
     width: '100%',
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.lightBlack,
   },
   imageViewParent: {
     justifyContent: 'center',

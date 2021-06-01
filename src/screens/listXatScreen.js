@@ -69,15 +69,19 @@ export default function listXatScreen({ navigation }) {
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
-        <View style={styles.imageView}>
-          <Image style={styles.imageProfile} source={{ uri: url_aux }} />
-          <View style={styles.circle}></View>
-        </View>
-        <View style={styles.textView}>
-          <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
-            {nomUsuari}
-          </Text>
-        </View>
+        <TouchableOpacity style={styles.imageView}>
+          <View>
+            <Image style={styles.imageProfile} source={{ uri: url_aux }} />
+            <View style={styles.circle}></View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.textView}>
+          <View>
+            <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
+              {nomUsuari}
+            </Text>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity>
           <View style={styles.searchView}>
             <MaterialIcons name="search" style={styles.searchIcon} />

@@ -11,12 +11,25 @@ function ChatList(chatData) {
     <ChatListItem titol={item[0]} message={item[1]} time={item[2]} nom={item[3]} imageSrc={url_aux} />
   );
 
+  const FlatListItemSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '100%',
+          backgroundColor: Colors.lightBlack,
+        }}
+      />
+    );
+  };
+
   return (
     <View style={styles.allChats}>
       <FlatList
         keyExtractor={(index) => index.toString()}
         renderItem={renderItem}
         data={chatData.chatData}
+        ItemSeparatorComponent={FlatListItemSeparator}
         contentContainerStyle={{ paddingBottom: 5 }}
         showsVerticalScrollIndicator={false}
       />
