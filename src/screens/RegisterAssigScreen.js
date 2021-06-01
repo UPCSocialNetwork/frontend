@@ -62,7 +62,7 @@ export default function RegisterAssigScreen({ navigation }) {
             (assig = {
               nomComplet: assig.nomComplet,
               nomSigles: assig.nomSigles,
-              chosen: false,
+              chosen: isChosen(assig.nomComplet),
             }),
         );
         setListAssignatura(AssigList);
@@ -73,6 +73,14 @@ export default function RegisterAssigScreen({ navigation }) {
     }
     fetchData();
   }, [quadrimestre]);
+
+  const isChosen = (assigNom) => {
+    let index = newUser.LlistaAssignatures.findIndex((e) => {
+      return e.nomComplet === assigNom;
+    });
+    if (index >= 0) return true;
+    else return false;
+  };
 
   if (!loaded) {
     return null;
@@ -133,11 +141,13 @@ export default function RegisterAssigScreen({ navigation }) {
         activeOpacity={0.5}
         style={!item.chosen ? styles.ListAssigAdd : styles.ListAssigDelete}
         onPress={() => {
-          let auxList = listAssignatura;
-          auxList[index].chosen = !auxList[index].chosen;
-          setChosen(item, item.chosen);
-          setChange(change === 'plus' ? 'trash' : 'plus');
-          setListAssignatura(auxList);
+          if (newUser.LlistaAssignatures.length < 6 || item.chosen) {
+            let auxList = listAssignatura;
+            auxList[index].chosen = !auxList[index].chosen;
+            setChosen(item, item.chosen);
+            setChange(change === 'plus' ? 'trash' : 'plus');
+            setListAssignatura(auxList);
+          }
         }}
       >
         <Icon style={{ marginEnd: 0 }} name={!item.chosen ? 'plus' : 'trash'} size={22} color={Colors.white} />
@@ -179,7 +189,7 @@ export default function RegisterAssigScreen({ navigation }) {
             />
           </View>
           <View style={styles.mainContainer}>
-            <View style={styles.ListAssig}>
+            <View style={styles.ListAssig} resetScrollToCoords={{ x: 0, y: 0 }}>
               <FlatList
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
@@ -213,7 +223,6 @@ export default function RegisterAssigScreen({ navigation }) {
             <View style={styles.registerButton}>
               <BaseButton
                 onPress={() => {
-                  console.log(listAssignatura);
                   registerAssigHandler();
                 }}
                 title="Següent"
@@ -318,21 +327,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ChosenAssigItem: {
-    width: 75,
-    height: '100%',
+    width: 85,
+    height: '93%',
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.lightGrey,
+    marginHorizontal: 7,
     borderRadius: 8,
-    backgroundColor: Colors.lightBlue,
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 4,
   },
   ChosenAssigItemText: {
-    fontFamily: 'InterBold',
-    fontSize: 14,
-  },
-  textChosenAssig: {
     fontFamily: 'InterMedium',
     fontSize: 15,
+  },
+  textChosenAssig: {
+    fontFamily: 'InterSemiBold',
+    marginLeft: 5,
+    fontSize: 17,
+    color: Colors.secondary,
   },
   textErrorInputs: {
     alignItems: 'center',

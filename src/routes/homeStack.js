@@ -18,6 +18,9 @@ const screens = {
   RegisterAssig: {
     screen: RegisterAssig,
   },
+  RegisterCentre: {
+    screen: RegisterCentre,
+  },
   Intro: {
     screen: Intro,
   },
@@ -29,9 +32,6 @@ const screens = {
   },
   RegisterPassword: {
     screen: RegisterPassword,
-  },
-  RegisterCentre: {
-    screen: RegisterCentre,
   },
 };
 
