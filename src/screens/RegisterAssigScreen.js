@@ -12,10 +12,21 @@ import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterAssigScreen({ navigation }) {
-  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
-  //LlistaAssignatures: [],
+  //const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
+  const [newUser, setNewUser] = useState({
+    nomUsuari: '',
+    mail: '',
+    contrasenya: '',
+    descripcio: '',
+    centreID: 'EPSEVG',
+    grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+    mentorID: '',
+    interessos: '',
+    LlistaAssignatures: [],
+    LlistaXatGrupTancat: [],
+  });
   const [errorText, setErrorText] = useState({
-    errorMsg: 'Selecciona les opcions correctament.',
+    errorMsg: 'Selecciona com a mínim una assignatura',
     errorStatus: false,
   });
   const [open, setOpen] = useState(false);
@@ -51,7 +62,7 @@ export default function RegisterAssigScreen({ navigation }) {
             (assig = {
               nomComplet: assig.nomComplet,
               nomSigles: assig.nomSigles,
-              choosen: false,
+              chosen: false,
             }),
         );
         setListAssignatura(AssigList);
@@ -67,7 +78,7 @@ export default function RegisterAssigScreen({ navigation }) {
     return null;
   }
 
-  const isCentreChoosen = () => {
+  const isCentreChosen = () => {
     if (newUser.centreID != 'Selecciona el teu centre ...') {
       changeModalVisibility('grau', true);
       setErrorText({ ...errorText, errorStatus: false });
@@ -87,47 +98,31 @@ export default function RegisterAssigScreen({ navigation }) {
     */
   };
 
-  const clickAssigHandler = (index) => {
-    let auxList = listAssignatura;
-    auxList[index] = !auxList[index].choosen;
-    extraData(auxList);
+  const setChosen = (item, action) => {
+    let chosenAux = newUser.LlistaAssignatures;
+    if (action) {
+      chosenAux.push({
+        nomComplet: item.nomComplet,
+        nomSigles: item.nomSigles,
+        grauID: newUser.grauID,
+      });
+      setNewUser({
+        ...newUser,
+        LlistaAssignatures: chosenAux,
+      });
+    } else {
+      let index = chosenAux.findIndex(function (elem) {
+        return elem.nomComplet === item.nomComplet;
+      });
+      if (index >= 0) {
+        chosenAux.splice(index, 1);
+      }
+      setNewUser({
+        ...newUser,
+        LlistaAssignatures: chosenAux,
+      });
+    }
   };
-
-  /*
-  const renderItem = ({ item, index }) => (
-    <View style={styles.ListAssigItem}>
-      <Text style={styles.ListAssigText} numberOfLines={1} ellipsizeMode="tail">
-        {item.nomSigles} - {item.nomComplet}
-      </Text>
-      {!item.choosen ? (
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.ListAssigAdd}
-          onPress={() => {
-            let auxList = listAssignatura;
-            auxList[index].choosen = !auxList[index].choosen;
-            setChange(!change);
-            setListAssignatura(auxList);
-          }}
-        >
-          <Icon style={{ marginEnd: 0 }} name="plus" size={22} color={Colors.white} />
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.ListAssigDelete}
-          onPress={() => {
-            let auxList = listAssignatura;
-            auxList[index].choosen = !auxList[index].choosen;
-            setChange(!change);
-            setListAssignatura(auxList);
-          }}
-        >
-          <Icon style={{ marginEnd: 0 }} name="trash" size={22} color={Colors.white} />
-        </TouchableOpacity>
-      )}
-    </View>
-  );*/
 
   const renderItem = ({ item, index }) => (
     <View style={styles.ListAssigItem}>
@@ -136,16 +131,23 @@ export default function RegisterAssigScreen({ navigation }) {
       </Text>
       <TouchableOpacity
         activeOpacity={0.5}
-        style={!item.choosen ? styles.ListAssigAdd : styles.ListAssigDelete}
+        style={!item.chosen ? styles.ListAssigAdd : styles.ListAssigDelete}
         onPress={() => {
           let auxList = listAssignatura;
-          auxList[index].choosen = !auxList[index].choosen;
+          auxList[index].chosen = !auxList[index].chosen;
+          setChosen(item, item.chosen);
           setChange(change === 'plus' ? 'trash' : 'plus');
           setListAssignatura(auxList);
         }}
       >
-        <Icon style={{ marginEnd: 0 }} name={!item.choosen ? 'plus' : 'trash'} size={22} color={Colors.white} />
+        <Icon style={{ marginEnd: 0 }} name={!item.chosen ? 'plus' : 'trash'} size={22} color={Colors.white} />
       </TouchableOpacity>
+    </View>
+  );
+
+  const renderChosenItem = ({ item }) => (
+    <View style={styles.ChosenAssigItem}>
+      <Text style={styles.ChosenAssigItemText}>{item.nomSigles}</Text>
     </View>
   );
 
@@ -187,8 +189,8 @@ export default function RegisterAssigScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
               />
             </View>
-            <View style={styles.ChoosenAssig}>
-              <Text style={styles.textChoosenAssig}>Assignatures escollides</Text>
+            <View style={styles.ChosenAssig}>
+              <Text style={styles.textChosenAssig}>Assignatures escollides</Text>
               <View style={styles.textErrorInputs}>
                 {!errorText.errorStatus ? null : (
                   <Animatable.View animation="fadeInLeft" duration={500}>
@@ -196,13 +198,16 @@ export default function RegisterAssigScreen({ navigation }) {
                   </Animatable.View>
                 )}
               </View>
-              <View style={styles.ChoosenAssigContainer}>
-                <View style={styles.ChoosenAssigItem}>
-                  <Text style={styles.ChoosenAssigItemText}>XASF</Text>
-                </View>
-                <View style={styles.ChoosenAssigItem}>
-                  <Text style={styles.ChoosenAssigItemText}>XASF</Text>
-                </View>
+              <View style={styles.ChosenAssigContainer}>
+                <FlatList
+                  horizontal
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderChosenItem}
+                  data={newUser.LlistaAssignatures}
+                  //extraData={change}
+                  contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+                  showsHorizontalScrollIndicator={false}
+                />
               </View>
             </View>
             <View style={styles.registerButton}>
@@ -302,79 +307,43 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: Colors.red,
   },
-  ChoosenAssig: {
+  ChosenAssig: {
     flex: 1,
     width: Window.width * 0.9,
-    height: Window.height * 0.15,
-    marginTop: 8,
   },
-  ChoosenAssigContainer: {
+  ChosenAssigContainer: {
     flex: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  ChoosenAssigItem: {
+  ChosenAssigItem: {
     width: 75,
-    height: 75,
+    height: '100%',
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
     backgroundColor: Colors.lightBlue,
   },
-  ChoosenAssigItemText: {
+  ChosenAssigItemText: {
     fontFamily: 'InterBold',
     fontSize: 14,
   },
-  textChoosenAssig: {
+  textChosenAssig: {
     fontFamily: 'InterMedium',
     fontSize: 15,
   },
   textErrorInputs: {
-    marginTop: 10, // 25 base
     alignItems: 'center',
-    paddingRight: 20,
-    paddingLeft: 20,
   },
   errorText: {
     fontFamily: 'InterMedium',
     fontSize: 13,
-    marginTop: 15,
     alignSelf: 'center',
     color: Colors.red,
   },
-  dropdownCentre: {
-    width: Window.width * 0.85,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    height: 55,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.lightBlack,
-    marginTop: 30,
-  },
-  dropdownIcon: {
-    width: 18,
-    height: 18,
-    borderRadius: 50,
-    marginLeft: 18,
-    backgroundColor: Colors.darkBlue,
-  },
-  dropdownTextContainer: {
-    width: Window.width * 0.6,
-  },
-  dropdownText: {
-    fontFamily: 'InterMedium',
-    marginRight: 15,
-    marginLeft: 15,
-    fontSize: 14,
-  },
   registerButton: {
-    marginTop: 10,
     marginBottom: 20,
     alignItems: 'center',
   },
