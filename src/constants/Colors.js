@@ -6,9 +6,12 @@ export default {
   darkBlue: '#2D7FCA',
   black: '#000',
   white: '#fff',
+  green: '#2DCA8C',
   lightGrey: '#FBFBFB',
   yellow: '#FFCB44',
   red: '#FF545E',
   test1: '#FFF733',
   test2: '#33FFDB',
+  blueGrey: '#58616A',
+  grey: '#E5E5E5',
 };

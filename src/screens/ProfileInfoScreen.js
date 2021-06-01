@@ -1,77 +1,99 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableNativeFeedback, Image, Text, ScrollView, FlatList } from 'react-native';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-import axios from 'axios';
+import axios from '../constants/axios';
+import BackHeader from '../components/BackHeader';
 
-const DATA = [
-  { id: 'sa', nom: 'Futbol' },
-  { id: 'adsd', nom: 'Basquet' },
-  { id: 'dsf', nom: 'Golf' },
-  { id: 'fdsf', nom: 'Tenis' },
-  { id: 'fdsf1', nom: 'Cricket' },
-  { id: 'fdsf2', nom: 'Leer' },
-  { id: 'fdsf3', nom: 'Abecedario' },
-  { id: 'fdsf4', nom: 'Saltar a la comba' },
-];
+function ProfileInfoScreen({ navigation }) {
+  const [userData, setUserData] = useState([
+    {
+      nomUsuari: '',
+      mail: '',
+      descripcio: '',
+      centreID: '',
+      grauID: '',
+      interessos: [''],
+      LlistaAssignatures: [''],
+    },
+  ]);
 
-const Item = ({ nom }) => (
-  <View style={styles.item}>
-    <Text style={styles.nomItem}>{nom}</Text>
-  </View>
-);
-
-const url = 'http://localhost:3000/estudiant/getAll';
-
-function ProfileInfoScreen() {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
+
+  const random = Math.floor(Math.random() * 100);
+  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
+
+  useEffect(() => {
+    async function getUserData() {
+      let response = null;
+      try {
+        response = await axios.get('estudiant/cesar.gutierrez');
+        let est = response.data.estudiant;
+        setUserData({
+          ...userData,
+          nomUsuari: est.nomUsuari,
+          mail: est.mail,
+          descripcio: est.descripcio,
+          centreID: est.centreID,
+          grauID: est.grauID,
+          interessos: est.interessos,
+          LlistaAssignatures: est.LlistaAssignatures,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    getUserData();
+  }, []);
+
   if (!loaded) {
     return null;
   }
 
-  const renderItem = ({ item }) => <Item nom={item.nom} />;
+  const Item = ({ nom }) => (
+    <View style={styles.item}>
+      <Text style={styles.nomItem}>{nom}</Text>
+    </View>
+  );
 
-  /*
-  axios
-    .get('http://localhost:3000/estudiant/getAll')
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(`Error -> ${error}`);
-      //console.error(`Error -> ${error}`);
-    });
-  */
+  const renderItem = ({ item }) => <Item nom={item} />;
 
   return (
-    <View>
+    <ScrollView>
+      <BackHeader
+        onPress={() => {
+          navigation.goBack();
+        }}
+      ></BackHeader>
       <View style={styles.header}>
-        <Text style={styles.nom}>César Gutiérrez</Text>
-        <Text style={styles.mail}>cesar.gutierrez@estudiantat.upc.edu</Text>
-        <Image style={styles.imageProfile} source={require('../assets/images/user.png')} />
+        <Text style={styles.nom}>{userData.nomUsuari}</Text>
+        <Text style={styles.mail}>{userData.mail}</Text>
+        <View style={styles.centreGrau}>
+          <Text style={styles.textCentre}>
+            {userData.centreID} - {userData.grauID}
+          </Text>
+        </View>
+        <Image style={styles.imageProfile} source={{ uri: url }} />
       </View>
       <View style={styles.border}>
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={styles.textArea}>
-            {
-              'When set, the scroll view will adjust the scroll position so that the first child that is currently visible and at or beyond minIndexForVisible will not change position. This is useful for lists that are loading content in both directions, e.g. a chat thread, where new messages coming in might otherwise cause the scroll position to jump. A value of 0 is common, but other values such as 1 can be used to skip loading spinners or other content that should not maintain position.'
-            }
-          </Text>
+          <Text style={styles.textArea}>{userData.descripcio}</Text>
         </ScrollView>
       </View>
       <Text style={styles.interessosTitle}>{'Interessos'}</Text>
       <View style={styles.list}>
         <FlatList
           horizontal
+          keyExtractor={(index) => index.toString()}
           renderItem={renderItem}
-          data={DATA}
+          data={userData.interessos}
           contentContainerStyle={{ paddingBottom: 5 }}
           showsHorizontalScrollIndicator={false}
         />
@@ -83,32 +105,54 @@ function ProfileInfoScreen() {
           </View>
         </TouchableNativeFeedback>
       </View>
-      <View style={styles.btn}>
+      <View style={styles.btnLast}>
         <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    marginTop: Window.height * 0.1,
+    marginTop: 10,
+  },
+  centreGrau: {
+    flexDirection: 'row',
+    width: Window.width * 0.7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    backgroundColor: Colors.primary,
+    padding: 7,
+    marginHorizontal: 7,
+    borderRadius: 12,
+  },
+  textCentre: {
+    color: Colors.white,
+    fontFamily: 'InterMedium',
+    fontSize: 12,
+    textAlign: 'center',
   },
   imageProfile: {
     width: Window.width * 0.4,
     height: Window.width * 0.4,
     marginTop: 15,
+    borderRadius: 100,
   },
   nom: {
     fontFamily: 'InterBold',
     fontSize: 20,
     lineHeight: 19,
+    textAlign: 'center',
+    width: Window.width * 0.8,
   },
   mail: {
     fontFamily: 'InterRegular',
     fontSize: 16,
     lineHeight: 19,
+    textAlign: 'center',
+    width: Window.width * 0.8,
   },
   border: {
     marginTop: 20,
@@ -145,7 +189,13 @@ const styles = StyleSheet.create({
   btn: {
     alignSelf: 'center',
     alignItems: 'center',
-    marginTop: 55,
+    marginTop: 40,
+  },
+  btnLast: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 30,
   },
   item: {
     backgroundColor: Colors.lightGrey,

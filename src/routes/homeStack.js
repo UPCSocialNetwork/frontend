@@ -9,7 +9,8 @@ import RegisterCentre from '../screens/RegisterCentreScreen';
 import RegisterAssig from '../screens/RegisterAssigScreen';
 import RegisterMentor1 from '../screens/RegisterMentor1Screen';
 import RegisterMentor2 from '../screens/RegisterMentor2Screen';
-
+import ProfileInfoScreen from '../screens/ProfileInfoScreen';
+import listXatScreen from '../screens/listXatScreen';
 /*
 import RegisterProfile from '../screens/RegisterProfileScreen';
 */
@@ -38,6 +39,12 @@ const screens = {
   },
   RegisterMentor2: {
     screen: RegisterMentor2,
+  },
+  ProfileInfoScreen: {
+    screen: ProfileInfoScreen,
+  },
+  listXatScreen: {
+    screen: listXatScreen,
   },
 };
 
