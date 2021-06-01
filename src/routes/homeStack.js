@@ -15,6 +15,12 @@ import RegisterProfile from '../screens/RegisterProfileScreen';
 */
 
 const screens = {
+  RegisterCentre: {
+    screen: RegisterCentre,
+  },
+  RegisterAssig: {
+    screen: RegisterAssig,
+  },
   Intro: {
     screen: Intro,
   },
@@ -26,12 +32,6 @@ const screens = {
   },
   RegisterPassword: {
     screen: RegisterPassword,
-  },
-  RegisterCentre: {
-    screen: RegisterCentre,
-  },
-  RegisterAssig: {
-    screen: RegisterAssig,
   },
 };
 

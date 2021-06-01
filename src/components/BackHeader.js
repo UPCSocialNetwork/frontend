@@ -17,23 +17,20 @@ function BackHeader({ onPress }) {
   }
 
   return (
-    <View style={styles.backgroundView}>
-      <TouchableOpacity onPress={onPress} activeOpacity={0.5}>
-        <View style={styles.buttonAll}>
-          <View style={styles.backButton}>
-            <Icon name="arrow-left" size={18} color={Colors.primary} />
-          </View>
-          <Text style={styles.Text}>Enrere</Text>
+    <TouchableOpacity style={styles.backgroundView} onPress={onPress} activeOpacity={0.5}>
+      <View style={styles.buttonAll}>
+        <View style={styles.backButton}>
+          <Icon name="arrow-left" size={18} color={Colors.primary} />
         </View>
-      </TouchableOpacity>
-    </View>
+        <Text style={styles.Text}>Enrere</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   backgroundView: {
     marginTop: 40,
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
