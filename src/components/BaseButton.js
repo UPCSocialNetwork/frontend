@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-function BaseButton({ onPress, title, btnColor }) {
+export default function BaseButton({ onPress, title, btnColor }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -43,5 +43,3 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
-
-export default BaseButton;

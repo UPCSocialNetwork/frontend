@@ -16,7 +16,7 @@ export default function RegisterMailScreen({ navigation }) {
   });
 
   const validMail = {
-    upc: 'estudiant.upc.edu',
+    upc: 'edu',
   };
 
   const [newUser, setNewUser] = useState({
@@ -28,8 +28,8 @@ export default function RegisterMailScreen({ navigation }) {
     grauID: '',
     mentorID: '',
     interessos: '',
-    LlistaAssignatures: [''],
-    LlistaXatGrupTancat: [''],
+    LlistaAssignatures: [],
+    LlistaXatGrupTancat: [],
   });
 
   // Fonts
@@ -76,7 +76,11 @@ export default function RegisterMailScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.backgroundView}>
+    <KeyboardAwareScrollView
+      style={styles.backgroundView}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+    >
       <BackHeader
         onPress={() => {
           navigation.goBack();
@@ -125,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: Window.height * 0.05,
+    marginTop: 30,
   },
   title: {
     fontFamily: 'InterBold',

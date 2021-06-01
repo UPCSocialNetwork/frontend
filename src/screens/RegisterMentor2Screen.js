@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 
 import Colors from '../constants/Colors';
 
-export default function IntroScreen({ navigation }) {
+export default function RegisterMentor2Screen({ navigation }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -20,14 +20,14 @@ export default function IntroScreen({ navigation }) {
 
   return (
     <TouchableOpacity style={styles.backgroundView} activeOpacity={0.8} onPress={pressHandler}>
-      <Text style={styles.Text}>On{`\n`}Campus</Text>
+      <Text style={styles.Text}>Screen Mentor 2</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   backgroundView: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.red,
     flex: 1,
     flexDirection: 'column', // horizontal
     justifyContent: 'center', // main (horiz)
@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     fontFamily: 'InterBold',
     marginBottom: 30,
     fontSize: 75,
-    color: Colors.white,
+    color: '#fff',
   },
 });
