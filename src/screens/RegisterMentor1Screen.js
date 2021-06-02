@@ -25,6 +25,13 @@ export default function RegisterMentor1Screen({ navigation }) {
     LlistaXatGrupTancat: [],
   });
 
+  // Fonts
+  const [loaded] = useFonts({
+    InterBold: require('../assets/fonts/Inter-Bold.ttf'),
+    InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
+    InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+  });
+
   const [errorText, setErrorText] = useState({
     errorMsg: 'Selecciona com a mínim una assignatura',
     errorStatus: false,
@@ -42,6 +49,10 @@ export default function RegisterMentor1Screen({ navigation }) {
     fetchData();
     */
   }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   const registerMentorHandler = () => {
     /*
