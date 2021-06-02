@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   textHeader: {
     fontFamily: 'InterBold',
-    fontSize: 20,
+    fontSize: 18,
     color: Colors.black,
   },
   searchView: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 27,
   },
   optionsIcon: {
-    fontSize: 25,
+    fontSize: 21,
   },
   selectPicker: {
     marginTop: 25,
