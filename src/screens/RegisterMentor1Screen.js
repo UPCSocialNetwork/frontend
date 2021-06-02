@@ -86,6 +86,9 @@ export default function RegisterMentor1Screen({ navigation }) {
         <View style={styles.registerButton}>
           <BaseButton onPress={registerMentorHandler} title="Següent" btnColor={Colors.primary} />
         </View>
+        <View style={styles.registerButton}>
+          <BaseButton onPress={registerMentorHandler} title="No vull ser mentoritzat" btnColor={Colors.red} />
+        </View>
       </View>
     </View>
   );
