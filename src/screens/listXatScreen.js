@@ -9,7 +9,7 @@ import { useEffect } from 'react/cjs/react.development';
 import axios from '../constants/axios';
 
 export default function listXatScreen({ navigation }) {
-  const [nomUsuari, setNomUsuari] = useState('cesar.gutierrez');
+  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
 
@@ -26,7 +26,7 @@ export default function listXatScreen({ navigation }) {
       let response = null;
       if (listType === 'privs') {
         try {
-          response = await axios.get('estudiant/xats/' + nomUsuari);
+          response = await axios.get('estudiant/xats/' + newUser.nomUsuari);
           let chats = response.data.xatsFinals;
           setChatData(chats);
         } catch (e) {
@@ -34,7 +34,7 @@ export default function listXatScreen({ navigation }) {
         }
       } else {
         try {
-          response = await axios.get('estudiant/grups/' + nomUsuari);
+          response = await axios.get('estudiant/grups/' + newUser.nomUsuari);
           let chats = response.data.xatsFinals;
           setChatData(chats);
         } catch (e) {
@@ -44,14 +44,6 @@ export default function listXatScreen({ navigation }) {
     }
     getChatData();
   }, [listType]);
-
-  /*
-  const randomUrl = () => {
-    const random = Math.floor(Math.random() * 100);
-    const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
-    return url;
-  };
-  */
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
@@ -78,7 +70,7 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity style={styles.textView}>
           <View>
             <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
-              {nomUsuari}
+              {newUser.nomUsuari}
             </Text>
           </View>
         </TouchableOpacity>
@@ -110,6 +102,11 @@ export default function listXatScreen({ navigation }) {
         </View>
       </View>
       <ChatList chatData={chatData} listType={listType}></ChatList>
+      <View style={styles.plusBtn}>
+        <TouchableOpacity style={styles.plusCircle}>
+          <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -232,5 +229,32 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: Colors.red,
     width: '100%',
+  },
+  plusBtn: {
+    width: Window.width * 0.17,
+    height: Window.width * 0.17,
+    position: 'absolute',
+    marginTop: Window.height * 0.9,
+    marginLeft: Window.width * 0.75,
+  },
+  plusCircle: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 50,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.9,
+    shadowRadius: 8,
+    elevation: 7,
+  },
+  plusStyle: {
+    color: Colors.white,
+    fontSize: 43,
+    alignSelf: 'center',
   },
 });
