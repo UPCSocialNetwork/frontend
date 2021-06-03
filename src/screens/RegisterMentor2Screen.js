@@ -19,7 +19,8 @@ export default function RegisterMentor2Screen({ navigation }) {
     descripcio: '',
     centreID: '',
     grauID: '',
-    mentorID: '',
+    xatMentorID: '',
+    esMentor: false,
     interessos: '',
     LlistaAssignatures: [],
     LlistaXatGrupTancat: [],
@@ -54,7 +55,7 @@ export default function RegisterMentor2Screen({ navigation }) {
 
   const registerMentorHandler = (isMentor) => {
     let user = newUser;
-    user.mentorID = isMentor;
+    user.esMentor = isMentor;
     navigation.navigate('RegisterProfile', { user });
   };
 
