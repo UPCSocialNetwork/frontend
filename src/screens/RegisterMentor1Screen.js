@@ -3,16 +3,21 @@ import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList } from 'react
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
-
+import ModalPicker from '../components/ModalPicker';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterMentor1Screen({ navigation }) {
   //const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [mentorsData, setMentorsData] = useState([]);
+  const [Graus, setGraus] = useState([]);
+  const [actualGrau, setActualGrau] = useState('GRAU EN ENGINYERIA INFORMÀTICA DSADSA');
+  const [nomMentor, setNomMentor] = useState(['Cerca el teu mentor...']);
+  const [isGrauModalVisible, setGrauModalVisible] = useState(false);
   const [newUser, setNewUser] = useState({
     nomUsuari: '',
     mail: '',
@@ -20,8 +25,9 @@ export default function RegisterMentor1Screen({ navigation }) {
     descripcio: '',
     centreID: '',
     grauID: '',
-    mentorID: '',
+    esMentor: '',
     interessos: '',
+    xatMentorID: '',
     LlistaAssignatures: [],
     LlistaXatGrupTancat: [],
   });
@@ -34,21 +40,25 @@ export default function RegisterMentor1Screen({ navigation }) {
   });
 
   const [errorText, setErrorText] = useState({
-    errorMsg: 'Selecciona com a mínim una assignatura',
+    errorMsg: `Si vols mentor, l'has d'escollir`,
     errorStatus: false,
   });
 
   useEffect(() => {
-    /*
     async function fetchData() {
-      let response = null;
+      let responseMentors = null;
+      let responseGrau = null;
       try {
+        responseMentors = await axios.get('mentors');
+        responseGrau = await axios.get('/grau/getAll');
+        setMentorsData(responseMentors.data.mentors);
+        setGraus(responseGrau.data.grau);
       } catch (error) {
+        console.error(e);
       }
-      return response;
+      return responseMentors + responseGrau;
     }
     fetchData();
-    */
   }, []);
 
   if (!loaded) {
@@ -56,14 +66,42 @@ export default function RegisterMentor1Screen({ navigation }) {
   }
 
   const registerMentorHandler = () => {
-    /*
-    if (condition) {
+    if (nomMentor === 'Cerca el teu mentor...') {
       setErrorText({ ...errorText, errorStatus: false });
-      navigation.navigate('RegisterProfile', { newUser });
+      //navigation.navigate('RegisterProfile', { newUser });
     } else {
       setErrorText({ ...errorText, errorStatus: true });
     }
-    */
+  };
+
+  const Item = ({ nom }) => (
+    <TouchableOpacity style={styles.cardParent}>
+      <View style={styles.card}>
+        <Text style={styles.nomItem}>{nom.nomUsuari}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderItem = ({ item }) => <Item nom={item} />;
+
+  const FlatListItemSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '100%',
+          backgroundColor: Colors.lightBlack,
+        }}
+      />
+    );
+  };
+
+  const changeModalVisibility = (bool) => {
+    setGrauModalVisible(bool);
+  };
+
+  const isGrauChosen = () => {
+    changeModalVisibility(true);
   };
 
   return (
@@ -88,11 +126,11 @@ export default function RegisterMentor1Screen({ navigation }) {
           </View>
         </View>
         <View style={styles.searchBloc}>
-          <TouchableOpacity style={styles.dropdown}>
+          <TouchableOpacity activeOpacity={0.6} style={styles.dropdown} onPress={() => setModalVisible(true)}>
             <View style={styles.dropdownIcon}></View>
             <View style={styles.dropdownTextContainer}>
               <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
-                Cerca el teu mentor...
+                {nomMentor}
               </Text>
             </View>
             <View style={{ backgroundColor: Colors.black, height: '86%', width: 1 }}></View>
@@ -100,6 +138,40 @@ export default function RegisterMentor1Screen({ navigation }) {
               <MaterialIcons style={{ marginEnd: 17 }} name="search" size={25} color={Colors.secondary} />
             </View>
           </TouchableOpacity>
+        </View>
+        <View style={styles.grauBtn}>
+          <TouchableOpacity activeOpacity={0.6} style={styles.grauDropdown} onPress={() => isGrauChosen()}>
+            <Text style={styles.textBtn} numberOfLines={1} ellipsizeMode="tail">
+              {actualGrau}
+            </Text>
+            <MaterialIcons style={styles.textFilter} name="subject" size={20} color={Colors.secondary} />
+            <Modal
+              transparent={true}
+              animationType="fade"
+              visible={isGrauModalVisible}
+              onRequestClose={() => {
+                changeModalVisibility(false);
+              }}
+            >
+              <ModalPicker
+                onPress={() => changeModalVisibility(false)}
+                setChoosenData={setActualGrau}
+                userInfo={newUser}
+                dataList={Graus}
+                type="canviGrau"
+              ></ModalPicker>
+            </Modal>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.flatListView}>
+          <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderItem}
+            data={mentorsData}
+            ItemSeparatorComponent={FlatListItemSeparator}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+          />
         </View>
         <View style={styles.registerButton1}>
           <BaseButton onPress={registerMentorHandler} title="Següent" btnColor={Colors.primary} />
@@ -118,7 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerContainer: {
-    marginTop: Window.height * 0.1,
+    marginTop: 10,
   },
   textHeader: {
     fontSize: 18,
@@ -130,6 +202,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textErrorInputs: {
     alignItems: 'center',
@@ -168,10 +241,53 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 14,
   },
+  grauBtn: {
+    marginTop: Window.height * 0.02,
+    height: Window.height * 0.06,
+  },
+  grauDropdown: {
+    alignSelf: 'center',
+    width: Window.width * 0.85,
+    height: '100%',
+    flexDirection: 'row',
+    backgroundColor: Colors.grey,
+    borderRadius: 8,
+    paddingLeft: 10,
+  },
+  textBtn: {
+    borderRadius: 8,
+    fontFamily: 'InterMedium',
+    fontSize: 16,
+    backgroundColor: Colors.grey,
+    height: '100%',
+    width: '90%',
+    textAlignVertical: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  textFilter: {
+    textAlignVertical: 'center',
+    marginLeft: '1%',
+  },
+  flatListView: {
+    marginTop: Window.height * 0.02,
+    height: Window.height * 0.43,
+  },
+  card: {
+    height: 50,
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  nomItem: {
+    marginLeft: 10,
+    fontSize: 17,
+    textAlign: 'center',
+  },
   registerButton1: {
     marginBottom: 20,
     alignItems: 'center',
-    marginTop: Window.height * 0.3,
+    marginTop: Window.height * 0.02,
   },
   registerButton2: {
     marginBottom: 20,
