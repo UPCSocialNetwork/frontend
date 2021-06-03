@@ -16,9 +16,6 @@ import RegisterProfile from '../screens/RegisterProfileScreen';
  */
 
 const screens = {
-  RegisterMentor2: {
-    screen: RegisterMentor2,
-  },
   Intro: {
     screen: Intro,
   },
@@ -40,13 +37,15 @@ const screens = {
   RegisterMentor1: {
     screen: RegisterMentor1,
   },
+  RegisterMentor2: {
+    screen: RegisterMentor2,
+  },
   RegisterProfile: {
     screen: RegisterProfile,
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
   },
-
   listXatScreen: {
     screen: listXatScreen,
   },
