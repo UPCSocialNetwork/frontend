@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, FlatList } from 'react-native
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -136,13 +136,13 @@ export default function RegisterAssigScreen({ navigation }) {
             let auxList = listAssignatura;
             auxList[index].chosen = !auxList[index].chosen;
             setChosen(item, item.chosen);
-            setChange(change === 'plus' ? 'trash' : 'plus');
+            setChange(change === 'add' ? 'delete' : 'delete');
             setListAssignatura(auxList);
             isAssigChosen();
           }
         }}
       >
-        <Icon style={{ marginEnd: 0 }} name={!item.chosen ? 'plus' : 'trash'} size={22} color={Colors.white} />
+        <MaterialIcons style={{ marginEnd: 0 }} name={!item.chosen ? 'add' : 'delete'} size={25} color={Colors.white} />
       </TouchableOpacity>
     </View>
   );

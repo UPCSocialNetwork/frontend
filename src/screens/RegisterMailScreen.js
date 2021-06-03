@@ -179,15 +179,15 @@ const styles = StyleSheet.create({
   },
   infoMailText: {
     fontFamily: 'InterMedium',
+    textAlign: 'justify',
     color: Colors.secondary,
     width: Window.width * 0.85,
-    paddingLeft: 5,
-    paddingLeft: 5,
+    padding: 5,
     marginTop: 15,
     fontSize: 14,
   },
   registerButton: {
-    marginTop: 150,
+    marginTop: 140,
     marginBottom: 20,
     alignItems: 'center',
   },
