@@ -62,12 +62,17 @@ export default function RegisterMentor1Screen({ navigation }) {
         grausData = grausData.unshift(totGraus);
         setGraus(responseGrau.data.grau);
       } catch (error) {
-        console.error(e);
+        console.error(error);
       }
       return responseMentors + responseGrau;
     }
     fetchData();
   }, []);
+
+  //Filter Grau
+  useEffect(() => {
+    setFilteredDataOnFlatlist();
+  }, [actualGrau]);
 
   if (!loaded) {
     return null;
@@ -112,16 +117,10 @@ export default function RegisterMentor1Screen({ navigation }) {
 
   const changeModalVisibility = (bool) => {
     setGrauModalVisible(bool);
-    //console.log('hey');
-  };
-
-  const modalPressed = () => {
-    setFilteredDataOnFlatlist();
-    changeModalVisibility(false);
   };
 
   const setFilteredDataOnFlatlist = () => {
-    //console.log(actualGrau);
+    console.log(actualGrau);
     const newData = mentorsData.filter((item) => {
       if (item.Grau === actualGrau || actualGrau === 'Tots els graus') return item;
     });
@@ -193,7 +192,7 @@ export default function RegisterMentor1Screen({ navigation }) {
               }}
             >
               <ModalPicker
-                onPress={() => modalPressed()}
+                onPress={() => changeModalVisibility(false)}
                 setChoosenData={setActualGrau}
                 userInfo={newUser}
                 dataList={Graus}
