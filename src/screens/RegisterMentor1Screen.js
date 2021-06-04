@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -9,15 +9,19 @@ import ModalPicker from '../components/ModalPicker';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
+import MentorListItem from '../components/MentorListItem';
 
 export default function RegisterMentor1Screen({ navigation }) {
   //const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
   const [isModalVisible, setModalVisible] = useState(false);
   const [mentorsData, setMentorsData] = useState([]);
+  const [filterData, setFilterData] = useState([]);
   const [Graus, setGraus] = useState([]);
-  const [actualGrau, setActualGrau] = useState('GRAU EN ENGINYERIA INFORMÀTICA DSADSA');
-  const [nomMentor, setNomMentor] = useState(['Cerca el teu mentor...']);
+  const [actualGrau, setActualGrau] = useState('Tots els graus');
+  const [nomMentor, setNomMentor] = useState('Cerca el teu mentor...');
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
+  const [search, setSearch] = useState('');
+  //const [isRender, setIsRender] = useState(false);
   const [newUser, setNewUser] = useState({
     nomUsuari: '',
     mail: '',
@@ -52,6 +56,10 @@ export default function RegisterMentor1Screen({ navigation }) {
         responseMentors = await axios.get('mentors');
         responseGrau = await axios.get('/grau/getAll');
         setMentorsData(responseMentors.data.mentors);
+        setFilterData(responseMentors.data.mentors);
+        let totGraus = { _id: 'none', centreUniversitariID: 'none', credits: 0, nom: 'Tots els graus' };
+        let grausData = responseGrau.data.grau;
+        grausData = grausData.unshift(totGraus);
         setGraus(responseGrau.data.grau);
       } catch (error) {
         console.error(e);
@@ -65,13 +73,16 @@ export default function RegisterMentor1Screen({ navigation }) {
     return null;
   }
 
-  const registerMentorHandler = () => {
+  const registerMentorSeguentHandler = () => {
     if (nomMentor === 'Cerca el teu mentor...') {
-      setErrorText({ ...errorText, errorStatus: false });
-      //navigation.navigate('RegisterProfile', { newUser });
-    } else {
       setErrorText({ ...errorText, errorStatus: true });
+    } else {
+      navigation.navigate('RegisterPerfil', { newUser });
     }
+  };
+
+  const registerMentorNoMentorHandler = () => {
+    navigation.navigate('RegisterPerfil', { newUser });
   };
 
   const Item = ({ nom }) => (
@@ -82,7 +93,10 @@ export default function RegisterMentor1Screen({ navigation }) {
     </TouchableOpacity>
   );
 
-  const renderItem = ({ item }) => <Item nom={item} />;
+  const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
+  const renderItem = ({ item }) => (
+    <MentorListItem setNomMentor={setNomMentor} titol={item.nomUsuari} grau={item.Grau} imageSrc={url_aux} />
+  );
 
   const FlatListItemSeparator = () => {
     return (
@@ -98,10 +112,39 @@ export default function RegisterMentor1Screen({ navigation }) {
 
   const changeModalVisibility = (bool) => {
     setGrauModalVisible(bool);
+    //console.log('hey');
+  };
+
+  const modalPressed = () => {
+    setFilteredDataOnFlatlist();
+    changeModalVisibility(false);
+  };
+
+  const setFilteredDataOnFlatlist = () => {
+    //console.log(actualGrau);
+    const newData = mentorsData.filter((item) => {
+      if (item.Grau === actualGrau || actualGrau === 'Tots els graus') return item;
+    });
+    setFilterData(newData);
   };
 
   const isGrauChosen = () => {
     changeModalVisibility(true);
+  };
+
+  const searchFilter = (text) => {
+    if (text) {
+      const newData = mentorsData.filter((item) => {
+        const itemData = item.nomUsuari ? item.nomUsuari.toUpperCase() : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilterData(newData);
+      setSearch(text);
+    } else {
+      setFilterData(mentorsData);
+      setSearch(text);
+    }
   };
 
   return (
@@ -126,18 +169,14 @@ export default function RegisterMentor1Screen({ navigation }) {
           </View>
         </View>
         <View style={styles.searchBloc}>
-          <TouchableOpacity activeOpacity={0.6} style={styles.dropdown} onPress={() => setModalVisible(true)}>
-            <View style={styles.dropdownIcon}></View>
-            <View style={styles.dropdownTextContainer}>
-              <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
-                {nomMentor}
-              </Text>
-            </View>
-            <View style={{ backgroundColor: Colors.black, height: '86%', width: 1 }}></View>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-              <MaterialIcons style={{ marginEnd: 17 }} name="search" size={25} color={Colors.secondary} />
-            </View>
-          </TouchableOpacity>
+          <TextInput
+            style={styles.dropdown}
+            value={search}
+            placeholder="Cerca el teu mentor..."
+            underlineColorAndroid="transparent"
+            onChangeText={(text) => searchFilter(text)}
+          ></TextInput>
+          <MaterialIcons style={styles.iconSearch} name="search" size={25} color={Colors.secondary} />
         </View>
         <View style={styles.grauBtn}>
           <TouchableOpacity activeOpacity={0.6} style={styles.grauDropdown} onPress={() => isGrauChosen()}>
@@ -146,15 +185,15 @@ export default function RegisterMentor1Screen({ navigation }) {
             </Text>
             <MaterialIcons style={styles.textFilter} name="subject" size={20} color={Colors.secondary} />
             <Modal
-              transparent={true}
               animationType="fade"
               visible={isGrauModalVisible}
+              presentationStyle="fullScreen"
               onRequestClose={() => {
                 changeModalVisibility(false);
               }}
             >
               <ModalPicker
-                onPress={() => changeModalVisibility(false)}
+                onPress={() => modalPressed()}
                 setChoosenData={setActualGrau}
                 userInfo={newUser}
                 dataList={Graus}
@@ -167,17 +206,17 @@ export default function RegisterMentor1Screen({ navigation }) {
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
-            data={mentorsData}
+            data={filterData}
             ItemSeparatorComponent={FlatListItemSeparator}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
           />
         </View>
         <View style={styles.registerButton1}>
-          <BaseButton onPress={registerMentorHandler} title="Següent" btnColor={Colors.primary} />
+          <BaseButton onPress={registerMentorSeguentHandler} title="Següent" btnColor={Colors.primary} />
         </View>
         <View style={styles.registerButton2}>
-          <BaseButton onPress={registerMentorHandler} title="No vull ser mentoritzat" btnColor={Colors.red} />
+          <BaseButton onPress={registerMentorNoMentorHandler} title="No vull ser mentoritzat" btnColor={Colors.red} />
         </View>
       </View>
     </View>
@@ -213,33 +252,30 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: Colors.red,
   },
+  searchBloc: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 30,
+    width: Window.width * 0.85,
+    borderRadius: 8,
+    borderColor: Colors.lightBlack,
+    borderWidth: 1,
+  },
   dropdown: {
     alignSelf: 'center',
-    width: Window.width * 0.85,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    width: '88%',
     height: 55,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.lightBlack,
-    marginTop: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 14,
+    paddingRight: 15,
+    fontSize: 17,
+    borderWidth: 0,
   },
-  dropdownIcon: {
-    width: 18,
-    height: 18,
-    borderRadius: 50,
-    marginLeft: 18,
-    backgroundColor: Colors.darkBlue,
-  },
-  dropdownTextContainer: {
-    width: Window.width * 0.61,
-  },
-  dropdownText: {
-    fontFamily: 'InterMedium',
-    marginRight: 15,
-    marginLeft: 15,
-    fontSize: 14,
+  iconSearch: {
+    marginEnd: 17,
+    width: '12%',
   },
   grauBtn: {
     marginTop: Window.height * 0.02,
@@ -264,6 +300,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
+    paddingLeft: 5,
   },
   textFilter: {
     textAlignVertical: 'center',
