@@ -17,7 +17,12 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
 
   useEffect(() => {
     function checkPressed() {
-      if (nomMentor === titol) setIsPressed(true);
+      console.log(nomMentor + ' ' + titol);
+      if (nomMentor === titol) {
+        setIsPressed(true);
+      } else {
+        setIsPressed(false);
+      }
     }
     checkPressed();
   }, []);
@@ -48,55 +53,57 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
     }
   };
 
-  if (titol && grau && imageSrc && isPressed) {
-    return (
-      <TouchableOpacity onPress={onPress} style={styles.pressed}>
-        <View style={styles.card}>
-          <View style={styles.imageViewParent}>
-            <View style={styles.imageView}>
-              <Image style={styles.imageChat} source={{ uri: imageSrc }} />
+  if (titol && grau && imageSrc) {
+    if (isPressed) {
+      return (
+        <TouchableOpacity onPress={onPress} style={styles.pressed}>
+          <View style={styles.card}>
+            <View style={styles.imageViewParent}>
+              <View style={styles.imageView}>
+                <Image style={styles.imageChat} source={{ uri: imageSrc }} />
+              </View>
+            </View>
+            <View style={styles.userViewParent}>
+              <View style={styles.userView}>
+                <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+                  {titol}
+                </Text>
+                <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+                  {grau}
+                </Text>
+              </View>
+            </View>
+            <View>
+              <View style={styles.optionsView}>
+                <MaterialIcons name="done" style={styles.optionsIcon} />
+              </View>
             </View>
           </View>
-          <View style={styles.userViewParent}>
-            <View style={styles.userView}>
-              <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                {titol}
-              </Text>
-              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                {grau}
-              </Text>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <TouchableOpacity onPress={onPress} style={styles.notPressed}>
+          <View style={styles.card}>
+            <View style={styles.imageViewParent}>
+              <View style={styles.imageView}>
+                <Image style={styles.imageChat} source={{ uri: imageSrc }} />
+              </View>
+            </View>
+            <View style={styles.userViewParent}>
+              <View style={styles.userView}>
+                <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+                  {titol}
+                </Text>
+                <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+                  {grau}
+                </Text>
+              </View>
             </View>
           </View>
-          <View>
-            <View style={styles.optionsView}>
-              <MaterialIcons name="done" style={styles.optionsIcon} />
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  } else {
-    return (
-      <TouchableOpacity onPress={onPress} style={styles.notPressed}>
-        <View style={styles.card}>
-          <View style={styles.imageViewParent}>
-            <View style={styles.imageView}>
-              <Image style={styles.imageChat} source={{ uri: imageSrc }} />
-            </View>
-          </View>
-          <View style={styles.userViewParent}>
-            <View style={styles.userView}>
-              <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                {titol}
-              </Text>
-              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                {grau}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+        </TouchableOpacity>
+      );
+    }
   }
 }
 
