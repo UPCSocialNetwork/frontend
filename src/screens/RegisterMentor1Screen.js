@@ -18,7 +18,8 @@ export default function RegisterMentor1Screen({ navigation }) {
   const [filterData, setFilterData] = useState([]);
   const [Graus, setGraus] = useState([]);
   const [actualGrau, setActualGrau] = useState('Tots els graus');
-  const [nomMentor, setNomMentor] = useState('Cerca el teu mentor...');
+  const [nomMentor, setNomMentor] = useState('none');
+  const [errorMentor, setErrorMentor] = useState(false);
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
   const [search, setSearch] = useState('');
   //const [isRender, setIsRender] = useState(false);
@@ -71,36 +72,56 @@ export default function RegisterMentor1Screen({ navigation }) {
 
   //Filter Grau
   useEffect(() => {
+    function setFilteredDataOnFlatlist() {
+      setErrorText({ ...errorText, errorStatus: false });
+      const newData = mentorsData.filter((item) => {
+        if (item.Grau === actualGrau || actualGrau === 'Tots els graus') return item;
+      });
+      setFilterData(newData);
+    }
     setFilteredDataOnFlatlist();
   }, [actualGrau]);
+
+  // Error mentor
+  useEffect(() => {
+    function errorMentorFunc() {
+      setErrorText({ errorMsg: `No es pot seleccionar més d'un mentor`, errorStatus: errorMentor });
+    }
+    errorMentorFunc();
+  }, [errorMentor]);
 
   if (!loaded) {
     return null;
   }
 
   const registerMentorSeguentHandler = () => {
-    if (nomMentor === 'Cerca el teu mentor...') {
-      setErrorText({ ...errorText, errorStatus: true });
+    if (nomMentor === 'none') {
+      setErrorText({ errorMsg: `Compte, no has seleccionat cap mentor`, errorStatus: true });
     } else {
+      newUser.esMentor = false;
+      newUser.xatMentorID = nomMentor;
       navigation.navigate('RegisterPerfil', { newUser });
     }
   };
 
   const registerMentorNoMentorHandler = () => {
+    newUser.esMentor = false;
+    newUser.xatMentorID = 'none';
     navigation.navigate('RegisterPerfil', { newUser });
   };
 
-  const Item = ({ nom }) => (
-    <TouchableOpacity style={styles.cardParent}>
-      <View style={styles.card}>
-        <Text style={styles.nomItem}>{nom.nomUsuari}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
   const renderItem = ({ item }) => (
-    <MentorListItem setNomMentor={setNomMentor} titol={item.nomUsuari} grau={item.Grau} imageSrc={url_aux} />
+    <MentorListItem
+      nomMentor={nomMentor}
+      setNomMentor={setNomMentor}
+      setErrorMentor={setErrorMentor}
+      titol={item.nomUsuari}
+      grau={item.Grau}
+      imageSrc={url_aux}
+      errorText={errorText}
+      setErrorText={setErrorText}
+    />
   );
 
   const FlatListItemSeparator = () => {
@@ -119,29 +140,29 @@ export default function RegisterMentor1Screen({ navigation }) {
     setGrauModalVisible(bool);
   };
 
-  const setFilteredDataOnFlatlist = () => {
-    console.log(actualGrau);
-    const newData = mentorsData.filter((item) => {
-      if (item.Grau === actualGrau || actualGrau === 'Tots els graus') return item;
-    });
-    setFilterData(newData);
-  };
-
   const isGrauChosen = () => {
     changeModalVisibility(true);
   };
 
   const searchFilter = (text) => {
+    setErrorText({ ...errorText, errorStatus: false });
     if (text) {
       const newData = mentorsData.filter((item) => {
-        const itemData = item.nomUsuari ? item.nomUsuari.toUpperCase() : ''.toUpperCase();
-        const textData = text.toUpperCase();
-        return itemData.indexOf(textData) > -1;
+        if (item.Grau === actualGrau || actualGrau === 'Tots els graus') {
+          const itemData = item.nomUsuari ? item.nomUsuari.toUpperCase() : ''.toUpperCase();
+          const textData = text.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        }
       });
       setFilterData(newData);
       setSearch(text);
     } else {
-      setFilterData(mentorsData);
+      const newData = mentorsData.filter((item) => {
+        if (item.Grau === actualGrau || actualGrau === 'Tots els graus') {
+          return item;
+        }
+      });
+      setFilterData(newData);
       setSearch(text);
     }
   };

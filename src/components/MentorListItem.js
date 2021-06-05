@@ -5,7 +5,7 @@ import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons } from '@expo/vector-icons';
 
-function MentorListItem({ setNomMentor, titol, grau, imageSrc }) {
+function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, imageSrc, errorText, setErrorText }) {
   const [isPressed, setIsPressed] = useState(false);
 
   const [loaded] = useFonts({
@@ -15,18 +15,42 @@ function MentorListItem({ setNomMentor, titol, grau, imageSrc }) {
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
+  useEffect(() => {
+    function checkPressed() {
+      if (nomMentor === titol) setIsPressed(true);
+    }
+    checkPressed();
+  }, []);
+
   if (!loaded) {
     return null;
   }
 
   const onPress = () => {
-    setIsPressed(!isPressed);
-    setNomMentor(titol);
+    if (isPressed === true) {
+      setIsPressed(false);
+      setNomMentor('none');
+      setErrorMentor(false);
+      //console.log('apretao');
+    } else {
+      if (nomMentor === 'none') {
+        setIsPressed(true);
+        setNomMentor(titol);
+        if (errorText.errorStatus === true) {
+          setErrorText({ ...errorText, errorStatus: false });
+        }
+        //console.log('no apretao primer mentor');
+        //console.log(titol);
+      } else {
+        setErrorMentor(true);
+        //console.log('no apretao ya hay mentor');
+      }
+    }
   };
 
-  if (titol && grau && imageSrc) {
+  if (titol && grau && imageSrc && isPressed) {
     return (
-      <TouchableOpacity onPress={onPress} style={isPressed === true ? [styles.pressed] : [styles.notPressed]}>
+      <TouchableOpacity onPress={onPress} style={styles.pressed}>
         <View style={styles.card}>
           <View style={styles.imageViewParent}>
             <View style={styles.imageView}>
@@ -52,17 +76,37 @@ function MentorListItem({ setNomMentor, titol, grau, imageSrc }) {
       </TouchableOpacity>
     );
   } else {
-    return null;
+    return (
+      <TouchableOpacity onPress={onPress} style={styles.notPressed}>
+        <View style={styles.card}>
+          <View style={styles.imageViewParent}>
+            <View style={styles.imageView}>
+              <Image style={styles.imageChat} source={{ uri: imageSrc }} />
+            </View>
+          </View>
+          <View style={styles.userViewParent}>
+            <View style={styles.userView}>
+              <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+                {titol}
+              </Text>
+              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+                {grau}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   pressed: {
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.blue,
   },
   notPressed: {},
   card: {
-    height: 75,
+    height: 80,
     width: '100%',
     flexDirection: 'row',
   },
@@ -82,7 +126,7 @@ const styles = StyleSheet.create({
   userViewParent: {
     marginLeft: Window.width * 0.032,
     justifyContent: 'center',
-    width: Window.width * 0.65,
+    width: Window.width * 0.64,
   },
   userView: {
     height: '80%',
@@ -105,7 +149,7 @@ const styles = StyleSheet.create({
     marginLeft: Window.width * 0.02,
   },
   optionsIcon: {
-    fontSize: 20,
+    fontSize: 25,
   },
 });
 
