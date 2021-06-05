@@ -34,23 +34,17 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
   }
 
   const onPress = () => {
-    if (isPressed === true) {
-      setIsPressed(false);
+    if (nomMentor === titol) {
       setNomMentor('none');
       setErrorMentor(false);
-      //console.log('apretao');
     } else {
       if (nomMentor === 'none') {
-        setIsPressed(true);
         setNomMentor(titol);
         if (errorText.errorStatus === true) {
           setErrorText({ ...errorText, errorStatus: false });
         }
-        //console.log('no apretao primer mentor');
-        //console.log(titol);
       } else {
         setErrorMentor(true);
-        //console.log('no apretao ya hay mentor');
       }
     }
   };
@@ -81,27 +75,6 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
               </View>
             </View>
           ) : null}
-        </View>
-      </TouchableOpacity>
-    );
-    return (
-      <TouchableOpacity onPress={onPress} style={styles.notPressed}>
-        <View style={styles.card}>
-          <View style={styles.imageViewParent}>
-            <View style={styles.imageView}>
-              <Image style={styles.imageChat} source={{ uri: imageSrc }} />
-            </View>
-          </View>
-          <View style={styles.userViewParent}>
-            <View style={styles.userView}>
-              <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                {titol}
-              </Text>
-              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                {grau}
-              </Text>
-            </View>
-          </View>
         </View>
       </TouchableOpacity>
     );
@@ -158,6 +131,7 @@ const styles = StyleSheet.create({
   },
   optionsIcon: {
     fontSize: 25,
+    color: Colors.primary,
   },
 });
 
