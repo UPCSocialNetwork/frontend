@@ -6,7 +6,7 @@ import { useFonts } from 'expo-font';
 import { MaterialIcons } from '@expo/vector-icons';
 
 function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, imageSrc, errorText, setErrorText }) {
-  const [isPressed, setIsPressed] = useState(false);
+  //const [isPressed, setIsPressed] = useState(false);
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -16,6 +16,7 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
   });
 
   useEffect(() => {
+    /*
     function checkPressed() {
       console.log(nomMentor + ' ' + titol);
       if (nomMentor === titol) {
@@ -25,6 +26,7 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
       }
     }
     checkPressed();
+    */
   }, []);
 
   if (!loaded) {
@@ -54,56 +56,55 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
   };
 
   if (titol && grau && imageSrc) {
-    if (isPressed) {
-      return (
-        <TouchableOpacity onPress={onPress} style={styles.pressed}>
-          <View style={styles.card}>
-            <View style={styles.imageViewParent}>
-              <View style={styles.imageView}>
-                <Image style={styles.imageChat} source={{ uri: imageSrc }} />
-              </View>
+    return (
+      <TouchableOpacity onPress={onPress} style={nomMentor === titol ? styles.pressed : styles.notPressed}>
+        <View style={styles.card}>
+          <View style={styles.imageViewParent}>
+            <View style={styles.imageView}>
+              <Image style={styles.imageChat} source={{ uri: imageSrc }} />
             </View>
-            <View style={styles.userViewParent}>
-              <View style={styles.userView}>
-                <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                  {titol}
-                </Text>
-                <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                  {grau}
-                </Text>
-              </View>
+          </View>
+          <View style={styles.userViewParent}>
+            <View style={styles.userView}>
+              <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+                {titol}
+              </Text>
+              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+                {grau}
+              </Text>
             </View>
+          </View>
+          {nomMentor === titol ? (
             <View>
               <View style={styles.optionsView}>
                 <MaterialIcons name="done" style={styles.optionsIcon} />
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
-      );
-    } else {
-      return (
-        <TouchableOpacity onPress={onPress} style={styles.notPressed}>
-          <View style={styles.card}>
-            <View style={styles.imageViewParent}>
-              <View style={styles.imageView}>
-                <Image style={styles.imageChat} source={{ uri: imageSrc }} />
-              </View>
-            </View>
-            <View style={styles.userViewParent}>
-              <View style={styles.userView}>
-                <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                  {titol}
-                </Text>
-                <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                  {grau}
-                </Text>
-              </View>
+          ) : null}
+        </View>
+      </TouchableOpacity>
+    );
+    return (
+      <TouchableOpacity onPress={onPress} style={styles.notPressed}>
+        <View style={styles.card}>
+          <View style={styles.imageViewParent}>
+            <View style={styles.imageView}>
+              <Image style={styles.imageChat} source={{ uri: imageSrc }} />
             </View>
           </View>
-        </TouchableOpacity>
-      );
-    }
+          <View style={styles.userViewParent}>
+            <View style={styles.userView}>
+              <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+                {titol}
+              </Text>
+              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+                {grau}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   }
 }
 
