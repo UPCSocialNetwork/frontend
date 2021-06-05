@@ -12,7 +12,6 @@ import Window from '../constants/Layout';
 import MentorListItem from '../components/MentorListItem';
 
 export default function RegisterMentor1Screen({ navigation }) {
-  //const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
   const [isModalVisible, setModalVisible] = useState(false);
   const [mentorsData, setMentorsData] = useState([]);
   const [filterData, setFilterData] = useState([]);
@@ -21,8 +20,8 @@ export default function RegisterMentor1Screen({ navigation }) {
   const [nomMentor, setNomMentor] = useState('none');
   const [errorMentor, setErrorMentor] = useState(false);
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
+  const [xatMentorReady, setXatMentorReady] = useState(false);
   const [search, setSearch] = useState('');
-  //const [isRender, setIsRender] = useState(false);
   const [newUser, setNewUser] = useState({
     nomUsuari: '',
     mail: '',
@@ -44,6 +43,7 @@ export default function RegisterMentor1Screen({ navigation }) {
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
 
+  // Errors
   const [errorText, setErrorText] = useState({
     errorMsg: `Si vols mentor, l'has d'escollir`,
     errorStatus: false,
@@ -70,7 +70,24 @@ export default function RegisterMentor1Screen({ navigation }) {
     fetchData();
   }, []);
 
-  //Filter Grau
+  // Get XatMentorID
+  useEffect(() => {
+    async function getXatMentor() {
+      let response = null;
+      try {
+        response = await axios.get(`XatMentor/${nomMentor}`);
+        newUser.xatMentorID = response.data.xatMentor._id;
+      } catch (error) {
+        console.error(error);
+      }
+      return response;
+    }
+    if (xatMentorReady === true) {
+      getXatMentor();
+    }
+  }, [xatMentorReady]);
+
+  // Filter Grau
   useEffect(() => {
     function setFilteredDataOnFlatlist() {
       //console.log('canvi de grau-----------------------------' + actualGrau);
@@ -100,7 +117,8 @@ export default function RegisterMentor1Screen({ navigation }) {
       setErrorText({ errorMsg: `Compte, no has seleccionat cap mentor`, errorStatus: true });
     } else {
       newUser.esMentor = false;
-      newUser.xatMentorID = nomMentor;
+      //newUser.xatMentorID = nomMentor;
+      setXatMentorReady(true);
       navigation.navigate('RegisterPerfil', { newUser });
     }
   };
