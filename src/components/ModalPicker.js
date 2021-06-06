@@ -15,23 +15,25 @@ export default function ModalPicker({ onPress, setChoosenData, userInfo, dataLis
     return null;
   }
 
-  const onPressItem = (option, type) => {
+  const onPressItem = (option) => {
     if (type == 'centre') {
       setChoosenData({
         ...userInfo,
         centreID: option,
       });
-    } else {
+    } else if (type == 'grau') {
       setChoosenData({
         ...userInfo,
         grauID: option,
       });
+    } else {
+      setChoosenData(option);
     }
     onPress(false);
   };
 
   const renderItemCentre = ({ item }) => (
-    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nomSigles, 'centre')}>
+    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nomSigles)}>
       <View style={styles.optionCard}>
         <Text style={styles.text}>
           {' '}
@@ -42,7 +44,7 @@ export default function ModalPicker({ onPress, setChoosenData, userInfo, dataLis
   );
 
   const renderItemGrau = ({ item }) => (
-    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nom, 'grau')}>
+    <TouchableOpacity style={styles.option} onPress={() => onPressItem(item.nom)}>
       <View style={styles.optionCard}>
         <Text style={styles.text}>{item.nom}</Text>
       </View>
