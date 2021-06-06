@@ -10,21 +10,20 @@ import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
-export default function RegisterMentor2Screen({ navigation }) {
-  //const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
-  const [newUser, setNewUser] = useState({
-    nomUsuari: '',
-    mail: '',
-    contrasenya: '',
-    descripcio: '',
-    centreID: '',
-    grauID: '',
-    xatMentorID: '',
-    esMentor: false,
-    interessos: '',
-    LlistaAssignatures: [],
-    LlistaXatGrupTancat: [],
-  });
+export default function RegisterProfileScreen({ navigation }) {
+  const [newUser, setNewUser] = useState(navigation.getParam('user'));
+  // const [newUser, setNewUser] = useState({
+  //   nomUsuari: '',
+  //   mail: '',
+  //   contrasenya: '',
+  //   descripcio: '',
+  //   centreID: '',
+  //   grauID: '',
+  //   mentorID: '',
+  //   interessos: '',
+  //   LlistaAssignatures: [],
+  //   LlistaXatGrupTancat: [],
+  // });
   const [textMentor, setTextMentor] = useState(
     'Si acceptes es crearà un grup de tipus mentor amb el teu usuari com a administrador i apareixeràs a la llista de mentors de la teva universitat.',
   );
@@ -53,10 +52,8 @@ export default function RegisterMentor2Screen({ navigation }) {
     return null;
   }
 
-  const registerMentorHandler = (isMentor) => {
-    let user = newUser;
-    user.esMentor = isMentor;
-    navigation.navigate('RegisterProfile', { user });
+  const registerMentorHandler = () => {
+    console.log(newUser);
   };
 
   return (
@@ -78,22 +75,7 @@ export default function RegisterMentor2Screen({ navigation }) {
         <Text style={styles.subtitle}>{textMentor}</Text>
 
         <View style={styles.registerButton}>
-          <BaseButton
-            onPress={() => {
-              registerMentorHandler(true);
-            }}
-            title="D'acord"
-            btnColor={Colors.primary}
-          />
-        </View>
-        <View style={styles.registerButton}>
-          <BaseButton
-            onPress={() => {
-              registerMentorHandler(false);
-            }}
-            title="No vull ser mentor"
-            btnColor={Colors.red}
-          />
+          <BaseButton onPress={registerMentorHandler} title="Finalitza" btnColor={Colors.primary} />
         </View>
       </View>
     </ScrollView>

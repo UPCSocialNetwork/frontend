@@ -11,14 +11,11 @@ import RegisterMentor1 from '../screens/RegisterMentor1Screen';
 import RegisterMentor2 from '../screens/RegisterMentor2Screen';
 import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import listXatScreen from '../screens/listXatScreen';
-/*
 import RegisterProfile from '../screens/RegisterProfileScreen';
-*/
+/*
+ */
 
 const screens = {
-  RegisterMentor1: {
-    screen: RegisterMentor1,
-  },
   Intro: {
     screen: Intro,
   },
@@ -37,8 +34,14 @@ const screens = {
   RegisterAssig: {
     screen: RegisterAssig,
   },
+  RegisterMentor1: {
+    screen: RegisterMentor1,
+  },
   RegisterMentor2: {
     screen: RegisterMentor2,
+  },
+  RegisterProfile: {
+    screen: RegisterProfile,
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,

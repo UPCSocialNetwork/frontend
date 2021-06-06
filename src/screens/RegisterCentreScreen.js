@@ -123,9 +123,9 @@ export default function RegisterCentreScreen({ navigation }) {
             <Icon style={{ marginEnd: 25 }} name="caret-down" size={25} color={Colors.secondary} />
           </View>
           <Modal
-            transparent={true}
             animationType="fade"
             visible={isCentreModalVisible}
+            presentationStyle="fullScreen"
             onRequestClose={() => changeModalVisibility('centre', false)}
           >
             <ModalPicker
@@ -153,9 +153,9 @@ export default function RegisterCentreScreen({ navigation }) {
             <Icon style={{ marginEnd: 25 }} name="caret-down" size={25} color={Colors.secondary} />
           </View>
           <Modal
-            transparent={true}
             animationType="fade"
             visible={isGrauModalVisible}
+            presentationStyle="fullScreen"
             onRequestClose={() => {
               changeModalVisibility('grau', false);
             }}
