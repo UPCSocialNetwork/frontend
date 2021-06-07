@@ -41,6 +41,7 @@ export default function RegisterMentor1Screen({ navigation }) {
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+    InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
   // Errors

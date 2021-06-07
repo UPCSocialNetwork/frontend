@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, TextInput, Image, StyleSheet, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -11,29 +11,31 @@ import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterProfileScreen({ navigation }) {
-  const [newUser, setNewUser] = useState(navigation.getParam('user'));
-  // const [newUser, setNewUser] = useState({
-  //   nomUsuari: '',
-  //   mail: '',
-  //   contrasenya: '',
-  //   descripcio: '',
-  //   centreID: '',
-  //   grauID: '',
-  //   mentorID: '',
-  //   interessos: '',
-  //   LlistaAssignatures: [],
-  //   LlistaXatGrupTancat: [],
-  // });
-  const [textMentor, setTextMentor] = useState(
-    'Si acceptes es crearà un grup de tipus mentor amb el teu usuari com a administrador i apareixeràs a la llista de mentors de la teva universitat.',
-  );
+  //const [newUser, setNewUser] = useState(navigation.getParam('user'));
+  const [newUser, setNewUser] = useState({
+    nomUsuari: 'cesar.gutierrez',
+    mail: 'cesar.gutierrez@estudiantat.upc.edu',
+    contrasenya: '',
+    descripcio: '',
+    centreID: '',
+    grauID: '',
+    mentorID: '',
+    interessos: [],
+    LlistaAssignatures: [],
+    LlistaXatGrupTancat: [],
+  });
+  const [textDesc, setTextDesc] = useState('');
 
   // Fonts
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
+    InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
+
+  const random = Math.floor(Math.random() * 100);
+  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
 
   useEffect(() => {
     /*
@@ -57,26 +59,33 @@ export default function RegisterProfileScreen({ navigation }) {
   };
 
   return (
-    <ScrollView
-      style={styles.backgroundView}
-      contentContainerStyle={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <ScrollView style={styles.backgroundView}>
       <BackHeader
         onPress={() => {
           navigation.goBack();
         }}
       ></BackHeader>
-      <View style={styles.mainContainer}>
-        <Text style={styles.title}>Vols ser mentor?</Text>
-        <Text style={styles.subtitle}>{textMentor}</Text>
-
-        <View style={styles.registerButton}>
-          <BaseButton onPress={registerMentorHandler} title="Finalitza" btnColor={Colors.primary} />
-        </View>
+      <View style={styles.header}>
+        <Text style={styles.nom}>{newUser.nomUsuari}</Text>
+        <Text style={styles.mail}>{newUser.mail}</Text>
+        <TouchableOpacity style={styles.imageView}>
+          <Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.border}>
+        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Escriu la teva descripció..."
+            underlineColorAndroid="transparent"
+            multiline={true}
+            onChangeText={(text) => setTextDesc(text)}
+          ></TextInput>
+        </ScrollView>
+      </View>
+      <Text style={styles.interessosTitle}>{'Interessos'}</Text>
+      <View style={styles.btnLast}>
+        <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
       </View>
     </ScrollView>
   );
@@ -86,36 +95,67 @@ const styles = StyleSheet.create({
   backgroundView: {
     backgroundColor: Colors.white,
   },
-  headerContainer: {
-    justifyContent: 'center',
+  header: {
     alignItems: 'center',
-    paddingTop: 50,
-    height: 55,
-    width: Window.width * 0.9,
+    marginTop: 30,
   },
-  title: {
+  nom: {
     fontFamily: 'InterBold',
     fontSize: 20,
-    marginTop: '20%',
-    color: Colors.secondary,
+    lineHeight: 19,
+    textAlign: 'center',
+    width: Window.width * 0.8,
   },
-  subtitle: {
-    fontFamily: 'InterMedium',
-    textAlign: 'justify',
-    color: Colors.secondary,
+  mail: {
+    fontFamily: 'InterRegular',
+    fontSize: 16,
+    lineHeight: 19,
+    textAlign: 'center',
+    width: Window.width * 0.8,
+  },
+  imageView: {
+    width: Window.width * 0.4,
+    height: Window.width * 0.4,
+    marginTop: 30,
+  },
+  imageProfile: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
+    borderColor: Colors.white,
+    borderWidth: 2,
+  },
+  border: {
+    marginTop: 30,
+    alignSelf: 'center',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.lightBlack,
     width: Window.width * 0.85,
-    marginBottom: '35%',
-    padding: 5,
-    marginTop: 25,
-    fontSize: 14,
+    height: 105,
   },
-  mainContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
+  scroll: {
+    alignSelf: 'center',
+    width: Window.width * 0.8,
   },
-  registerButton: {
-    marginBottom: 20,
+  textArea: {
+    width: '100%',
+    fontSize: 16,
+    textAlign: 'justify',
+    paddingTop: 3,
+    paddingBottom: 4,
+    paddingLeft: 6,
+    paddingRight: 5,
+  },
+  interessosTitle: {
+    marginTop: 20,
+    alignSelf: 'center',
+    fontFamily: 'InterBold',
+  },
+  btnLast: {
+    alignSelf: 'center',
     alignItems: 'center',
+    marginTop: 40,
+    marginBottom: 30,
   },
 });
