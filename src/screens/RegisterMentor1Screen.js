@@ -91,7 +91,6 @@ export default function RegisterMentor1Screen({ navigation }) {
   // Filter Grau
   useEffect(() => {
     function setFilteredDataOnFlatlist() {
-      //console.log('canvi de grau-----------------------------' + actualGrau);
       setErrorText({ ...errorText, errorStatus: false });
       const newData = mentorsData.filter((item) => {
         if (item.Grau === actualGrau || actualGrau === 'Tots els graus') return item;
@@ -118,7 +117,6 @@ export default function RegisterMentor1Screen({ navigation }) {
       setErrorText({ errorMsg: `Compte, no has seleccionat cap mentor`, errorStatus: true });
     } else {
       newUser.esMentor = false;
-      //newUser.xatMentorID = nomMentor;
       setXatMentorReady(true);
       navigation.navigate('RegisterPerfil', { newUser });
     }
@@ -132,7 +130,6 @@ export default function RegisterMentor1Screen({ navigation }) {
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
   const renderItem = ({ item }) => (
-    //console.log(item.nomUsuari + ' ' + actualGrau + ' ' + nomMentor),
     <MentorListItem
       nomMentor={nomMentor}
       setNomMentor={setNomMentor}

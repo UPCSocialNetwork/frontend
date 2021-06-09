@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Image, StyleSheet, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, TextInput, Image, StyleSheet, Text, TouchableOpacity, Modal, FlatList, ScrollView } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
+import InteresListItem from '../components/InteresListItem';
 
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
@@ -19,12 +20,15 @@ export default function RegisterProfileScreen({ navigation }) {
     descripcio: '',
     centreID: '',
     grauID: '',
-    mentorID: '',
+    esMentor: '',
     interessos: [],
+    xatMentorID: '',
     LlistaAssignatures: [],
     LlistaXatGrupTancat: [],
   });
-  const [textDesc, setTextDesc] = useState('');
+  //const [textDesc, setTextDesc] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [inteSelect, setInteSelect] = useState([]);
 
   // Fonts
   const [loaded] = useFonts({
@@ -36,6 +40,23 @@ export default function RegisterProfileScreen({ navigation }) {
 
   const random = Math.floor(Math.random() * 100);
   const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
+
+  const dataFlatlist = [
+    'Cuina',
+    'Esports',
+    'Tecnologia',
+    'Política',
+    'Religió',
+    'Videojocs',
+    'Oci nocturn',
+    'Viatjar',
+    'Lectura',
+    'Passejar',
+    'Mascotes',
+    'Filosofia',
+    'Amor',
+    'Moda',
+  ];
 
   useEffect(() => {
     /*
@@ -56,6 +77,22 @@ export default function RegisterProfileScreen({ navigation }) {
 
   const registerMentorHandler = () => {
     console.log(newUser);
+  };
+
+  const renderItem = ({ item }) => (
+    <InteresListItem titol={item} setInteSelect={setInteSelect} inteSelect={inteSelect}></InteresListItem>
+  );
+
+  const renderItemInt = ({ item }) => <Item nom={item} />;
+
+  const Item = ({ nom }) => (
+    <View style={styles.item}>
+      <Text style={styles.nomItem}>{nom}</Text>
+    </View>
+  );
+
+  const crearUsuariHandler = () => {
+    //console.log(newUser);
   };
 
   return (
@@ -79,13 +116,89 @@ export default function RegisterProfileScreen({ navigation }) {
             placeholder="Escriu la teva descripció..."
             underlineColorAndroid="transparent"
             multiline={true}
-            onChangeText={(text) => setTextDesc(text)}
+            onChangeText={(text) =>
+              setNewUser({
+                ...newUser,
+                descripcio: text,
+              })
+            }
           ></TextInput>
         </ScrollView>
       </View>
-      <Text style={styles.interessosTitle}>{'Interessos'}</Text>
+      <View style={styles.btnInteres}>
+        <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.9} style={styles.touchable}>
+          <View style={styles.button}>
+            <Text style={styles.text}>Selecciona els teus interessos</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <Modal
+        animationType="fade"
+        visible={modalVisible}
+        presentationStyle="fullScreen"
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.flatListView}>
+          <FlatList
+            numColumns={'2'}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderItem}
+            data={dataFlatlist}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+        <View style={styles.btnModalView}>
+          <TouchableOpacity
+            onPress={() => {
+              setModalVisible(false);
+              setNewUser({
+                ...newUser,
+                interessos: inteSelect,
+              });
+            }}
+            activeOpacity={0.9}
+            style={styles.touchable}
+          >
+            <View style={styles.button1}>
+              <Text style={styles.text}>Confirmar</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      {inteSelect.length > 0 ? (
+        <View style={styles.interessosView}>
+          <Text style={styles.interessosTitle}>{'Interessos'}</Text>
+          <View style={styles.flatInteressos}>
+            <FlatList
+              horizontal
+              keyExtractor={(index) => index.toString()}
+              renderItem={renderItemInt}
+              data={inteSelect}
+              contentContainerStyle={{ paddingBottom: 5 }}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.interessosView}>
+          <Text style={styles.interessosTitle}></Text>
+          <View style={styles.flatInteressos}>
+            <FlatList
+              horizontal
+              keyExtractor={(index) => index.toString()}
+              renderItem={renderItemInt}
+              data={inteSelect}
+              contentContainerStyle={{ paddingBottom: 5 }}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      )}
       <View style={styles.btnLast}>
-        <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
+        <BaseButton onPress={crearUsuariHandler} title="Crear usuari" btnColor={Colors.primary} />
       </View>
     </ScrollView>
   );
@@ -147,10 +260,88 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
     paddingRight: 5,
   },
-  interessosTitle: {
+  btnInteres: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginTop: 30,
+    width: Window.width * 0.7,
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: Colors.yellow,
+    elevation: 1,
+    width: '100%',
+  },
+  text: {
+    fontFamily: 'InterMedium',
+    textAlign: 'center',
+    fontWeight: '500',
+    fontSize: 16,
+    lineHeight: 22,
+    color: Colors.white,
+    borderRadius: 8,
+  },
+  touchable: {
+    borderRadius: 8,
+    width: '100%',
+  },
+  flatListView: {
+    marginTop: Window.height * 0.03,
+    height: Window.height * 0.85,
+    marginLeft: Window.width * 0.02,
+    marginRight: Window.width * 0.02,
+  },
+  btnModalView: {
+    height: Window.height * 0.12,
+    alignContent: 'center',
+    flexDirection: 'row',
+  },
+  button1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: Window.height * 0.08,
+    borderRadius: 8,
+    backgroundColor: Colors.primary,
+    elevation: 1,
+    width: '92%',
+    alignSelf: 'center',
+  },
+  interessosView: {
     marginTop: 20,
+    flex: 1,
+    height: Window.height * 0.1,
+  },
+  interessosTitle: {
     alignSelf: 'center',
     fontFamily: 'InterBold',
+    height: '25%',
+  },
+  flatInteressos: {
+    marginTop: 10,
+    height: '75%',
+    width: '85%',
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  item: {
+    backgroundColor: Colors.lightGrey,
+    padding: 10,
+    marginHorizontal: 7,
+    borderRadius: 8,
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 4,
+    width: Window.width * 0.23,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btnLast: {
     alignSelf: 'center',

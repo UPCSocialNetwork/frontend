@@ -28,7 +28,7 @@ export default function RegisterMailScreen({ navigation }) {
     grauID: '',
     xatMentorID: '',
     esMentor: false,
-    interessos: '',
+    interessos: [],
     LlistaAssignatures: [],
     LlistaXatGrupTancat: [],
   });
