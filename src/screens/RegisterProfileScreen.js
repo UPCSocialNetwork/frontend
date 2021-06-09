@@ -14,19 +14,19 @@ import Window from '../constants/Layout';
 export default function RegisterProfileScreen({ navigation }) {
   //const [newUser, setNewUser] = useState(navigation.getParam('user'));
   const [newUser, setNewUser] = useState({
-    nomUsuari: 'cesar.gutierrez',
-    mail: 'cesar.gutierrez@estudiantat.upc.edu',
-    contrasenya: '',
-    descripcio: '',
-    centreID: '',
-    grauID: '',
-    esMentor: '',
-    interessos: [],
-    xatMentorID: '',
-    LlistaAssignatures: [],
+    nomUsuari: 'woody.benavente',
+    mail: 'woody.benavente@estudiant.upc.edu',
+    contrasenya: 'dani12345',
+    descripcio: 'Hit me up!',
+    centreID: 'EPSEVG',
+    grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+    xatMentorID: 'none',
+    esMentor: true,
+    interessos: ['Basket', 'Snow', 'Tech'],
+    LlistaAssignatures: ['XASF', 'ESIN', 'AMEP'],
     LlistaXatGrupTancat: [],
   });
-  //const [textDesc, setTextDesc] = useState('');
+
   const [modalVisible, setModalVisible] = useState(false);
   const [inteSelect, setInteSelect] = useState([]);
 
@@ -75,10 +75,6 @@ export default function RegisterProfileScreen({ navigation }) {
     return null;
   }
 
-  const registerMentorHandler = () => {
-    console.log(newUser);
-  };
-
   const renderItem = ({ item }) => (
     <InteresListItem titol={item} setInteSelect={setInteSelect} inteSelect={inteSelect}></InteresListItem>
   );
@@ -91,9 +87,31 @@ export default function RegisterProfileScreen({ navigation }) {
     </View>
   );
 
-  const crearUsuariHandler = () => {
-    //console.log(newUser);
-  };
+  async function crearUsuariHandler() {
+    /*
+    //let responseEstudiant = null;
+    try {
+      //CREAR XAT MENTOR
+      if (newUser.esMentor) {
+        await axios.post(
+          '/XatMentor',
+          {
+            mentorID: newUser.nomUsuari,
+            titol: 'XatMentor ' + newUser.nomUsuari,
+            descripcio: 'MailMentor: ' + newUser.mail,
+            imatge: 'none',
+            ultimMissatgeID: 'none',
+          },
+          { 'Content-Type': 'application/json' },
+        );
+      }
+      // POST ESTUDIANT
+      //responseEstudiant = await axios.post('/estudiant', newUser, { 'Content-Type': 'application/json' });
+    } catch (error) {
+      console.log(error.response);
+    }
+    */
+  }
 
   return (
     <ScrollView style={styles.backgroundView}>
