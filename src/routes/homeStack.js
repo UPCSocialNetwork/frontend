@@ -12,6 +12,7 @@ import RegisterMentor2 from '../screens/RegisterMentor2Screen';
 import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import listXatScreen from '../screens/listXatScreen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
+import ChatScreen from '../screens/ChatScreen';
 /*
  */
 
@@ -48,6 +49,9 @@ const screens = {
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
+  },
+  ChatScreen: {
+    screen: ChatScreen,
   },
 };
 
