@@ -22,19 +22,20 @@ export default function RegisterMentor1Screen({ navigation }) {
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
   const [xatMentorReady, setXatMentorReady] = useState(false);
   const [search, setSearch] = useState('');
-  const [newUser, setNewUser] = useState({
-    nomUsuari: '',
-    mail: '',
-    contrasenya: '',
-    descripcio: '',
-    centreID: '',
-    grauID: '',
-    esMentor: '',
-    interessos: '',
-    xatMentorID: '',
-    LlistaAssignatures: [],
-    LlistaXatGrupTancat: [],
-  });
+  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
+  // const [newUser, setNewUser] = useState({
+  //   nomUsuari: '',
+  //   mail: '',
+  //   contrasenya: '',
+  //   descripcio: '',
+  //   centreID: '',
+  //   grauID: '',
+  //   esMentor: '',
+  //   interessos: '',
+  //   xatMentorID: '',
+  //   LlistaAssignatures: [],
+  //   LlistaXatGrupTancat: [],
+  // });
 
   // Fonts
   const [loaded] = useFonts({

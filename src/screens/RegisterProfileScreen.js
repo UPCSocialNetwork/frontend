@@ -12,21 +12,22 @@ import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterProfileScreen({ navigation }) {
-  //const [newUser, setNewUser] = useState(navigation.getParam('user'));
+  const [newUser, setNewUser] = useState(navigation.getParam('user'));
   const [register, setRegister] = useState(false);
-  const [newUser, setNewUser] = useState({
-    nomUsuari: 'nathan.benavente',
-    mail: 'nathan.benavente@estudiant.upc.edu',
-    contrasenya: 'dani12345',
-    descripcio: 'Hit me up!',
-    centreID: 'EPSEVG',
-    grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-    xatMentorID: 'none',
-    esMentor: true,
-    interessos: ['Basket', 'Snow', 'Tech'],
-    LlistaAssignatures: ['XASF', 'ESIN', 'AMEP', 'INEP'],
-    LlistaXatGrupTancat: [],
-  });
+  // const [newUser, setNewUser] = useState({
+  //   nomUsuari: 'carlos.benavente',
+  //   mail: 'carlos.benavente@estudiant.upc.edu',
+  //   contrasenya: 'dani12345',
+  //   descripcio: 'Hit me up!',
+  //   centreID: 'EPSEVG',
+  //   grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //   xatMentorID: '60c27017bbffcf261272ecc0',
+  //   esMentor: false,
+  //   interessos: ['Basket', 'Snow', 'Tech'],
+  //   LlistaAssignatures: ['XASF', 'ESIN'],
+  //   LlistaXatGrupTancat: [],
+  // });
+  console.log(newUser);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [inteSelect, setInteSelect] = useState([]);
@@ -106,7 +107,7 @@ export default function RegisterProfileScreen({ navigation }) {
       } else {
         createUser();
         //CREAR PARTICIPANT XAT MENTOR
-        if (newUser.xatMentorID != 'none') createParticipant(responseXatMentor.data.XatMentor._id);
+        if (newUser.xatMentorID != 'none') createParticipant(newUser.xatMentorID);
       }
 
       //CREAR PARTICIPANTES POR XAT ASSIGNATURA
@@ -122,8 +123,10 @@ export default function RegisterProfileScreen({ navigation }) {
       responseXatAssig.data.xatAssignatura.forEach((assig) => {
         createParticipant(assig._id);
       });
+
+      navigation.navigate('Login');
     } catch (error) {
-      console.log(error);
+      console.log('USUARI HANDLER:', error);
     }
   }
 
@@ -132,7 +135,7 @@ export default function RegisterProfileScreen({ navigation }) {
     try {
       responseEstudiant = await axios.post('/estudiant', newUser, { 'Content-Type': 'application/json' });
     } catch (error) {
-      console.log(error);
+      console.log('CREATE USER:', error);
     }
   }
 
@@ -151,7 +154,7 @@ export default function RegisterProfileScreen({ navigation }) {
         { 'Content-Type': 'application/json' },
       );
     } catch (error) {
-      console.log(error);
+      console.log('CREATE PARTICIPANT:', error);
     }
   }
 
