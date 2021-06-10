@@ -13,9 +13,10 @@ import Window from '../constants/Layout';
 
 export default function RegisterProfileScreen({ navigation }) {
   //const [newUser, setNewUser] = useState(navigation.getParam('user'));
+  const [register, setRegister] = useState(false);
   const [newUser, setNewUser] = useState({
-    nomUsuari: 'woody.benavente',
-    mail: 'woody.benavente@estudiant.upc.edu',
+    nomUsuari: 'nathan.benavente',
+    mail: 'nathan.benavente@estudiant.upc.edu',
     contrasenya: 'dani12345',
     descripcio: 'Hit me up!',
     centreID: 'EPSEVG',
@@ -23,7 +24,7 @@ export default function RegisterProfileScreen({ navigation }) {
     xatMentorID: 'none',
     esMentor: true,
     interessos: ['Basket', 'Snow', 'Tech'],
-    LlistaAssignatures: ['XASF', 'ESIN', 'AMEP'],
+    LlistaAssignatures: ['XASF', 'ESIN', 'AMEP', 'INEP'],
     LlistaXatGrupTancat: [],
   });
 
@@ -59,17 +60,8 @@ export default function RegisterProfileScreen({ navigation }) {
   ];
 
   useEffect(() => {
-    /*
-    async function fetchData() {
-      let response = null;
-      try {
-      } catch (error) {
-      }
-      return response;
-    }
-    fetchData();
-    */
-  }, []);
+    if (register) createUser();
+  }, [newUser]);
 
   if (!loaded) {
     return null;
@@ -88,12 +80,12 @@ export default function RegisterProfileScreen({ navigation }) {
   );
 
   async function crearUsuariHandler() {
-    /*
-    //let responseEstudiant = null;
+    let responseXatMentor = null;
+    let responseXatAssig = null;
     try {
-      //CREAR XAT MENTOR
       if (newUser.esMentor) {
-        await axios.post(
+        //CREAR XAT MENTOR
+        responseXatMentor = await axios.post(
           '/XatMentor',
           {
             mentorID: newUser.nomUsuari,
@@ -104,13 +96,63 @@ export default function RegisterProfileScreen({ navigation }) {
           },
           { 'Content-Type': 'application/json' },
         );
+        setNewUser({
+          ...newUser,
+          xatMentorID: responseXatMentor.data.XatMentor._id,
+        });
+
+        //CREAR PARTICIPANT XAT MENTOR
+        createParticipant(responseXatMentor.data.XatMentor._id);
+      } else {
+        createUser();
+        //CREAR PARTICIPANT XAT MENTOR
+        if (newUser.xatMentorID != 'none') createParticipant(responseXatMentor.data.XatMentor._id);
       }
-      // POST ESTUDIANT
-      //responseEstudiant = await axios.post('/estudiant', newUser, { 'Content-Type': 'application/json' });
+
+      //CREAR PARTICIPANTES POR XAT ASSIGNATURA
+      responseXatAssig = await axios.post(
+        '/XatAssignatura/getXatAssig',
+        {
+          grauID: newUser.grauID,
+          LlistaAssignatures: newUser.LlistaAssignatures,
+        },
+        { 'Content-Type': 'application/json' },
+      );
+
+      responseXatAssig.data.xatAssignatura.forEach((assig) => {
+        createParticipant(assig._id);
+      });
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
     }
-    */
+  }
+
+  async function createUser() {
+    let responseEstudiant = null;
+    try {
+      responseEstudiant = await axios.post('/estudiant', newUser, { 'Content-Type': 'application/json' });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function createParticipant(xatID) {
+    let responseParticipant = null;
+    try {
+      responseParticipant = await axios.post(
+        '/participant',
+        {
+          estudiantID: newUser.nomUsuari,
+          xatID: xatID,
+          ultimaLectura: 0,
+          notificacions: 'Activat',
+          bloqueigGrup: 'Desactivat',
+        },
+        { 'Content-Type': 'application/json' },
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -216,7 +258,14 @@ export default function RegisterProfileScreen({ navigation }) {
         </View>
       )}
       <View style={styles.btnLast}>
-        <BaseButton onPress={crearUsuariHandler} title="Crear usuari" btnColor={Colors.primary} />
+        <BaseButton
+          onPress={() => {
+            setRegister(true);
+            crearUsuariHandler();
+          }}
+          title="Crear usuari"
+          btnColor={Colors.primary}
+        />
       </View>
     </ScrollView>
   );
