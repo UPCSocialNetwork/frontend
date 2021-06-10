@@ -13,10 +13,11 @@ import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import listXatScreen from '../screens/listXatScreen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
 import ChatScreen from '../screens/ChatScreen';
-/*
- */
 
 const screens = {
+  ChatScreen: {
+    screen: ChatScreen,
+  },
   RegisterProfile: {
     screen: RegisterProfile,
   },
@@ -49,9 +50,6 @@ const screens = {
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
-  },
-  ChatScreen: {
-    screen: ChatScreen,
   },
 };
 
