@@ -7,18 +7,34 @@ import Window from '../constants/Layout';
 import socket from '../components/Socket';
 import { GiftedChat } from 'react-native-gifted-chat';
 
-export default function ChatScreen({ nomUsuari, navigation }) {
+export default function ChatScreen({ emisor, receptor, navigation }) {
   //socket.emit('conectado');
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [emisorState, setEmisorState] = useState('cesar.guti');
 
   useEffect(() => {
+    socket.emit('connected', emisorState);
+    socket.on('chat message', (msg) => {
+      console.log(msg);
+    });
     setMessages([
       {
         _id: 1,
-        text: 'Hello developer',
+        text: 'Hello developers',
         createdAt: new Date(),
         user: {
           _id: 2,
+          name: 'React Native',
+          avatar: 'https://placeimg.com/140/140/any',
+        },
+      },
+      {
+        _id: 3,
+        text: 'Hello developera',
+        createdAt: new Date(),
+        user: {
+          _id: 1,
           name: 'React Native',
           avatar: 'https://placeimg.com/140/140/any',
         },
@@ -27,6 +43,7 @@ export default function ChatScreen({ nomUsuari, navigation }) {
   }, []);
 
   const onSend = useCallback((messages = []) => {
+    socket.emit('chat message', messages);
     setMessages((previousMessages) => GiftedChat.append(previousMessages, messages));
   }, []);
 
