@@ -17,7 +17,11 @@ export default function RegisterMentor1Screen({ navigation }) {
   const [filterData, setFilterData] = useState([]);
   const [Graus, setGraus] = useState([]);
   const [actualGrau, setActualGrau] = useState('Tots els graus');
-  const [nomMentor, setNomMentor] = useState('none');
+  const [mentorActiu, setMentorActiu] = useState({
+    nomUsuari: 'none',
+    Grau: 'none',
+    xatMentorID: 'none',
+  });
   const [errorMentor, setErrorMentor] = useState(false);
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
   const [xatMentorReady, setXatMentorReady] = useState(false);
@@ -72,14 +76,16 @@ export default function RegisterMentor1Screen({ navigation }) {
     fetchData();
   }, []);
 
+  /*
   // Get XatMentorID
   useEffect(() => {
     async function getXatMentor() {
       let response = null;
       try {
-        response = await axios.get(`XatMentor/${nomMentor}`);
-        // No entiendo esto !!!
-        newUser.xatMentorID = response.data.xatMentor._id;
+        response = await axios.get(`XatMentor/${mentorActiu}`);
+        let user = newUser;
+        user.xatMentorID = response.data.xatMentor._id;
+        navigation.navigate('RegisterPerfil', { user });
       } catch (error) {
         console.error(error);
       }
@@ -87,6 +93,7 @@ export default function RegisterMentor1Screen({ navigation }) {
     }
     if (xatMentorReady === true) getXatMentor();
   }, [xatMentorReady]);
+*/
 
   // Filter Grau
   useEffect(() => {
@@ -113,31 +120,29 @@ export default function RegisterMentor1Screen({ navigation }) {
   }
 
   const registerMentorSeguentHandler = () => {
-    if (nomMentor === 'none') {
+    if (mentorActiu.nomUsuari === 'none') {
       setErrorText({ errorMsg: `Compte, no has seleccionat cap mentor`, errorStatus: true });
     } else {
       let user = newUser;
-      user.esMentor = false;
-      setXatMentorReady(true);
-      navigation.navigate('RegisterPerfil', { user });
+      user.xatMentorID = mentorActiu.xatMentorID;
+      navigation.navigate('RegisterProfile', { user });
     }
   };
 
   const registerMentorNoMentorHandler = () => {
     let user = newUser;
-    user.esMentor = false;
-    user.xatMentorID = 'none';
-    navigation.navigate('RegisterPerfil', { user });
+    navigation.navigate('RegisterProfile', { user });
   };
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
   const renderItem = ({ item }) => (
     <MentorListItem
-      nomMentor={nomMentor}
-      setNomMentor={setNomMentor}
+      mentorActiu={mentorActiu}
+      setMentorActiu={setMentorActiu}
+      mentor={item}
       setErrorMentor={setErrorMentor}
-      titol={item.nomUsuari}
-      grau={item.Grau}
+      //titol={item.nomUsuari}
+      //grau={item.Grau}
       imageSrc={url_aux}
       errorText={errorText}
       setErrorText={setErrorText}

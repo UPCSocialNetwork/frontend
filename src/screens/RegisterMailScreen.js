@@ -23,7 +23,7 @@ export default function RegisterMailScreen({ navigation }) {
     nomUsuari: '',
     mail: '',
     contrasenya: '',
-    descripcio: '',
+    descripcio: 'none',
     centreID: '',
     grauID: '',
     xatMentorID: 'none',

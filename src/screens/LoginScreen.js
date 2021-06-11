@@ -130,7 +130,10 @@ export default function LoginScreen({ navigation }) {
           <BaseButton
             onPress={() => {
               //LoginHandler();
-              navigation.navigate('ProfileInfoScreen');
+              let newUser = {
+                nomUsuari: 'cesar.guti',
+              };
+              navigation.navigate('listXatScreen', { newUser });
             }}
             title="Accedeix"
             btnColor={Colors.primary}
