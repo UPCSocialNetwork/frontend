@@ -78,15 +78,14 @@ export default function RegisterMentor1Screen({ navigation }) {
       let response = null;
       try {
         response = await axios.get(`XatMentor/${nomMentor}`);
+        // No entiendo esto !!!
         newUser.xatMentorID = response.data.xatMentor._id;
       } catch (error) {
         console.error(error);
       }
       return response;
     }
-    if (xatMentorReady === true) {
-      getXatMentor();
-    }
+    if (xatMentorReady === true) getXatMentor();
   }, [xatMentorReady]);
 
   // Filter Grau
@@ -117,16 +116,18 @@ export default function RegisterMentor1Screen({ navigation }) {
     if (nomMentor === 'none') {
       setErrorText({ errorMsg: `Compte, no has seleccionat cap mentor`, errorStatus: true });
     } else {
-      newUser.esMentor = false;
+      let user = newUser;
+      user.esMentor = false;
       setXatMentorReady(true);
-      navigation.navigate('RegisterPerfil', { newUser });
+      navigation.navigate('RegisterPerfil', { user });
     }
   };
 
   const registerMentorNoMentorHandler = () => {
-    newUser.esMentor = false;
-    newUser.xatMentorID = 'none';
-    navigation.navigate('RegisterPerfil', { newUser });
+    let user = newUser;
+    user.esMentor = false;
+    user.xatMentorID = 'none';
+    navigation.navigate('RegisterPerfil', { user });
   };
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
   },
   flatListView: {
     marginTop: Window.height * 0.02,
-    height: Window.height * 0.43,
+    height: Window.height * 0.42,
   },
   card: {
     height: 50,
@@ -361,9 +362,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   registerButton1: {
-    marginBottom: 20,
+    marginBottom: 12,
     alignItems: 'center',
-    marginTop: Window.height * 0.02,
+    marginTop: Window.height * 0.01,
   },
   registerButton2: {
     marginBottom: 20,

@@ -24,10 +24,34 @@ export default function RegisterProfileScreen({ navigation }) {
   //   xatMentorID: '60c27017bbffcf261272ecc0',
   //   esMentor: false,
   //   interessos: ['Basket', 'Snow', 'Tech'],
-  //   LlistaAssignatures: ['XASF', 'ESIN'],
+  //   LlistaAssignatures: [
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'FÍSICA',
+  //       nomSigles: 'FISI',
+  //       quad: 1,
+  //     },
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'FONAMENTS DE PROGRAMACIÓ',
+  //       nomSigles: 'FOPR',
+  //       quad: 1,
+  //     },
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'ADMINISTRACIÓ DE SISTEMES OPERATIUS',
+  //       nomSigles: 'ADSO',
+  //       quad: 5,
+  //     },
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'INTERNET',
+  //       nomSigles: 'INTE',
+  //       quad: 5,
+  //     },
+  //   ],
   //   LlistaXatGrupTancat: [],
   // });
-  console.log(newUser);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [inteSelect, setInteSelect] = useState([]);
@@ -114,14 +138,13 @@ export default function RegisterProfileScreen({ navigation }) {
       responseXatAssig = await axios.post(
         '/XatAssignatura/getXatAssig',
         {
-          grauID: newUser.grauID,
           LlistaAssignatures: newUser.LlistaAssignatures,
         },
         { 'Content-Type': 'application/json' },
       );
 
-      responseXatAssig.data.xatAssignatura.forEach((assig) => {
-        createParticipant(assig._id);
+      responseXatAssig.data.xatAssignatura.forEach((Xatassig) => {
+        createParticipant(Xatassig._id);
       });
 
       navigation.navigate('Login');
