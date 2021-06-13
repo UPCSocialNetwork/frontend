@@ -5,9 +5,12 @@ import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 
+import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 //import Window from '../constants/Layout';
 const Window = Dimensions.get('window');
+
+var JWT = "";
 
 export default function LoginScreen({ navigation }) {
   const [data, setData] = useState({
@@ -36,6 +39,7 @@ export default function LoginScreen({ navigation }) {
         ...data,
         username: val,
         isValidUser: true,
+        isValidSignIn: true
       });
     } else {
       setData({
@@ -53,6 +57,7 @@ export default function LoginScreen({ navigation }) {
         ...data,
         password: val,
         isValidPassword: true,
+        isValidSignIn: true
       });
     } else {
       setData({
@@ -63,8 +68,22 @@ export default function LoginScreen({ navigation }) {
       });
     }
   };
+ 
+  async function loginUser() {
+    let responseLogin = null;
+    try {
+      responseLogin = await axios.post('/estudiant/auth/signin', {
+        nomUsuari: data.username,
+        contrasenya: data.password
+      }, { 'Content-Type': 'application/json' });
+      JWT = responseLogin.data.jwt;
+      return responseLogin.data.message;
+    } catch (error) {
+      return error;
+    }
+  }
 
-  const LoginHandler = () => {
+  async function LoginHandler () {
     if (data.password == '' || data.username == '') {
       setData({
         ...data,
@@ -82,6 +101,21 @@ export default function LoginScreen({ navigation }) {
         isValidSignIn: true,
         isnotEmpty: true,
       });
+      let responseLogin = await loginUser();
+      if (responseLogin === "Success"){
+        navigation.navigate('listXatScreen', {
+          user : {
+            nomUsuari : data.username,
+            jwt: JWT
+          }
+        });
+      } else {
+        setData({
+          ...data,
+          isValidSignIn: false,
+          errorMsg: 'That username and password combination is incorrect.',
+        });
+      }
     }
   };
 
@@ -129,11 +163,13 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.loginButton}>
           <BaseButton
             onPress={() => {
-              //LoginHandler();
+              LoginHandler();
+              /*
               let newUser = {
                 nomUsuari: 'cesar.guti',
               };
               navigation.navigate('listXatScreen', { newUser });
+              */
             }}
             title="Accedeix"
             btnColor={Colors.primary}

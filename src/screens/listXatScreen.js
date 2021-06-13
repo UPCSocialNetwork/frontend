@@ -9,7 +9,7 @@ import { useEffect } from 'react/cjs/react.development';
 import axios from '../constants/axios';
 
 export default function listXatScreen({ navigation }) {
-  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
+  const [user, setUser] = useState(navigation.getParam('user'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
 
@@ -26,7 +26,7 @@ export default function listXatScreen({ navigation }) {
       let response = null;
       if (listType === 'privs') {
         try {
-          response = await axios.get('estudiant/xats/' + newUser.nomUsuari);
+          response = await axios.get('estudiant/xats/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
           setChatData(chats);
         } catch (e) {
@@ -34,7 +34,7 @@ export default function listXatScreen({ navigation }) {
         }
       } else {
         try {
-          response = await axios.get('estudiant/grups/' + newUser.nomUsuari);
+          response = await axios.get('estudiant/grups/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
           setChatData(chats);
         } catch (e) {
@@ -70,7 +70,7 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity style={styles.textView}>
           <View>
             <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
-              {newUser.nomUsuari}
+              {user.nomUsuari}
             </Text>
           </View>
         </TouchableOpacity>

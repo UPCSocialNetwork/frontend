@@ -84,7 +84,6 @@ export default function RegisterAssigScreen({ navigation }) {
   };
 
   const registerAssigHandler = () => {
-    console.log('USER ASSIG', newUser);
     let notprimer = newUser.LlistaAssignatures.find((assig) => {
       return assig.quad != 1 && assig.quad != 2;
     });

@@ -156,7 +156,7 @@ export default function RegisterProfileScreen({ navigation }) {
   async function createUser() {
     let responseEstudiant = null;
     try {
-      responseEstudiant = await axios.post('/estudiant', newUser, { 'Content-Type': 'application/json' });
+      responseEstudiant = await axios.post('/estudiant/auth/signup', newUser, { 'Content-Type': 'application/json' });
     } catch (error) {
       console.log('CREATE USER:', error);
     }
