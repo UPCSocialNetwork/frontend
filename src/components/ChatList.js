@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import ChatListItem from './ChatListItem';
 import Colors from '../constants/Colors';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
-function ChatList(chatData) {
+function ChatList({ chatData, setUser, user, setToggle, toggle }) {
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
   const renderItem = ({ item }) => (
-    <ChatListItem titol={item[0]} message={item[1]} time={item[2]} nom={item[3]} imageSrc={url_aux} />
+    <ChatListItem
+      roomId={item[0]}
+      titol={item[1]}
+      message={item[2]}
+      time={item[3]}
+      nom={item[4]}
+      imageSrc={url_aux}
+      setUser={setUser}
+      user={user}
+      setToggle={setToggle}
+      toggle={toggle}
+    />
   );
 
   const FlatListItemSeparator = () => {
@@ -28,7 +39,7 @@ function ChatList(chatData) {
       <FlatList
         keyExtractor={(index) => index.toString()}
         renderItem={renderItem}
-        data={chatData.chatData}
+        data={chatData}
         ItemSeparatorComponent={FlatListItemSeparator}
         contentContainerStyle={{ paddingBottom: 5 }}
         showsVerticalScrollIndicator={false}

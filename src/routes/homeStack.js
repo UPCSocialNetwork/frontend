@@ -15,6 +15,9 @@ import RegisterProfile from '../screens/RegisterProfileScreen';
 import ChatScreen from '../screens/ChatScreen';
 
 const screens = {
+  listXatScreen: {
+    screen: listXatScreen,
+  },
   ChatScreen: {
     screen: ChatScreen,
   },
@@ -44,9 +47,6 @@ const screens = {
   },
   RegisterMentor2: {
     screen: RegisterMentor2,
-  },
-  listXatScreen: {
-    screen: listXatScreen,
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
