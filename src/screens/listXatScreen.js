@@ -15,6 +15,7 @@ export default function listXatScreen({ nomUsuari, navigation }) {
   const [user, setUser] = useState({
     name: 'cesar.gutierrez', // aqui va user.nomUsuari
     room: 'none',
+    participant: 'none',
   });
 
   const pressPickerPrivs = () => {

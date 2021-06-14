@@ -5,7 +5,19 @@ import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
-function ChatListItem({ roomId, titol, message, time, nom, imageSrc, setUser, user, setToggle, toggle }) {
+function ChatListItem({
+  roomID,
+  participantID,
+  titol,
+  message,
+  time,
+  nom,
+  imageSrc,
+  setUser,
+  user,
+  setToggle,
+  toggle,
+}) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -69,14 +81,14 @@ function ChatListItem({ roomId, titol, message, time, nom, imageSrc, setUser, us
   };
 
   const onPress = () => {
-    if (user.room === roomId) {
+    if (user.room === roomID) {
       setToggle(!toggle);
     } else {
-      setUser({ ...user, room: roomId });
+      setUser({ ...user, room: roomID, participant: participantID });
     }
   };
 
-  if (roomId && titol && message && time) {
+  if (roomID && participantID && titol && message && time) {
     return (
       <TouchableOpacity onPress={onPress}>
         <View style={styles.card}>

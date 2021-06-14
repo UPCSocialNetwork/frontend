@@ -9,11 +9,12 @@ function ChatList({ chatData, setUser, user, setToggle, toggle }) {
 
   const renderItem = ({ item }) => (
     <ChatListItem
-      roomId={item[0]}
-      titol={item[1]}
-      message={item[2]}
-      time={item[3]}
-      nom={item[4]}
+      roomID={item[0]}
+      participantID={item[1]}
+      titol={item[2]}
+      message={item[3]}
+      time={item[4]}
+      nom={item[5]}
       imageSrc={url_aux}
       setUser={setUser}
       user={user}
