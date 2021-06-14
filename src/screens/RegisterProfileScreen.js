@@ -12,20 +12,46 @@ import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function RegisterProfileScreen({ navigation }) {
-  //const [newUser, setNewUser] = useState(navigation.getParam('user'));
-  const [newUser, setNewUser] = useState({
-    nomUsuari: 'woody.benavente',
-    mail: 'woody.benavente@estudiant.upc.edu',
-    contrasenya: 'dani12345',
-    descripcio: 'Hit me up!',
-    centreID: 'EPSEVG',
-    grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-    xatMentorID: 'none',
-    esMentor: true,
-    interessos: ['Basket', 'Snow', 'Tech'],
-    LlistaAssignatures: ['XASF', 'ESIN', 'AMEP'],
-    LlistaXatGrupTancat: [],
-  });
+  const [newUser, setNewUser] = useState(navigation.getParam('user'));
+  const [register, setRegister] = useState(false);
+  // const [newUser, setNewUser] = useState({
+  //   nomUsuari: 'carlos.benavente',
+  //   mail: 'carlos.benavente@estudiant.upc.edu',
+  //   contrasenya: 'dani12345',
+  //   descripcio: 'Hit me up!',
+  //   centreID: 'EPSEVG',
+  //   grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //   xatMentorID: '60c27017bbffcf261272ecc0',
+  //   esMentor: false,
+  //   interessos: ['Basket', 'Snow', 'Tech'],
+  //   LlistaAssignatures: [
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'FÍSICA',
+  //       nomSigles: 'FISI',
+  //       quad: 1,
+  //     },
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'FONAMENTS DE PROGRAMACIÓ',
+  //       nomSigles: 'FOPR',
+  //       quad: 1,
+  //     },
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'ADMINISTRACIÓ DE SISTEMES OPERATIUS',
+  //       nomSigles: 'ADSO',
+  //       quad: 5,
+  //     },
+  //     {
+  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
+  //       nomComplet: 'INTERNET',
+  //       nomSigles: 'INTE',
+  //       quad: 5,
+  //     },
+  //   ],
+  //   LlistaXatGrupTancat: [],
+  // });
 
   const [modalVisible, setModalVisible] = useState(false);
   const [inteSelect, setInteSelect] = useState([]);
@@ -59,17 +85,8 @@ export default function RegisterProfileScreen({ navigation }) {
   ];
 
   useEffect(() => {
-    /*
-    async function fetchData() {
-      let response = null;
-      try {
-      } catch (error) {
-      }
-      return response;
-    }
-    fetchData();
-    */
-  }, []);
+    if (register) createUser();
+  }, [newUser]);
 
   if (!loaded) {
     return null;
@@ -88,12 +105,12 @@ export default function RegisterProfileScreen({ navigation }) {
   );
 
   async function crearUsuariHandler() {
-    /*
-    //let responseEstudiant = null;
+    let responseXatMentor = null;
+    let responseXatAssig = null;
     try {
-      //CREAR XAT MENTOR
       if (newUser.esMentor) {
-        await axios.post(
+        //CREAR XAT MENTOR
+        responseXatMentor = await axios.post(
           '/XatMentor',
           {
             mentorID: newUser.nomUsuari,
@@ -104,13 +121,64 @@ export default function RegisterProfileScreen({ navigation }) {
           },
           { 'Content-Type': 'application/json' },
         );
+        setNewUser({
+          ...newUser,
+          xatMentorID: responseXatMentor.data.XatMentor._id,
+        });
+
+        //CREAR PARTICIPANT XAT MENTOR
+        createParticipant(responseXatMentor.data.XatMentor._id);
+      } else {
+        createUser();
+        //CREAR PARTICIPANT XAT MENTOR
+        if (newUser.xatMentorID != 'none') createParticipant(newUser.xatMentorID);
       }
-      // POST ESTUDIANT
-      //responseEstudiant = await axios.post('/estudiant', newUser, { 'Content-Type': 'application/json' });
+
+      //CREAR PARTICIPANTES POR XAT ASSIGNATURA
+      responseXatAssig = await axios.post(
+        '/XatAssignatura/getXatAssig',
+        {
+          LlistaAssignatures: newUser.LlistaAssignatures,
+        },
+        { 'Content-Type': 'application/json' },
+      );
+
+      responseXatAssig.data.xatAssignatura.forEach((Xatassig) => {
+        createParticipant(Xatassig._id);
+      });
+
+      navigation.navigate('Login');
     } catch (error) {
-      console.log(error.response);
+      console.log('USUARI HANDLER:', error);
     }
-    */
+  }
+
+  async function createUser() {
+    let responseEstudiant = null;
+    try {
+      responseEstudiant = await axios.post('/estudiant/auth/signup', newUser, { 'Content-Type': 'application/json' });
+    } catch (error) {
+      console.log('CREATE USER:', error);
+    }
+  }
+
+  async function createParticipant(xatID) {
+    let responseParticipant = null;
+    try {
+      responseParticipant = await axios.post(
+        '/participant',
+        {
+          estudiantID: newUser.nomUsuari,
+          xatID: xatID,
+          ultimaLectura: 0,
+          notificacions: 'Activat',
+          bloqueigGrup: 'Desactivat',
+        },
+        { 'Content-Type': 'application/json' },
+      );
+    } catch (error) {
+      console.log('CREATE PARTICIPANT:', error);
+    }
   }
 
   return (
@@ -216,7 +284,14 @@ export default function RegisterProfileScreen({ navigation }) {
         </View>
       )}
       <View style={styles.btnLast}>
-        <BaseButton onPress={crearUsuariHandler} title="Crear usuari" btnColor={Colors.primary} />
+        <BaseButton
+          onPress={() => {
+            setRegister(true);
+            crearUsuariHandler();
+          }}
+          title="Crear usuari"
+          btnColor={Colors.primary}
+        />
       </View>
     </ScrollView>
   );

@@ -16,17 +16,17 @@ export default function RegisterMailScreen({ navigation }) {
   });
 
   const validMail = {
-    upc: 'edu',
+    upc: 'estudiant.upc.edu',
   };
 
   const [newUser, setNewUser] = useState({
     nomUsuari: '',
     mail: '',
     contrasenya: '',
-    descripcio: '',
+    descripcio: 'none',
     centreID: '',
     grauID: '',
-    xatMentorID: '',
+    xatMentorID: 'none',
     esMentor: false,
     interessos: [],
     LlistaAssignatures: [],
@@ -52,6 +52,7 @@ export default function RegisterMailScreen({ navigation }) {
       setNewUser({
         ...newUser,
         mail: val,
+        nomUsuari: val.split('@')[0],
       });
     } else {
       setData({
@@ -61,6 +62,7 @@ export default function RegisterMailScreen({ navigation }) {
       setNewUser({
         ...newUser,
         mail: val,
+        nomUsuari: val.split('@')[0],
       });
     }
   };

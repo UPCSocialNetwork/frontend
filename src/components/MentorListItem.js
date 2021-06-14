@@ -5,9 +5,7 @@ import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons } from '@expo/vector-icons';
 
-function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, imageSrc, errorText, setErrorText }) {
-  //const [isPressed, setIsPressed] = useState(false);
-
+function MentorListItem({ mentorActiu, setMentorActiu, mentor, setErrorMentor, imageSrc, errorText, setErrorText }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -15,31 +13,21 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
-  useEffect(() => {
-    /*
-    function checkPressed() {
-      console.log(nomMentor + ' ' + titol);
-      if (nomMentor === titol) {
-        setIsPressed(true);
-      } else {
-        setIsPressed(false);
-      }
-    }
-    checkPressed();
-    */
-  }, []);
-
   if (!loaded) {
     return null;
   }
 
   const onPress = () => {
-    if (nomMentor === titol) {
-      setNomMentor('none');
+    if (mentorActiu.nomUsuari === mentor.nomUsuari) {
+      setMentorActiu({
+        nomUsuari: 'none',
+        Grau: 'none',
+        xatMentorID: 'none',
+      });
       setErrorMentor(false);
     } else {
-      if (nomMentor === 'none') {
-        setNomMentor(titol);
+      if (mentorActiu.nomUsuari === 'none') {
+        setMentorActiu(mentor);
         if (errorText.errorStatus === true) {
           setErrorText({ ...errorText, errorStatus: false });
         }
@@ -49,9 +37,12 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
     }
   };
 
-  if (titol && grau && imageSrc) {
+  if (mentor.nomUsuari && mentor.Grau && imageSrc) {
     return (
-      <TouchableOpacity onPress={onPress} style={nomMentor === titol ? styles.pressed : styles.notPressed}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={mentorActiu.nomUsuari === mentor.nomUsuari ? styles.pressed : styles.notPressed}
+      >
         <View style={styles.card}>
           <View style={styles.imageViewParent}>
             <View style={styles.imageView}>
@@ -61,14 +52,14 @@ function MentorListItem({ nomMentor, setNomMentor, setErrorMentor, titol, grau, 
           <View style={styles.userViewParent}>
             <View style={styles.userView}>
               <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
-                {titol}
+                {mentor.nomUsuari}
               </Text>
               <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                {grau}
+                {mentor.Grau}
               </Text>
             </View>
           </View>
-          {nomMentor === titol ? (
+          {mentorActiu.nomUsuari === mentor.nomUsuari ? (
             <View>
               <View style={styles.optionsView}>
                 <MaterialIcons name="done" style={styles.optionsIcon} />

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 //import Window from '../constants/Layout';
 const Window = Dimensions.get('window');
+
+var JWT = "";
 
 export default function LoginScreen({ navigation }) {
   const [data, setData] = useState({
@@ -20,12 +24,41 @@ export default function LoginScreen({ navigation }) {
     isValidSignIn: true,
     isnotEmpty: true,
   });
+
+  //const [userSession, setUserSession] = useState({});
+
   // Fonts
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        let user = await AsyncStorage.getItem('userSession');
+        if (user != null){
+          user = JSON.parse(user);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                'Authorization': `${user.jwt}`
+              }
+            });
+            if (response.data.msg == "Success") navigation.replace('listXatScreen', { user });
+          } catch (error) {
+
+          }
+        }
+      } catch(e) {
+        // error reading value
+      }
+    }
+    getData();
+  }, []);
+
+
   if (!loaded) {
     return null;
   }
@@ -36,6 +69,7 @@ export default function LoginScreen({ navigation }) {
         ...data,
         username: val,
         isValidUser: true,
+        isValidSignIn: true
       });
     } else {
       setData({
@@ -53,6 +87,7 @@ export default function LoginScreen({ navigation }) {
         ...data,
         password: val,
         isValidPassword: true,
+        isValidSignIn: true
       });
     } else {
       setData({
@@ -63,8 +98,31 @@ export default function LoginScreen({ navigation }) {
       });
     }
   };
+ 
+  async function loginUser() {
+    let responseLogin = null;
+    try {
+      responseLogin = await axios.post('/estudiant/auth/signin', {
+        nomUsuari: data.username,
+        contrasenya: data.password
+      }, { 'Content-Type': 'application/json' });
+      JWT = responseLogin.data.jwt;
+      return responseLogin.data.message;
+    } catch (error) {
+      return error;
+    }
+  }
 
-  const LoginHandler = () => {
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('userSession', jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  }
+
+  async function LoginHandler () {
     if (data.password == '' || data.username == '') {
       setData({
         ...data,
@@ -82,6 +140,22 @@ export default function LoginScreen({ navigation }) {
         isValidSignIn: true,
         isnotEmpty: true,
       });
+      let responseLogin = await loginUser();
+      if (responseLogin === "Success"){
+        let user = {
+          nomUsuari : data.username,
+          jwt: JWT
+        }
+        // setUserSession(user);
+        await storeData(user);
+        navigation.replace('listXatScreen', { user });
+      } else {
+        setData({
+          ...data,
+          isValidSignIn: false,
+          errorMsg: 'That username and password combination is incorrect.',
+        });
+      }
     }
   };
 
@@ -129,8 +203,13 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.loginButton}>
           <BaseButton
             onPress={() => {
-              //LoginHandler();
-              navigation.navigate('ProfileInfoScreen');
+              LoginHandler();
+              /*
+              let newUser = {
+                nomUsuari: 'cesar.guti',
+              };
+              navigation.navigate('listXatScreen', { newUser });
+              */
             }}
             title="Accedeix"
             btnColor={Colors.primary}
