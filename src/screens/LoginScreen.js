@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
@@ -23,12 +24,41 @@ export default function LoginScreen({ navigation }) {
     isValidSignIn: true,
     isnotEmpty: true,
   });
+
+  //const [userSession, setUserSession] = useState({});
+
   // Fonts
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        let user = await AsyncStorage.getItem('userSession');
+        if (user != null){
+          user = JSON.parse(user);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                'Authorization': `${user.jwt}`
+              }
+            });
+            if (response.data.msg == "Success") navigation.replace('listXatScreen', { user });
+          } catch (error) {
+
+          }
+        }
+      } catch(e) {
+        // error reading value
+      }
+    }
+    getData();
+  }, []);
+
+
   if (!loaded) {
     return null;
   }
@@ -83,6 +113,15 @@ export default function LoginScreen({ navigation }) {
     }
   }
 
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('userSession', jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  }
+
   async function LoginHandler () {
     if (data.password == '' || data.username == '') {
       setData({
@@ -103,12 +142,13 @@ export default function LoginScreen({ navigation }) {
       });
       let responseLogin = await loginUser();
       if (responseLogin === "Success"){
-        navigation.navigate('listXatScreen', {
-          user : {
-            nomUsuari : data.username,
-            jwt: JWT
-          }
-        });
+        let user = {
+          nomUsuari : data.username,
+          jwt: JWT
+        }
+        // setUserSession(user);
+        await storeData(user);
+        navigation.replace('listXatScreen', { user });
       } else {
         setData({
           ...data,

@@ -7,6 +7,7 @@ import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ChatList from '../components/ChatList';
 import { useEffect } from 'react/cjs/react.development';
 import axios from '../constants/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
   const [user, setUser] = useState(navigation.getParam('user'));
@@ -20,6 +21,31 @@ export default function listXatScreen({ navigation }) {
   const pressPickerGrups = () => {
     setListType('grups');
   };
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        let userSess = await AsyncStorage.getItem('userSession');
+        if (userSess != null){
+          userSess = JSON.parse(userSess);
+          setUser(userSess);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                'Authorization': `${userSess.jwt}`
+              }
+            });
+            if (response.data.msg != "Success") navigation.replace('Login');
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch(e) {
+        // navigation.replace('Login');
+      }
+    }
+    getData();
+  }, []);
 
   useEffect(() => {
     async function getChatData() {
@@ -58,6 +84,15 @@ export default function listXatScreen({ navigation }) {
     return null;
   }
 
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('userSession');
+      navigation.replace('Login');
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
@@ -79,9 +114,9 @@ export default function listXatScreen({ navigation }) {
             <MaterialIcons name="search" style={styles.searchIcon} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={logout}>
           <View style={styles.optionsView}>
-            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />
+            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon}/>
           </View>
         </TouchableOpacity>
       </View>
