@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ChatList from '../components/ChatList';
-import { useEffect } from 'react/cjs/react.development';
 import axios from '../constants/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function listXatScreen({ navigation }) {
-  const [user, setUser] = useState(navigation.getParam('user'));
+export default function listXatScreen({ nomUsuari, navigation }) {
+  //const [user, setUser] = useState(navigation.getParam('user'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
+  const [toggle, setToggle] = useState(false);
+  const [user, setUser] = useState({
+    nomUsuari: 'cesar.gutierrez', // aqui va user.nomUsuari
+    room: 'none',
+    participant: 'none',
+  });
 
   const pressPickerPrivs = () => {
     setListType('privs');
@@ -70,6 +75,15 @@ export default function listXatScreen({ navigation }) {
     }
     getChatData();
   }, [listType]);
+
+  useEffect(() => {
+    function navigateRoom() {
+      if (user.room != 'none') {
+        navigation.navigate('ChatScreen', { user });
+      }
+    }
+    navigateRoom();
+  }, [user.room, toggle]);
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
@@ -136,7 +150,7 @@ export default function listXatScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <ChatList chatData={chatData} listType={listType}></ChatList>
+      <ChatList chatData={chatData} setUser={setUser} user={user} setToggle={setToggle} toggle={toggle} />
       <View style={styles.plusBtn}>
         <TouchableOpacity style={styles.plusCircle}>
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>

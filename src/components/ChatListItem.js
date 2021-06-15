@@ -1,62 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
-const formatNom = (nom) => {
-  var nouNom;
-  if (nom != '') {
-    nouNom = nom.split('.')[0];
-    nouNom = nouNom.charAt(0).toUpperCase() + nouNom.slice(1) + ': ';
-  } else {
-    nouNom = '';
-  }
-  return nouNom;
-};
-
-const formatTime = (time) => {
-  if (time === 404) return null;
-  var now = new Date();
-  var time = new Date(time);
-  var diff_time = now - time;
-  var diff_minuts = diff_time / 1000 / 60;
-  var diff_hora = diff_minuts / 60;
-  var diff_dies = diff_hora / 24;
-  if (diff_minuts < 60) {
-    var recent = Math.round(diff_minuts);
-    if (recent === 0) {
-      recent = 'Ara mateix';
-      return recent;
-    } else if (recent === 1) {
-      recent = 'Fa ' + recent + ' minut';
-      return recent;
-    } else {
-      recent = 'Fa ' + recent + ' minuts';
-      return recent;
-    }
-  } else if (diff_hora > 0 && diff_hora < 24) {
-    var recent = Math.round(diff_hora);
-    if (recent === 1) {
-      recent = 'Fa 1 hora';
-      return recent;
-    } else {
-      recent = 'Fa ' + recent + ' hores';
-      return recent;
-    }
-  } else if (diff_dies > 0 && diff_dies < 2) {
-    return 'Ahir';
-  } else {
-    var day = new Date(time).getDate();
-    var month = new Date(time).getMonth() + 1;
-    var year = new Date(time).getFullYear();
-    var recent = day + '/' + month + '/' + year;
-    return recent;
-  }
-};
-
-function ChatListItem({ titol, message, time, nom, imageSrc }) {
+function ChatListItem({
+  roomID,
+  participantID,
+  titol,
+  message,
+  time,
+  nom,
+  imageSrc,
+  setUser,
+  user,
+  setToggle,
+  toggle,
+}) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -68,9 +29,68 @@ function ChatListItem({ titol, message, time, nom, imageSrc }) {
     return null;
   }
 
-  if (titol && message && time) {
+  const formatNom = (nom) => {
+    var nouNom;
+    if (nom != '') {
+      nouNom = nom.split('.')[0];
+      nouNom = nouNom.charAt(0).toUpperCase() + nouNom.slice(1) + ': ';
+    } else {
+      nouNom = '';
+    }
+    return nouNom;
+  };
+
+  const formatTime = (time) => {
+    if (time === 404) return null;
+    var now = new Date();
+    var time = new Date(time);
+    var diff_time = now - time;
+    var diff_minuts = diff_time / 1000 / 60;
+    var diff_hora = diff_minuts / 60;
+    var diff_dies = diff_hora / 24;
+    if (diff_minuts < 60) {
+      var recent = Math.round(diff_minuts);
+      if (recent === 0) {
+        recent = 'Ara mateix';
+        return recent;
+      } else if (recent === 1) {
+        recent = 'Fa ' + recent + ' minut';
+        return recent;
+      } else {
+        recent = 'Fa ' + recent + ' minuts';
+        return recent;
+      }
+    } else if (diff_hora > 0 && diff_hora < 24) {
+      var recent = Math.round(diff_hora);
+      if (recent === 1) {
+        recent = 'Fa 1 hora';
+        return recent;
+      } else {
+        recent = 'Fa ' + recent + ' hores';
+        return recent;
+      }
+    } else if (diff_dies > 0 && diff_dies < 2) {
+      return 'Ahir';
+    } else {
+      var day = new Date(time).getDate();
+      var month = new Date(time).getMonth() + 1;
+      var year = new Date(time).getFullYear();
+      var recent = day + '/' + month + '/' + year;
+      return recent;
+    }
+  };
+
+  const onPress = () => {
+    if (user.room === roomID) {
+      setToggle(!toggle);
+    } else {
+      setUser({ ...user, room: roomID, participant: participantID });
+    }
+  };
+
+  if (roomID && participantID && titol && message && time) {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onPress}>
         <View style={styles.card}>
           <View style={styles.imageViewParent}>
             <View style={styles.imageView}>

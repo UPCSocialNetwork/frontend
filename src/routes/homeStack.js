@@ -12,8 +12,7 @@ import RegisterMentor2 from '../screens/RegisterMentor2Screen';
 import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import listXatScreen from '../screens/listXatScreen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
-/*
- */
+import ChatScreen from '../screens/ChatScreen';
 
 const screens = {
   Intro: {
@@ -40,15 +39,18 @@ const screens = {
   RegisterMentor2: {
     screen: RegisterMentor2,
   },
-  listXatScreen: {
-    screen: listXatScreen,
-  },
-  ProfileInfoScreen: {
-    screen: ProfileInfoScreen,
-  },
   RegisterProfile: {
     screen: RegisterProfile,
   },
+  listXatScreen: {
+    screen: listXatScreen,
+  },
+  ChatScreen: {
+    screen: ChatScreen,
+  },
+  ProfileInfoScreen: {
+    screen: ProfileInfoScreen,
+  }
 };
 
 const HomeStack = createStackNavigator(screens, {
