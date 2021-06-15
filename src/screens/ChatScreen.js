@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, StyleSheet, Text, TextInput } from 'react-native';
+import { Image, TouchableOpacity, StatusBar, View, StyleSheet, Text, TextInput } from 'react-native';
 import { useFonts } from 'expo-font';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
@@ -17,15 +18,15 @@ export default function ChatScreen({ navigation }) {
     room: 'room1',
   });*/
 
-  const formatMsg = (msg) => {
+  const formatMsg = (msg, sender) => {
     let giftMess = {
       _id: msg._id,
       text: msg.text,
       createdAt: new Date(msg.createdAt),
       user: {
         _id: msg.participantID,
-        name: 'React Native',
-        avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+        name: sender,
+        avatar: 'https://randomuser.me/api/portraits/men/1.jpg', //                   PRIORIDAD 3 // IMAGENES REALES
       },
     };
     return giftMess;
@@ -42,6 +43,7 @@ export default function ChatScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
+    // console.log(user.tipusXat);
     async function getMessages() {
       socket.emit('xat actiu', user.room);
       let response = null;
@@ -50,9 +52,9 @@ export default function ChatScreen({ navigation }) {
         let missatges = response.data.missatges;
         let giftedMessages = [];
         if (missatges) {
-          missatges.forEach((element) => {
-            element.forEach((msg) => {
-              msg = formatMsg(msg);
+          missatges.map(function (element) {
+            element[1].map(function (msg) {
+              msg = formatMsg(msg, element[0]);
               giftedMessages.push(msg);
             });
           });
@@ -78,21 +80,82 @@ export default function ChatScreen({ navigation }) {
         { 'Content-Type': 'application/json' },
       );
       let missatgeDB = response.data.Missatge;
-      await axios.put(
-        `/Xat/${user.room}`,
-        {
-          ultimMissatgeID: missatgeDB._id,
-        },
-        { 'Content-Type': 'application/json' },
-      );
+      if (user.tipusXat === 'privs') {
+        try {
+          await axios.put(
+            `/Xat/${user.room}`,
+            {
+              ultimMissatgeID: missatgeDB._id,
+            },
+            { 'Content-Type': 'application/json' },
+          );
+        } catch (e) {
+          console.error(e);
+        }
+      } else if (user.tipusXat === 'XatGrupTancat') {
+        try {
+          await axios.put(
+            `/XatGrupTancat/${user.room}`,
+            {
+              /*
+              titol: Joi.string().required(),              // PRIORIDAD 1
+              descripcio: Joi.string(),                    // NECESITO PODER HACER EL UPDATE CON SOLO EL ULTIMMISSATGEID
+              imatge: Joi.string(),                        // SI NO NO PUEDO PORQUE TENDRIA QUE ACTUALIZAR TODOS LOS OTROS CAMPOS (COMO POR EJ EL TITULO)
+              */
+              ultimMissatgeID: missatgeDB._id,
+            },
+            { 'Content-Type': 'application/json' },
+          );
+        } catch (e) {
+          console.error(e);
+        }
+      } else if (user.tipusXat === 'XatAssignatura') {
+        try {
+          await axios.put(
+            `/XatAssignatura/${user.room}`,
+            {
+              /*
+              guiaDocent: '-',                             // PRIORIDAD 1
+              mailProfessor: [],                           // NECESITO PODER HACER EL UPDATE CON SOLO EL ULTIMMISSATGEID
+              delegatID: '-',                              // SI NO NO PUEDO PORQUE TENDRIA QUE ACTUALIZAR TODOS LOS OTROS CAMPOS (COMO POR EJ EL TITULO)
+              titol: '-',
+              descripcio: '-',
+              imatge: '-',
+              */
+              ultimMissatgeID: missatgeDB._id,
+            },
+            { 'Content-Type': 'application/json' },
+          );
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        try {
+          await axios.put(
+            `/XatMentor/${user.room}`,
+            {
+              /*
+              mentorID: Joi.string(),                        // PRIORIDAD 1
+              titol: Joi.string(),                           // NECESITO PODER HACER EL UPDATE CON SOLO EL ULTIMMISSATGEID
+              descripcio: Joi.string(),                      // SI NO NO PUEDO PORQUE TENDRIA QUE ACTUALIZAR TODOS LOS OTROS CAMPOS (COMO POR EJ EL TITULO)
+              imatge: Joi.string(),
+              */
+              ultimMissatgeID: missatgeDB._id,
+            },
+            { 'Content-Type': 'application/json' },
+          );
+        } catch (e) {
+          console.error(e);
+        }
+      }
       let giftMess = {
         _id: missatgeDB._id,
         text: missatgeDB.text,
         createdAt: missatgeDB.createdAt,
         user: {
           _id: user.participant,
-          name: user.name,
-          avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+          name: user.nomUsuari,
+          avatar: 'https://randomuser.me/api/portraits/men/1.jpg', //           PRIORIDAD 3 // IMAGENES REALES
         },
       };
       socket.emit('send message', giftMess, user.room);
@@ -102,14 +165,120 @@ export default function ChatScreen({ navigation }) {
   }, []);
 
   return (
-    <GiftedChat
-      messages={messages}
-      placeholder={'Escriu un missatge'}
-      alwaysShowSend={true}
-      onSend={(newMessage) => onSend(newMessage)}
-      user={{
-        _id: user.participant,
-      }}
-    />
+    // user.tipusXat
+    <View style={{ flex: 1, backgroundColor: Colors.white }}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => {
+            //                                                                 // PRIORIDAD 2
+            // navigation.replace('listXatScreen', { user });                  // NAVEGACION HACIA ATRAS (DANIEL)
+          }}
+        >
+          <View style={styles.goBack}>
+            <View style={styles.goBackView}>
+              <Icon name="arrow-left" size={20} color={Colors.primary} />
+            </View>
+            <Text style={styles.textEnrere}> Enrere </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={styles.nameAndImg}>
+            <View style={styles.nameView}>
+              <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">
+                {user.titol}
+              </Text>
+            </View>
+            <View style={styles.imgView}>
+              <View style={styles.imgViewChild}>
+                <Image style={styles.image} source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} />
+                <View style={styles.circle}></View>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <GiftedChat
+        messages={messages}
+        renderUsernameOnMessage={true}
+        placeholder={'Escriu un missatge'}
+        alwaysShowSend={true}
+        onSend={(newMessage) => onSend(newMessage)}
+        user={{
+          _id: user.participant,
+        }}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    height: Window.height * 0.09,
+    width: Window.width,
+    marginTop: StatusBar.currentHeight,
+    flexDirection: 'row',
+  },
+  goBack: {
+    width: Window.width * 0.3,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  goBackView: {
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 50,
+    height: '55%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 5,
+  },
+  textEnrere: {
+    fontFamily: 'InterBold',
+    fontSize: 16,
+    color: Colors.primary,
+  },
+  nameAndImg: {
+    width: Window.width * 0.7,
+    height: '100%',
+    flexDirection: 'row',
+  },
+  nameView: {
+    width: Window.width * 0.4,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nameText: {
+    fontSize: 18,
+    fontFamily: 'InterBold',
+  },
+  imgView: {
+    width: Window.width * 0.3,
+    height: '100%',
+    justifyContent: 'center',
+  },
+  imgViewChild: {
+    justifyContent: 'center',
+    height: '85%',
+    aspectRatio: 1,
+    marginLeft: '30%',
+  },
+  image: {
+    height: '100%',
+    aspectRatio: 1,
+    borderRadius: 50,
+  },
+  circle: {
+    height: '30%',
+    aspectRatio: 1,
+    borderRadius: 50,
+    backgroundColor: Colors.green,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    borderColor: Colors.white,
+    borderWidth: 2,
+  },
+});

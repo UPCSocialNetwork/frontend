@@ -14,45 +14,6 @@ import Window from '../constants/Layout';
 export default function RegisterProfileScreen({ navigation }) {
   const [newUser, setNewUser] = useState(navigation.getParam('user'));
   const [register, setRegister] = useState(false);
-  // const [newUser, setNewUser] = useState({
-  //   nomUsuari: 'carlos.benavente',
-  //   mail: 'carlos.benavente@estudiant.upc.edu',
-  //   contrasenya: 'dani12345',
-  //   descripcio: 'Hit me up!',
-  //   centreID: 'EPSEVG',
-  //   grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-  //   xatMentorID: '60c27017bbffcf261272ecc0',
-  //   esMentor: false,
-  //   interessos: ['Basket', 'Snow', 'Tech'],
-  //   LlistaAssignatures: [
-  //     {
-  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-  //       nomComplet: 'FÍSICA',
-  //       nomSigles: 'FISI',
-  //       quad: 1,
-  //     },
-  //     {
-  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-  //       nomComplet: 'FONAMENTS DE PROGRAMACIÓ',
-  //       nomSigles: 'FOPR',
-  //       quad: 1,
-  //     },
-  //     {
-  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-  //       nomComplet: 'ADMINISTRACIÓ DE SISTEMES OPERATIUS',
-  //       nomSigles: 'ADSO',
-  //       quad: 5,
-  //     },
-  //     {
-  //       grauID: 'GRAU EN ENGINYERIA INFORMÀTICA',
-  //       nomComplet: 'INTERNET',
-  //       nomSigles: 'INTE',
-  //       quad: 5,
-  //     },
-  //   ],
-  //   LlistaXatGrupTancat: [],
-  // });
-
   const [modalVisible, setModalVisible] = useState(false);
   const [inteSelect, setInteSelect] = useState([]);
 
