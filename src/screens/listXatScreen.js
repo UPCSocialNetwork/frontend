@@ -28,25 +28,25 @@ export default function listXatScreen({ nomUsuari, navigation }) {
   };
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     async function getData() {
       try {
         let userSess = await AsyncStorage.getItem('userSession');
-        if (userSess != null){
+        if (userSess != null) {
           userSess = JSON.parse(userSess);
           setUserSess(userSess);
           try {
             response = await axios.get('estudiant/auth/session', {
               headers: {
-                'Authorization': `${userSess.jwt}`
-              }
+                Authorization: `${userSess.jwt}`,
+              },
             });
-            if (response.data.msg != "Success") navigation.replace('Login');
+            if (response.data.msg != 'Success') navigation.replace('Login');
           } catch (error) {
             console.log(error);
           }
         }
-      } catch(e) {
+      } catch (e) {
         // navigation.replace('Login');
       }
     }
@@ -103,10 +103,10 @@ export default function listXatScreen({ nomUsuari, navigation }) {
     try {
       await AsyncStorage.removeItem('userSession');
       navigation.replace('Login');
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   return (
     <View style={styles.scroll}>
@@ -131,7 +131,7 @@ export default function listXatScreen({ nomUsuari, navigation }) {
         </TouchableOpacity>
         <TouchableOpacity onPress={logout}>
           <View style={styles.optionsView}>
-            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon}/>
+            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />
           </View>
         </TouchableOpacity>
       </View>

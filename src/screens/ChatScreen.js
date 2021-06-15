@@ -43,7 +43,7 @@ export default function ChatScreen({ navigation }) {
 
   useEffect(() => {
     async function getMessages() {
-      socket.emit('xat actiu', user.name, user.room, user.participant);
+      socket.emit('xat actiu', user.room);
       let response = null;
       try {
         response = await axios.get('missatge/xat/' + user.room);
