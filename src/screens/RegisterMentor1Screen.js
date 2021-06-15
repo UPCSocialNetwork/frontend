@@ -17,24 +17,29 @@ export default function RegisterMentor1Screen({ navigation }) {
   const [filterData, setFilterData] = useState([]);
   const [Graus, setGraus] = useState([]);
   const [actualGrau, setActualGrau] = useState('Tots els graus');
-  const [nomMentor, setNomMentor] = useState('none');
+  const [mentorActiu, setMentorActiu] = useState({
+    nomUsuari: 'none',
+    Grau: 'none',
+    xatMentorID: 'none',
+  });
   const [errorMentor, setErrorMentor] = useState(false);
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
   const [xatMentorReady, setXatMentorReady] = useState(false);
   const [search, setSearch] = useState('');
-  const [newUser, setNewUser] = useState({
-    nomUsuari: '',
-    mail: '',
-    contrasenya: '',
-    descripcio: '',
-    centreID: '',
-    grauID: '',
-    esMentor: '',
-    interessos: '',
-    xatMentorID: '',
-    LlistaAssignatures: [],
-    LlistaXatGrupTancat: [],
-  });
+  const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
+  // const [newUser, setNewUser] = useState({
+  //   nomUsuari: '',
+  //   mail: '',
+  //   contrasenya: '',
+  //   descripcio: '',
+  //   centreID: '',
+  //   grauID: '',
+  //   esMentor: '',
+  //   interessos: '',
+  //   xatMentorID: '',
+  //   LlistaAssignatures: [],
+  //   LlistaXatGrupTancat: [],
+  // });
 
   // Fonts
   const [loaded] = useFonts({
@@ -71,22 +76,24 @@ export default function RegisterMentor1Screen({ navigation }) {
     fetchData();
   }, []);
 
+  /*
   // Get XatMentorID
   useEffect(() => {
     async function getXatMentor() {
       let response = null;
       try {
-        response = await axios.get(`XatMentor/${nomMentor}`);
-        newUser.xatMentorID = response.data.xatMentor._id;
+        response = await axios.get(`XatMentor/${mentorActiu}`);
+        let user = newUser;
+        user.xatMentorID = response.data.xatMentor._id;
+        navigation.navigate('RegisterPerfil', { user });
       } catch (error) {
         console.error(error);
       }
       return response;
     }
-    if (xatMentorReady === true) {
-      getXatMentor();
-    }
+    if (xatMentorReady === true) getXatMentor();
   }, [xatMentorReady]);
+*/
 
   // Filter Grau
   useEffect(() => {
@@ -113,29 +120,29 @@ export default function RegisterMentor1Screen({ navigation }) {
   }
 
   const registerMentorSeguentHandler = () => {
-    if (nomMentor === 'none') {
+    if (mentorActiu.nomUsuari === 'none') {
       setErrorText({ errorMsg: `Compte, no has seleccionat cap mentor`, errorStatus: true });
     } else {
-      newUser.esMentor = false;
-      setXatMentorReady(true);
-      navigation.navigate('RegisterPerfil', { newUser });
+      let user = newUser;
+      user.xatMentorID = mentorActiu.xatMentorID;
+      navigation.navigate('RegisterProfile', { user });
     }
   };
 
   const registerMentorNoMentorHandler = () => {
-    newUser.esMentor = false;
-    newUser.xatMentorID = 'none';
-    navigation.navigate('RegisterPerfil', { newUser });
+    let user = newUser;
+    navigation.navigate('RegisterProfile', { user });
   };
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
   const renderItem = ({ item }) => (
     <MentorListItem
-      nomMentor={nomMentor}
-      setNomMentor={setNomMentor}
+      mentorActiu={mentorActiu}
+      setMentorActiu={setMentorActiu}
+      mentor={item}
       setErrorMentor={setErrorMentor}
-      titol={item.nomUsuari}
-      grau={item.Grau}
+      //titol={item.nomUsuari}
+      //grau={item.Grau}
       imageSrc={url_aux}
       errorText={errorText}
       setErrorText={setErrorText}
@@ -346,7 +353,7 @@ const styles = StyleSheet.create({
   },
   flatListView: {
     marginTop: Window.height * 0.02,
-    height: Window.height * 0.43,
+    height: Window.height * 0.42,
   },
   card: {
     height: 50,
@@ -360,9 +367,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   registerButton1: {
-    marginBottom: 20,
+    marginBottom: 12,
     alignItems: 'center',
-    marginTop: Window.height * 0.02,
+    marginTop: Window.height * 0.01,
   },
   registerButton2: {
     marginBottom: 20,

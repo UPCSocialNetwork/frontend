@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ChatList from '../components/ChatList';
 import axios from '../constants/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ nomUsuari, navigation }) {
   //const [user, setUser] = useState(navigation.getParam('user'));
@@ -13,7 +14,7 @@ export default function listXatScreen({ nomUsuari, navigation }) {
   const [listType, setListType] = useState('privs');
   const [toggle, setToggle] = useState(false);
   const [user, setUser] = useState({
-    name: 'cesar.gutierrez', // aqui va user.nomUsuari
+    nomUsuari: 'cesar.gutierrez', // aqui va user.nomUsuari
     room: 'none',
     participant: 'none',
   });
@@ -27,11 +28,36 @@ export default function listXatScreen({ nomUsuari, navigation }) {
   };
 
   useEffect(() => {
+    async function getData() {
+      try {
+        let userSess = await AsyncStorage.getItem('userSession');
+        if (userSess != null){
+          userSess = JSON.parse(userSess);
+          setUser(userSess);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                'Authorization': `${userSess.jwt}`
+              }
+            });
+            if (response.data.msg != "Success") navigation.replace('Login');
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch(e) {
+        // navigation.replace('Login');
+      }
+    }
+    getData();
+  }, []);
+
+  useEffect(() => {
     async function getChatData() {
       let response = null;
       if (listType === 'privs') {
         try {
-          response = await axios.get('estudiant/xats/' + user.name);
+          response = await axios.get('estudiant/xats/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
           setChatData(chats);
         } catch (e) {
@@ -39,7 +65,7 @@ export default function listXatScreen({ nomUsuari, navigation }) {
         }
       } else {
         try {
-          response = await axios.get('estudiant/grups/' + user.name);
+          response = await axios.get('estudiant/grups/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
           setChatData(chats);
         } catch (e) {
@@ -72,6 +98,15 @@ export default function listXatScreen({ nomUsuari, navigation }) {
     return null;
   }
 
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('userSession');
+      navigation.replace('Login');
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
@@ -84,7 +119,7 @@ export default function listXatScreen({ nomUsuari, navigation }) {
         <TouchableOpacity style={styles.textView}>
           <View>
             <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
-              {user.name}
+              {user.nomUsuari}
             </Text>
           </View>
         </TouchableOpacity>
@@ -93,9 +128,9 @@ export default function listXatScreen({ nomUsuari, navigation }) {
             <MaterialIcons name="search" style={styles.searchIcon} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={logout}>
           <View style={styles.optionsView}>
-            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />
+            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon}/>
           </View>
         </TouchableOpacity>
       </View>

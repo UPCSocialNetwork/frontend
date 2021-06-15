@@ -29,7 +29,7 @@ function ChatList({ chatData, setUser, user, setToggle, toggle }) {
         style={{
           height: 1,
           width: '100%',
-          backgroundColor: Colors.lightBlack,
+          backgroundColor: Colors.greySeparator,
         }}
       />
     );
