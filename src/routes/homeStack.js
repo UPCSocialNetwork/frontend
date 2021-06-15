@@ -21,6 +21,9 @@ const screens = {
   Login: {
     screen: Login,
   },
+  listXatScreen: {
+    screen: listXatScreen,
+  },
   RegisterMail: {
     screen: RegisterMail,
   },
@@ -41,9 +44,6 @@ const screens = {
   },
   RegisterProfile: {
     screen: RegisterProfile,
-  },
-  listXatScreen: {
-    screen: listXatScreen,
   },
   ChatScreen: {
     screen: ChatScreen,

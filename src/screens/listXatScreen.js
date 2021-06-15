@@ -9,12 +9,12 @@ import axios from '../constants/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ nomUsuari, navigation }) {
-  //const [user, setUser] = useState(navigation.getParam('user'));
+  const [userSess, setUserSess] = useState(navigation.getParam('user'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
   const [toggle, setToggle] = useState(false);
   const [user, setUser] = useState({
-    nomUsuari: 'cesar.gutierrez', // aqui va user.nomUsuari
+    nomUsuari: navigation.getParam('user').nomUsuari,
     room: 'none',
     participant: 'none',
   });
@@ -28,12 +28,13 @@ export default function listXatScreen({ nomUsuari, navigation }) {
   };
 
   useEffect(() => {
+    console.log(user);
     async function getData() {
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null){
           userSess = JSON.parse(userSess);
-          setUser(userSess);
+          setUserSess(userSess);
           try {
             response = await axios.get('estudiant/auth/session', {
               headers: {
