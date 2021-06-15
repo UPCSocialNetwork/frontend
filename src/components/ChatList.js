@@ -15,6 +15,7 @@ function ChatList({ chatData, setUser, user, setToggle, toggle }) {
       message={item[3]}
       time={item[4]}
       nom={item[5]}
+      tipusXat={item[6]}
       imageSrc={url_aux}
       setUser={setUser}
       user={user}

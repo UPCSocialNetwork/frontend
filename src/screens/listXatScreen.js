@@ -17,14 +17,18 @@ export default function listXatScreen({ nomUsuari, navigation }) {
     nomUsuari: navigation.getParam('user').nomUsuari,
     room: 'none',
     participant: 'none',
+    tipusXat: 'none',
+    titol: 'none',
   });
 
   const pressPickerPrivs = () => {
     setListType('privs');
+    setUser({ ...user, tipusXat: 'privs' });
   };
 
   const pressPickerGrups = () => {
     setListType('grups');
+    setUser({ ...user, tipusXat: 'grups' });
   };
 
   useEffect(() => {

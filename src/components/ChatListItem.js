@@ -12,6 +12,7 @@ function ChatListItem({
   message,
   time,
   nom,
+  tipusXat,
   imageSrc,
   setUser,
   user,
@@ -81,10 +82,12 @@ function ChatListItem({
   };
 
   const onPress = () => {
+    //console.log('hi' + nom + '-' + titol);
     if (user.room === roomID) {
+      setUser({ ...user, room: roomID, participant: participantID, titol: titol, tipusXat: tipusXat });
       setToggle(!toggle);
     } else {
-      setUser({ ...user, room: roomID, participant: participantID });
+      setUser({ ...user, room: roomID, participant: participantID, titol: titol, tipusXat: tipusXat });
     }
   };
 
