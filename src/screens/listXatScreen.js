@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ChatList from '../components/ChatList';
 import axios from '../constants/axios';
+import socket from '../components/Socket';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
@@ -13,6 +14,11 @@ export default function listXatScreen({ navigation }) {
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
   const [toggle, setToggle] = useState(false);
+  const [socketUpdate, setSocketUpdate] = useState(false);
+  const [messageUpdate, setMessageUpdate] = useState({
+    message: 'none',
+    roomID: 'none',
+  });
   const [user, setUser] = useState({
     nomUsuari: navigation.getParam('user').nomUsuari,
     room: 'none',
@@ -31,6 +37,70 @@ export default function listXatScreen({ navigation }) {
     setUser({ ...user, tipusXat: 'grups' });
   };
 
+  useEffect(() => {
+    async function getData() {
+      try {
+        let userSess = await AsyncStorage.getItem('userSession');
+        if (userSess != null) {
+          userSess = JSON.parse(userSess);
+          setUserSess(userSess);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                Authorization: `${userSess.jwt}`,
+              },
+            });
+            if (response.data.msg != 'Success') navigation.replace('Login');
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (e) {
+        // navigation.replace('Login');
+      }
+    }
+    getData();
+    socket.emit('listXat ready', user.nomUsuari);
+    socket.on('update message', (message, roomID) => {
+      console.log(user.nomUsuari);
+      setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
+      setSocketUpdate(true);
+    });
+    return () => {
+      socket.off();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socketUpdate === true) {
+      //console.log('message: ' + messageUpdate.message);
+      //console.log('roomID: ' + messageUpdate.roomID);
+      let chatDataAux = [];
+      let xatAux;
+      for (let i = 0; i < chatData.length; i++) {
+        const element = chatData[i];
+        if (element[0] === messageUpdate.roomID) {
+          if (
+            element[3] != messageUpdate.message.text ||
+            element[4] != messageUpdate.message.createdAt ||
+            element[5] != messageUpdate.message.user.name
+          ) {
+            xatAux = element;
+            xatAux[3] = messageUpdate.message.text;
+            xatAux[4] = messageUpdate.message.createdAt;
+            xatAux[5] = messageUpdate.message.user.name;
+            chatDataAux.unshift(xatAux);
+          }
+        } else {
+          chatDataAux.push(element);
+        }
+      }
+      setChatData(chatDataAux);
+    }
+    setSocketUpdate(false);
+  }, [socketUpdate]);
+
+  /*
   useEffect(() => {
     // console.log(user);
     async function getData() {
@@ -56,6 +126,7 @@ export default function listXatScreen({ navigation }) {
     }
     getData();
   }, []);
+*/
 
   useEffect(() => {
     async function getChatData() {

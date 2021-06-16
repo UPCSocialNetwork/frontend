@@ -33,10 +33,18 @@ export default function ChatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    socket.on('send message', (message) => {
+    socket.on('send message', async (message, roomID) => {
       setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
+      try {
+        let response = await axios.get(`estudiants/${roomID}`);
+        let noms = response.data.persones;
+        noms.forEach((element) => {
+          socket.emit('refresh list', message, element, roomID);
+        });
+      } catch (e) {
+        console.log(e);
+      }
     });
-
     return () => {
       socket.off();
     };
