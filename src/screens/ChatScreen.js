@@ -97,11 +97,6 @@ export default function ChatScreen({ navigation }) {
           await axios.put(
             `/XatGrupTancat/${user.room}`,
             {
-              /*
-              titol: Joi.string().required(),              // PRIORIDAD 1
-              descripcio: Joi.string(),                    // NECESITO PODER HACER EL UPDATE CON SOLO EL ULTIMMISSATGEID
-              imatge: Joi.string(),                        // SI NO NO PUEDO PORQUE TENDRIA QUE ACTUALIZAR TODOS LOS OTROS CAMPOS (COMO POR EJ EL TITULO)
-              */
               ultimMissatgeID: missatgeDB._id,
             },
             { 'Content-Type': 'application/json' },
@@ -114,14 +109,6 @@ export default function ChatScreen({ navigation }) {
           await axios.put(
             `/XatAssignatura/${user.room}`,
             {
-              /*
-              guiaDocent: '-',                             // PRIORIDAD 1
-              mailProfessor: [],                           // NECESITO PODER HACER EL UPDATE CON SOLO EL ULTIMMISSATGEID
-              delegatID: '-',                              // SI NO NO PUEDO PORQUE TENDRIA QUE ACTUALIZAR TODOS LOS OTROS CAMPOS (COMO POR EJ EL TITULO)
-              titol: '-',
-              descripcio: '-',
-              imatge: '-',
-              */
               ultimMissatgeID: missatgeDB._id,
             },
             { 'Content-Type': 'application/json' },
@@ -134,12 +121,6 @@ export default function ChatScreen({ navigation }) {
           await axios.put(
             `/XatMentor/${user.room}`,
             {
-              /*
-              mentorID: Joi.string(),                        // PRIORIDAD 1
-              titol: Joi.string(),                           // NECESITO PODER HACER EL UPDATE CON SOLO EL ULTIMMISSATGEID
-              descripcio: Joi.string(),                      // SI NO NO PUEDO PORQUE TENDRIA QUE ACTUALIZAR TODOS LOS OTROS CAMPOS (COMO POR EJ EL TITULO)
-              imatge: Joi.string(),
-              */
               ultimMissatgeID: missatgeDB._id,
             },
             { 'Content-Type': 'application/json' },
