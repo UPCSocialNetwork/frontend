@@ -8,7 +8,7 @@ import ChatList from '../components/ChatList';
 import axios from '../constants/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function listXatScreen({ nomUsuari, navigation }) {
+export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');

@@ -43,7 +43,7 @@ export default function ChatScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    // console.log(user.tipusXat);
+    //console.log(user.tipusXat);
     async function getMessages() {
       socket.emit('xat actiu', user.room);
       let response = null;
@@ -152,7 +152,7 @@ export default function ChatScreen({ navigation }) {
         <TouchableOpacity
           onPress={() => {
             //                                                                 // PRIORIDAD 2
-            // navigation.replace('listXatScreen', { user });                  // NAVEGACION HACIA ATRAS (DANIEL)
+            navigation.goBack();
           }}
         >
           <View style={styles.goBack}>
