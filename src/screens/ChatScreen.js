@@ -158,9 +158,11 @@ export default function ChatScreen({ navigation }) {
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => {
-            //                                                                 // PRIORIDAD 2
-            navigation.goBack();
+          onPress={async () => {
+            await socket.emit('leave', user.room);
+            let returnChat = false;
+            navigation.navigate('listXatScreen', { user, returnChat });
+            //navigation.goBack();
           }}
         >
           <View style={styles.goBack}>

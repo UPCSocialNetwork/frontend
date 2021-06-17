@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
+  const [returnChat, setReturnChat] = useState(navigation.getParam('returnChat'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
   const [toggle, setToggle] = useState(false);
@@ -38,38 +39,48 @@ export default function listXatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    async function getData() {
-      try {
-        let userSess = await AsyncStorage.getItem('userSession');
-        if (userSess != null) {
-          userSess = JSON.parse(userSess);
-          setUserSess(userSess);
-          try {
-            response = await axios.get('estudiant/auth/session', {
-              headers: {
-                Authorization: `${userSess.jwt}`,
-              },
-            });
-            if (response.data.msg != 'Success') navigation.replace('Login');
-          } catch (error) {
-            console.log(error);
+    //console.log('entro');
+    if (returnChat === false) {
+      setReturnChat(true);
+    } else {
+      async function getData() {
+        try {
+          let userSess = await AsyncStorage.getItem('userSession');
+          if (userSess != null) {
+            userSess = JSON.parse(userSess);
+            setUserSess(userSess);
+            try {
+              response = await axios.get('estudiant/auth/session', {
+                headers: {
+                  Authorization: `${userSess.jwt}`,
+                },
+              });
+              if (response.data.msg != 'Success') navigation.replace('Login');
+            } catch (error) {
+              console.log(error);
+            }
           }
+        } catch (e) {
+          // navigation.replace('Login');
         }
-      } catch (e) {
-        // navigation.replace('Login');
       }
+      getData();
+      // socket.disconnect();
+      //socket.connect();
+      socket.emit('listXat ready', user.nomUsuari);
+      socket.on('listening', (var1, var2) => {
+        console.log(user.nomUsuari + ' listening');
+      });
+      socket.on('update message', (message, roomID) => {
+        console.log('update: ' + user.nomUsuari);
+        setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
+        setSocketUpdate(true);
+      });
+      return () => {
+        socket.off();
+      };
     }
-    getData();
-    socket.emit('listXat ready', user.nomUsuari);
-    socket.on('update message', (message, roomID) => {
-      console.log(user.nomUsuari);
-      setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
-      setSocketUpdate(true);
-    });
-    return () => {
-      socket.off();
-    };
-  }, []);
+  }, [returnChat]);
 
   useEffect(() => {
     if (socketUpdate === true) {
@@ -155,6 +166,7 @@ export default function listXatScreen({ navigation }) {
   useEffect(() => {
     function navigateRoom() {
       if (user.room != 'none') {
+        //socket.disconnect();
         navigation.navigate('ChatScreen', { user });
       }
     }
