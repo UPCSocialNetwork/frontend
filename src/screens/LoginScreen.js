@@ -47,8 +47,7 @@ export default function LoginScreen({ navigation }) {
               },
             });
             if (response.data.msg == 'Success') {
-              let returnChat = false;
-              navigation.replace('listXatScreen', { user, returnChat });
+              navigation.replace('listXatScreen', { user });
             }
           } catch (error) {}
         }
@@ -152,8 +151,8 @@ export default function LoginScreen({ navigation }) {
         };
         // setUserSession(user);
         await storeData(user);
-        let returnChat = true;
-        navigation.replace('listXatScreen', { user, returnChat });
+        //let returnChat = true;
+        navigation.replace('listXatScreen', { user });
       } else {
         setData({
           ...data,

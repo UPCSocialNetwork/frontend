@@ -38,7 +38,9 @@ export default function ChatScreen({ navigation }) {
       try {
         let response = await axios.get(`estudiants/${roomID}`);
         let noms = response.data.persones;
+        //console.log(noms.length);
         noms.forEach((element) => {
+          //console.log(element);
           socket.emit('refresh list', message, element, roomID);
         });
       } catch (e) {
@@ -51,7 +53,6 @@ export default function ChatScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    //console.log(user.tipusXat);
     async function getMessages() {
       socket.emit('xat actiu', user.room);
       let response = null;
@@ -158,11 +159,11 @@ export default function ChatScreen({ navigation }) {
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={async () => {
-            await socket.emit('leave', user.room);
-            let returnChat = false;
-            navigation.navigate('listXatScreen', { user, returnChat });
-            //navigation.goBack();
+          onPress={() => {
+            socket.emit('leave', user.room);
+            // let returnChat = false;
+            navigation.navigate('listXatScreen', { user });
+            // navigation.goBack();
           }}
         >
           <View style={styles.goBack}>
