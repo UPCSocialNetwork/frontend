@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
@@ -8,7 +9,7 @@ import ChatList from '../components/ChatList';
 import axios from '../constants/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function listXatScreen({ nomUsuari, navigation }) {
+export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    marginTop: Window.height * 0.1,
+    marginTop: Window.height * 0.06,
     height: 58,
     width: Window.width * 0.88,
     alignSelf: 'center',
@@ -285,11 +286,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   plusBtn: {
-    width: Window.width * 0.17,
-    height: Window.width * 0.17,
+    width: Window.width * 0.15,
+    height: Window.width * 0.15,
     position: 'absolute',
-    marginTop: Window.height * 0.9,
-    marginLeft: Window.width * 0.75,
+    marginTop: Window.height * 0.87,
+    marginLeft: Window.width * 0.77,
   },
   plusCircle: {
     width: '100%',
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   },
   plusStyle: {
     color: Colors.white,
-    fontSize: 43,
+    fontSize: 30,
     alignSelf: 'center',
   },
 });

@@ -152,7 +152,7 @@ export default function ChatScreen({ navigation }) {
         <TouchableOpacity
           onPress={() => {
             //                                                                 // PRIORIDAD 2
-            // navigation.replace('listXatScreen', { user });                  // NAVEGACION HACIA ATRAS (DANIEL)
+            navigation.goBack();
           }}
         >
           <View style={styles.goBack}>
