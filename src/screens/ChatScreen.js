@@ -161,9 +161,8 @@ export default function ChatScreen({ navigation }) {
         <TouchableOpacity
           onPress={() => {
             socket.emit('leave', user.room);
-            // let returnChat = false;
             navigation.navigate('listXatScreen', { user });
-            // navigation.goBack();
+            // navigation.goBack()
           }}
         >
           <View style={styles.goBack}>
