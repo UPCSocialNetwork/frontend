@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet, StatusBar, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    marginTop: Window.height * 0.06,
+    marginTop: Window.height * 0.02 + StatusBar.currentHeight,
     height: 58,
     width: Window.width * 0.88,
     alignSelf: 'center',
