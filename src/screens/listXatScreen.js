@@ -233,7 +233,12 @@ export default function listXatScreen({ navigation }) {
       </View>
       <ChatList chatData={chatData} setUser={setUser} user={user} setToggle={setToggle} toggle={toggle} />
       <View style={styles.plusBtn}>
-        <TouchableOpacity style={styles.plusCircle}>
+        <TouchableOpacity
+          style={styles.plusCircle}
+          onPress={() => {
+            navigation.navigate('SearchScreen', { listType });
+          }}
+        >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>
         </TouchableOpacity>
       </View>
