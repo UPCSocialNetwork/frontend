@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -30,7 +30,7 @@ function BackHeader({ onPress }) {
 
 const styles = StyleSheet.create({
   backgroundView: {
-    marginTop: 40,
+    marginTop: StatusBar.currentHeight + 10,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',

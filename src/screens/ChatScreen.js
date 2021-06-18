@@ -33,17 +33,26 @@ export default function ChatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    socket.on('send message', (message) => {
+    socket.on('send message', async (message, roomID) => {
       setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
+      try {
+        let response = await axios.get(`estudiants/${roomID}`);
+        let noms = response.data.persones;
+        //console.log(noms.length);
+        noms.forEach((element) => {
+          //console.log(element);
+          socket.emit('refresh list', message, element, roomID);
+        });
+      } catch (e) {
+        console.log(e);
+      }
     });
-
     return () => {
       socket.off();
     };
   }, []);
 
   useEffect(() => {
-    // console.log(user.tipusXat);
     async function getMessages() {
       socket.emit('xat actiu', user.room);
       let response = null;
@@ -151,8 +160,9 @@ export default function ChatScreen({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
-            //                                                                 // PRIORIDAD 2
-            navigation.goBack();
+            socket.emit('leave', user.room);
+            navigation.navigate('listXatScreen', { user });
+            // navigation.goBack()
           }}
         >
           <View style={styles.goBack}>

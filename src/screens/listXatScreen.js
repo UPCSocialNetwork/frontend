@@ -7,13 +7,20 @@ import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ChatList from '../components/ChatList';
 import axios from '../constants/axios';
+import socket from '../components/Socket';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
+  //const [returnChat, setReturnChat] = useState(navigation.getParam('returnChat'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
   const [toggle, setToggle] = useState(false);
+  const [socketUpdate, setSocketUpdate] = useState(false);
+  const [messageUpdate, setMessageUpdate] = useState({
+    message: 'none',
+    roomID: 'none',
+  });
   const [user, setUser] = useState({
     nomUsuari: navigation.getParam('user').nomUsuari,
     room: 'none',
@@ -32,6 +39,72 @@ export default function listXatScreen({ navigation }) {
     setUser({ ...user, tipusXat: 'grups' });
   };
 
+  useEffect(() => {
+    //console.log('entro');
+    async function getData() {
+      try {
+        let userSess = await AsyncStorage.getItem('userSession');
+        if (userSess != null) {
+          userSess = JSON.parse(userSess);
+          setUserSess(userSess);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                Authorization: `${userSess.jwt}`,
+              },
+            });
+            if (response.data.msg != 'Success') navigation.replace('Login');
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (e) {
+        // navigation.replace('Login');
+      }
+    }
+    getData();
+    socket.emit('listXat ready', user.nomUsuari);
+    /*socket.on('listening', (var1, var2) => {
+      console.log(user.nomUsuari + ' listening');
+    });*/
+    socket.on('update message', (message, roomID) => {
+      console.log('update: ' + user.nomUsuari);
+      setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
+      setSocketUpdate(true);
+    });
+    // return () => { };
+  }, []);
+
+  useEffect(() => {
+    if (socketUpdate === true) {
+      //console.log('message: ' + messageUpdate.message);
+      //console.log('roomID: ' + messageUpdate.roomID);
+      let chatDataAux = [];
+      let xatAux;
+      for (let i = 0; i < chatData.length; i++) {
+        const element = chatData[i];
+        if (element[0] === messageUpdate.roomID) {
+          if (
+            element[3] != messageUpdate.message.text ||
+            element[4] != messageUpdate.message.createdAt ||
+            element[5] != messageUpdate.message.user.name
+          ) {
+            xatAux = element;
+            xatAux[3] = messageUpdate.message.text;
+            xatAux[4] = messageUpdate.message.createdAt;
+            xatAux[5] = messageUpdate.message.user.name;
+            chatDataAux.unshift(xatAux);
+          }
+        } else {
+          chatDataAux.push(element);
+        }
+      }
+      setChatData(chatDataAux);
+    }
+    setSocketUpdate(false);
+  }, [socketUpdate]);
+
+  /*
   useEffect(() => {
     // console.log(user);
     async function getData() {
@@ -57,6 +130,7 @@ export default function listXatScreen({ navigation }) {
     }
     getData();
   }, []);
+*/
 
   useEffect(() => {
     async function getChatData() {
@@ -85,6 +159,8 @@ export default function listXatScreen({ navigation }) {
   useEffect(() => {
     function navigateRoom() {
       if (user.room != 'none') {
+        //console.log('hi');
+        //socket.emit('leave', user.nomUsuari);
         navigation.navigate('ChatScreen', { user });
       }
     }
@@ -158,7 +234,12 @@ export default function listXatScreen({ navigation }) {
       </View>
       <ChatList chatData={chatData} setUser={setUser} user={user} setToggle={setToggle} toggle={toggle} />
       <View style={styles.plusBtn}>
-        <TouchableOpacity style={styles.plusCircle}>
+        <TouchableOpacity
+          style={styles.plusCircle}
+          onPress={() => {
+            navigation.navigate('SearchScreen', { listType });
+          }}
+        >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>
         </TouchableOpacity>
       </View>

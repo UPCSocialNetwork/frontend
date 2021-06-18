@@ -13,6 +13,7 @@ import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import listXatScreen from '../screens/listXatScreen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
 import ChatScreen from '../screens/ChatScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const screens = {
   Intro: {
@@ -50,7 +51,10 @@ const screens = {
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
-  }
+  },
+  SearchScreen: {
+    screen: SearchScreen,
+  },
 };
 
 const HomeStack = createStackNavigator(screens, {

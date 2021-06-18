@@ -11,7 +11,7 @@ import Colors from '../constants/Colors';
 //import Window from '../constants/Layout';
 const Window = Dimensions.get('window');
 
-var JWT = "";
+var JWT = '';
 
 export default function LoginScreen({ navigation }) {
   const [data, setData] = useState({
@@ -38,26 +38,25 @@ export default function LoginScreen({ navigation }) {
     async function getData() {
       try {
         let user = await AsyncStorage.getItem('userSession');
-        if (user != null){
+        if (user != null) {
           user = JSON.parse(user);
           try {
             response = await axios.get('estudiant/auth/session', {
               headers: {
-                'Authorization': `${user.jwt}`
-              }
+                Authorization: `${user.jwt}`,
+              },
             });
-            if (response.data.msg == "Success") navigation.replace('listXatScreen', { user });
-          } catch (error) {
-
-          }
+            if (response.data.msg == 'Success') {
+              navigation.replace('listXatScreen', { user });
+            }
+          } catch (error) {}
         }
-      } catch(e) {
+      } catch (e) {
         // error reading value
       }
     }
     getData();
   }, []);
-
 
   if (!loaded) {
     return null;
@@ -69,7 +68,7 @@ export default function LoginScreen({ navigation }) {
         ...data,
         username: val,
         isValidUser: true,
-        isValidSignIn: true
+        isValidSignIn: true,
       });
     } else {
       setData({
@@ -87,7 +86,7 @@ export default function LoginScreen({ navigation }) {
         ...data,
         password: val,
         isValidPassword: true,
-        isValidSignIn: true
+        isValidSignIn: true,
       });
     } else {
       setData({
@@ -98,14 +97,18 @@ export default function LoginScreen({ navigation }) {
       });
     }
   };
- 
+
   async function loginUser() {
     let responseLogin = null;
     try {
-      responseLogin = await axios.post('/estudiant/auth/signin', {
-        nomUsuari: data.username,
-        contrasenya: data.password
-      }, { 'Content-Type': 'application/json' });
+      responseLogin = await axios.post(
+        '/estudiant/auth/signin',
+        {
+          nomUsuari: data.username,
+          contrasenya: data.password,
+        },
+        { 'Content-Type': 'application/json' },
+      );
       JWT = responseLogin.data.jwt;
       return responseLogin.data.message;
     } catch (error) {
@@ -120,9 +123,9 @@ export default function LoginScreen({ navigation }) {
     } catch (e) {
       // saving error
     }
-  }
+  };
 
-  async function LoginHandler () {
+  async function LoginHandler() {
     if (data.password == '' || data.username == '') {
       setData({
         ...data,
@@ -141,13 +144,14 @@ export default function LoginScreen({ navigation }) {
         isnotEmpty: true,
       });
       let responseLogin = await loginUser();
-      if (responseLogin === "Success"){
+      if (responseLogin === 'Success') {
         let user = {
-          nomUsuari : data.username,
-          jwt: JWT
-        }
+          nomUsuari: data.username,
+          jwt: JWT,
+        };
         // setUserSession(user);
         await storeData(user);
+        //let returnChat = true;
         navigation.replace('listXatScreen', { user });
       } else {
         setData({
@@ -157,7 +161,7 @@ export default function LoginScreen({ navigation }) {
         });
       }
     }
-  };
+  }
 
   return (
     <KeyboardAwareScrollView
