@@ -47,7 +47,8 @@ export default function LoginScreen({ navigation }) {
               },
             });
             if (response.data.msg == 'Success') {
-              navigation.replace('listXatScreen', { user });
+              let tipusXat = 'grups';
+              navigation.replace('listXatScreen', { user, tipusXat });
             }
           } catch (error) {}
         }
@@ -151,8 +152,8 @@ export default function LoginScreen({ navigation }) {
         };
         // setUserSession(user);
         await storeData(user);
-        //let returnChat = true;
-        navigation.replace('listXatScreen', { user });
+        let tipusXat = 'grups';
+        navigation.replace('listXatScreen', { user, tipusXat });
       } else {
         setData({
           ...data,

@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
   const [chatData, setChatData] = useState([]);
-  const [listType, setListType] = useState('privs');
+  const [listType, setListType] = useState(navigation.getParam('tipusXat'));
   const [toggle, setToggle] = useState(false);
   const [messageUpdate, setMessageUpdate] = useState({
     message: 'none',
@@ -58,17 +58,17 @@ export default function listXatScreen({ navigation }) {
       } catch (e) {}
     }
     getData();
-    if (navigation.getParam('tipusXat') != undefined) {
+    socket.emit('listXat ready', user.nomUsuari);
+    socket.on('update message', (message, roomID) => {
+      setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
+    });
+    /*if (navigation.getParam('tipusXat') != undefined) {
       if (navigation.getParam('tipusXat') === 'privs') {
         pressPickerPrivs();
       } else {
         pressPickerGrups();
       }
-    }
-    socket.emit('listXat ready', user.nomUsuari);
-    socket.on('update message', (message, roomID) => {
-      setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
-    });
+    }*/
     return () => {
       socket.removeListener('update message');
     };
