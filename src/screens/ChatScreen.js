@@ -33,15 +33,12 @@ export default function ChatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    console.log('ReciveMessage');
     socket.on('send message', async (message, roomID) => {
       setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
       try {
         let response = await axios.get(`estudiants/${roomID}`);
         let noms = response.data.persones;
-        //console.log(noms.length);
         noms.forEach((element) => {
-          //console.log(element);
           socket.emit('refresh list', message, element, roomID);
         });
       } catch (e) {
@@ -150,21 +147,19 @@ export default function ChatScreen({ navigation }) {
         },
       };
       socket.emit('send message', giftMess, user.room);
-      console.log('SendMessage');
     } catch (e) {
       console.error(e);
     }
   }, []);
 
   return (
-    // user.tipusXat
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
             socket.emit('leave', user.room);
-            navigation.navigate('listXatScreen', { user });
-            // navigation.goBack()
+            let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
+            navigation.replace('listXatScreen', { user, tipusXat });
           }}
         >
           <View style={styles.goBack}>

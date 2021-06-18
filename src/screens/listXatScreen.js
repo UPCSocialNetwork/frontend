@@ -12,11 +12,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
-  //const [returnChat, setReturnChat] = useState(navigation.getParam('returnChat'));
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState('privs');
   const [toggle, setToggle] = useState(false);
-  const [socketUpdate, setSocketUpdate] = useState(false);
   const [messageUpdate, setMessageUpdate] = useState({
     message: 'none',
     roomID: 'none',
@@ -40,7 +38,6 @@ export default function listXatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    //console.log('entro');
     async function getData() {
       try {
         let userSess = await AsyncStorage.getItem('userSession');
@@ -58,19 +55,19 @@ export default function listXatScreen({ navigation }) {
             console.log(error);
           }
         }
-      } catch (e) {
-        // navigation.replace('Login');
-      }
+      } catch (e) {}
     }
     getData();
+    if (navigation.getParam('tipusXat') != undefined) {
+      if (navigation.getParam('tipusXat') === 'privs') {
+        pressPickerPrivs();
+      } else {
+        pressPickerGrups();
+      }
+    }
     socket.emit('listXat ready', user.nomUsuari);
-    /*socket.on('listening', (var1, var2) => {
-      console.log(user.nomUsuari + ' listening');
-    });*/
     socket.on('update message', (message, roomID) => {
-      console.log('update: ' + user.nomUsuari);
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
-      setSocketUpdate(true);
     });
     return () => {
       socket.removeListener('update message');
@@ -78,9 +75,7 @@ export default function listXatScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (socketUpdate === true) {
-      //console.log('message: ' + messageUpdate.message);
-      //console.log('roomID: ' + messageUpdate.roomID);
+    if (messageUpdate.message != 'none') {
       let chatDataAux = [];
       let xatAux;
       for (let i = 0; i < chatData.length; i++) {
@@ -103,36 +98,7 @@ export default function listXatScreen({ navigation }) {
       }
       setChatData(chatDataAux);
     }
-    setSocketUpdate(false);
-  }, [socketUpdate]);
-
-  /*
-  useEffect(() => {
-    // console.log(user);
-    async function getData() {
-      try {
-        let userSess = await AsyncStorage.getItem('userSession');
-        if (userSess != null) {
-          userSess = JSON.parse(userSess);
-          setUserSess(userSess);
-          try {
-            response = await axios.get('estudiant/auth/session', {
-              headers: {
-                Authorization: `${userSess.jwt}`,
-              },
-            });
-            if (response.data.msg != 'Success') navigation.replace('Login');
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } catch (e) {
-        // navigation.replace('Login');
-      }
-    }
-    getData();
-  }, []);
-*/
+  }, [messageUpdate]);
 
   useEffect(() => {
     async function getChatData() {
@@ -161,8 +127,6 @@ export default function listXatScreen({ navigation }) {
   useEffect(() => {
     function navigateRoom() {
       if (user.room != 'none') {
-        //console.log('hi');
-        //socket.emit('leave', user.nomUsuari);
         navigation.replace('ChatScreen', { user });
       }
     }
