@@ -72,7 +72,9 @@ export default function listXatScreen({ navigation }) {
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
       setSocketUpdate(true);
     });
-    // return () => { };
+    return () => {
+      socket.removeListener('update message');
+    };
   }, []);
 
   useEffect(() => {
@@ -161,7 +163,7 @@ export default function listXatScreen({ navigation }) {
       if (user.room != 'none') {
         //console.log('hi');
         //socket.emit('leave', user.nomUsuari);
-        navigation.navigate('ChatScreen', { user });
+        navigation.replace('ChatScreen', { user });
       }
     }
     navigateRoom();

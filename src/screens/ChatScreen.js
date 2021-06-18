@@ -33,6 +33,7 @@ export default function ChatScreen({ navigation }) {
   };
 
   useEffect(() => {
+    console.log('ReciveMessage');
     socket.on('send message', async (message, roomID) => {
       setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
       try {
@@ -48,7 +49,7 @@ export default function ChatScreen({ navigation }) {
       }
     });
     return () => {
-      socket.off();
+      socket.removeListener('send message');
     };
   }, []);
 
@@ -149,6 +150,7 @@ export default function ChatScreen({ navigation }) {
         },
       };
       socket.emit('send message', giftMess, user.room);
+      console.log('SendMessage');
     } catch (e) {
       console.error(e);
     }
