@@ -52,8 +52,7 @@ export default function RegisterMentor1Screen({ navigation }) {
         setMentorsData(responseMentors.data.mentors);
         setFilterData(responseMentors.data.mentors);
         let totGraus = { _id: 'none', centreUniversitariID: 'none', credits: 0, nom: 'Tots els graus' };
-        let grausData = responseGrau.data.grau;
-        grausData = grausData.unshift(totGraus);
+        responseGrau.data.grau.unshift(totGraus);
         setGraus(responseGrau.data.grau);
       } catch (error) {
         console.error(error);
@@ -62,25 +61,6 @@ export default function RegisterMentor1Screen({ navigation }) {
     }
     fetchData();
   }, []);
-
-  /*
-  // Get XatMentorID
-  useEffect(() => {
-    async function getXatMentor() {
-      let response = null;
-      try {
-        response = await axios.get(`XatMentor/${mentorActiu}`);
-        let user = newUser;
-        user.xatMentorID = response.data.xatMentor._id;
-        navigation.navigate('RegisterPerfil', { user });
-      } catch (error) {
-        console.error(error);
-      }
-      return response;
-    }
-    if (xatMentorReady === true) getXatMentor();
-  }, [xatMentorReady]);
-*/
 
   // Filter Grau
   useEffect(() => {

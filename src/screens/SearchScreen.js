@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
+import { View, Image, StatusBar, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -39,6 +39,8 @@ export default function SearchScreen({ navigation }) {
       let responseUsers = null;
       try {
         responseGrau = await axios.get('/grau/getAll');
+        let totGraus = { _id: 'none', centreUniversitariID: 'none', credits: 0, nom: 'Tots els graus' };
+        responseGrau.data.grau.unshift(totGraus);
         responseUsers = await axios.get('/estudiant');
         setUsers(responseUsers.data.estudiant);
         setFilterData(responseUsers.data.estudiant);
@@ -102,21 +104,6 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
-  const SearchInput = () => {
-    return (
-      <View style={styles.searchBloc}>
-        <TextInput
-          style={styles.dropdown}
-          value={search}
-          placeholder="Cerca estudiant..."
-          underlineColorAndroid="transparent"
-          onChangeText={(text) => searchFilter(text)}
-        ></TextInput>
-        <MaterialIcons style={styles.iconSearch} name="search" size={25} color={Colors.secondary} />
-      </View>
-    );
-  };
-
   const GrauButton = () => {
     return (
       <View style={styles.grauBtn}>
@@ -146,7 +133,30 @@ export default function SearchScreen({ navigation }) {
     );
   };
 
-  const renderItem = ({ item }) => <Text></Text>;
+  const renderItem = ({ item, index }) => (
+    <TouchableOpacity>
+      <View style={styles.card}>
+        <View style={styles.imageViewParent}>
+          <View style={styles.imageView}>
+            <Image
+              style={styles.imageChat}
+              source={{ uri: `https://randomuser.me/api/portraits/men/${index + 1}.jpg` }}
+            />
+          </View>
+        </View>
+        <View style={styles.userViewParent}>
+          <View style={styles.userView}>
+            <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+              {item.nomUsuari}
+            </Text>
+            <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+              {item.grauID}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   const FlatListItemSeparator = () => {
     return (
@@ -191,7 +201,16 @@ export default function SearchScreen({ navigation }) {
           <Title text={'Afegeix els integrants del grup'} />
         )}
       </View>
-      <SearchInput></SearchInput>
+      <View style={styles.searchBloc}>
+        <TextInput
+          style={styles.dropdown}
+          value={search}
+          placeholder="Cerca estudiant..."
+          underlineColorAndroid="transparent"
+          onChangeText={(text) => searchFilter(text)}
+        ></TextInput>
+        <MaterialIcons style={styles.iconSearch} name="search" size={25} color={Colors.secondary} />
+      </View>
       <GrauButton></GrauButton>
       <ListUsers></ListUsers>
     </View>
@@ -272,5 +291,43 @@ const styles = StyleSheet.create({
   flatListView: {
     marginTop: Window.height * 0.02,
     height: Window.height * 0.42,
+  },
+  card: {
+    height: 80,
+    width: '100%',
+    flexDirection: 'row',
+  },
+  imageViewParent: {
+    justifyContent: 'center',
+    marginLeft: Window.width * 0.06,
+    width: Window.width * 0.1333,
+  },
+  imageView: {
+    height: Window.width * 0.1333,
+  },
+  imageChat: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 50,
+  },
+  userViewParent: {
+    marginLeft: Window.width * 0.032,
+    justifyContent: 'center',
+    width: Window.width * 0.64,
+  },
+  userView: {
+    height: '80%',
+  },
+  nom: {
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
+    color: Colors.secondary,
+    width: '95%',
+  },
+  message: {
+    fontFamily: 'InterRegular',
+    fontSize: 14,
+    color: Colors.blueGrey,
+    paddingTop: 2,
   },
 });
