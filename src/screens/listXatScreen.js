@@ -203,7 +203,7 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity
           style={styles.plusCircle}
           onPress={() => {
-            navigation.navigate('SearchScreen', { listType });
+            navigation.navigate('SearchScreen', { listType, user });
           }}
         >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>

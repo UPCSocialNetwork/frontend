@@ -19,12 +19,7 @@ export default function SearchScreen({ navigation }) {
   const [Graus, setGraus] = useState([]);
   const [Users, setUsers] = useState([]);
   const [filterData, setFilterData] = useState([]);
-  const [errorMentor, setErrorMentor] = useState(false);
-  const [mentorActiu, setMentorActiu] = useState({
-    nomUsuari: 'none',
-    Grau: 'none',
-    xatMentorID: 'none',
-  });
+  const [user, setUser] = useState(navigation.getParam('user'));
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -133,8 +128,30 @@ export default function SearchScreen({ navigation }) {
     );
   };
 
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity>
+  const FlatListItemSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '100%',
+          backgroundColor: Colors.lightBlack,
+        }}
+      />
+    );
+  };
+
+  const itemPrivPress = (receiverName) => {
+    // crear chat
+    // recoger el id
+    // crear participantes con user.nomUsuari y receiverName
+    // actualizas user con: user.nomUsuari, room; id recogido del chat, participant: partID con user.nomUsuari, tipusXat: 'privs', titol: receiverName
+    // mandas a chat screen con user
+    // Si no envia mensaje y tira para atras se borra el chat
+    // Si envia mensaje se crea
+  };
+
+  const renderItemPrivs = ({ item, index }) => (
+    <TouchableOpacity activeOpacity={0.6} onPress={() => itemPrivPress(item.nomUsuari)}>
       <View style={styles.card}>
         <View style={styles.imageViewParent}>
           <View style={styles.imageView}>
@@ -158,24 +175,30 @@ export default function SearchScreen({ navigation }) {
     </TouchableOpacity>
   );
 
-  const FlatListItemSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: '100%',
-          backgroundColor: Colors.lightBlack,
-        }}
-      />
-    );
-  };
-
-  const ListUsers = () => {
+  const ListUsersPrivs = () => {
     return (
       <View style={styles.flatListView}>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
+          renderItem={renderItemPrivs}
+          data={filterData}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+    );
+  };
+
+  const ListUsersGrups = () => {
+    return (
+      <View style={styles.flatListView}>
+        <View>
+          <Text>GRUPS</Text>
+        </View>
+        <FlatList
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItemGrups}
           data={filterData}
           ItemSeparatorComponent={FlatListItemSeparator}
           showsVerticalScrollIndicator={false}
@@ -212,7 +235,7 @@ export default function SearchScreen({ navigation }) {
         <MaterialIcons style={styles.iconSearch} name="search" size={25} color={Colors.secondary} />
       </View>
       <GrauButton></GrauButton>
-      <ListUsers></ListUsers>
+      {searchType === 'privs' ? <ListUsersPrivs></ListUsersPrivs> : <ListUsersGrups></ListUsersGrups>}
     </View>
   );
 }
