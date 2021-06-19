@@ -19,7 +19,7 @@ export default function SearchScreen({ navigation }) {
   const [Graus, setGraus] = useState([]);
   const [Users, setUsers] = useState([]);
   const [filterData, setFilterData] = useState([]);
-  const [user, setUser] = useState(navigation.getParam('user'));
+  const [userData, setUserData] = useState(navigation.getParam('user'));
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -141,13 +141,14 @@ export default function SearchScreen({ navigation }) {
   };
 
   const itemPrivPress = (receiverName) => {
-    // crear chat
-    // recoger el id
-    // crear participantes con user.nomUsuari y receiverName
-    // actualizas user con: user.nomUsuari, room; id recogido del chat, participant: partID con user.nomUsuari, tipusXat: 'privs', titol: receiverName
-    // mandas a chat screen con user
-    // Si no envia mensaje y tira para atras se borra el chat
-    // Si envia mensaje se crea
+    const user = {
+      nomUsuari: userData.nomUsuari,
+      room: 'none',
+      participant: 'none',
+      tipusXat: 'privs',
+      titol: receiverName,
+    };
+    navigation.replace('ChatScreen', { user });
   };
 
   const renderItemPrivs = ({ item, index }) => (

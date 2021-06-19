@@ -13,10 +13,7 @@ export default function ChatScreen({ navigation }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(navigation.getParam('user'));
-  /*const [user, setUser] = useState({
-    name: 'cesar',
-    room: 'room1',
-  });*/
+  const [nouXat, setNouXat] = useState(false);
 
   const formatMsg = (msg, sender) => {
     let giftMess = {
@@ -58,13 +55,15 @@ export default function ChatScreen({ navigation }) {
         response = await axios.get('missatge/xat/' + user.room);
         let missatges = response.data.missatges;
         let giftedMessages = [];
-        if (missatges) {
+        if (missatges && missatges.length > 0) {
           missatges.map(function (element) {
             element[1].map(function (msg) {
               msg = formatMsg(msg, element[0]);
               giftedMessages.push(msg);
             });
           });
+        } else {
+          setNouXat(true);
         }
         giftedMessages.sort((a, b) => b.createdAt - a.createdAt);
         setMessages(giftedMessages);
@@ -75,14 +74,14 @@ export default function ChatScreen({ navigation }) {
     getMessages();
   }, []);
 
-  const onSend = useCallback(async (newMessage = []) => {
+  const addMissatge = async (newMessage, part, room) => {
     newMessage = newMessage[0];
     try {
       let response = await axios.post(
         '/missatge/add',
         {
           text: newMessage.text,
-          participantID: user.participant,
+          participantID: part,
         },
         { 'Content-Type': 'application/json' },
       );
@@ -90,7 +89,7 @@ export default function ChatScreen({ navigation }) {
       if (user.tipusXat === 'privs') {
         try {
           await axios.put(
-            `/Xat/${user.room}`,
+            `/Xat/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -102,7 +101,7 @@ export default function ChatScreen({ navigation }) {
       } else if (user.tipusXat === 'XatGrupTancat') {
         try {
           await axios.put(
-            `/XatGrupTancat/${user.room}`,
+            `/XatGrupTancat/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -114,7 +113,7 @@ export default function ChatScreen({ navigation }) {
       } else if (user.tipusXat === 'XatAssignatura') {
         try {
           await axios.put(
-            `/XatAssignatura/${user.room}`,
+            `/XatAssignatura/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -126,7 +125,7 @@ export default function ChatScreen({ navigation }) {
       } else {
         try {
           await axios.put(
-            `/XatMentor/${user.room}`,
+            `/XatMentor/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -141,14 +140,57 @@ export default function ChatScreen({ navigation }) {
         text: missatgeDB.text,
         createdAt: missatgeDB.createdAt,
         user: {
-          _id: user.participant,
+          _id: part,
           name: user.nomUsuari,
           avatar: 'https://randomuser.me/api/portraits/men/1.jpg', //           PRIORIDAD 3 // IMAGENES REALES
         },
       };
-      socket.emit('send message', giftMess, user.room);
+      socket.emit('send message', giftMess, room);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const onSend = useCallback(async (newMessage = []) => {
+    if (!nouXat) {
+      addMissatge(newMessage, user.participant, user.room);
+    } else {
+      try {
+        let responseXat = await axios.post('/Xat');
+        let xatID = responseXat.data.Xat._id;
+        try {
+          let responsePart1 = await axios.post(
+            '/participant',
+            {
+              estudiantID: user.nomUsuari,
+              xatID: xatID,
+              ultimaLectura: 0,
+              notificacions: 'Activat',
+              bloqueigGrup: 'Desactivat',
+            },
+            { 'Content-Type': 'application/json' },
+          );
+          let responsePart2 = await axios.post(
+            '/participant',
+            {
+              estudiantID: user.titol,
+              xatID: xatID,
+              ultimaLectura: 0,
+              notificacions: 'Activat',
+              bloqueigGrup: 'Desactivat',
+            },
+            { 'Content-Type': 'application/json' },
+          );
+          let partID = responsePart1.data.Participant._id;
+          setNouXat(false);
+          setUser({ ...user, room: xatID, participant: partID });
+          addMissatge(newMessage, partID, xatID);
+        } catch (e) {
+          console.error(e);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
