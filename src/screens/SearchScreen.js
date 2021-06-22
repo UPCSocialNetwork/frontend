@@ -30,6 +30,8 @@ export default function SearchScreen({ navigation }) {
 
   useEffect(() => {
     async function fetchData() {
+      // console.log('searchType: ' + searchType);
+      // console.log('user: ' + userData);
       let responseGrau = null;
       let responseUsers = null;
       try {
@@ -37,6 +39,9 @@ export default function SearchScreen({ navigation }) {
         let totGraus = { _id: 'none', centreUniversitariID: 'none', credits: 0, nom: 'Tots els graus' };
         responseGrau.data.grau.unshift(totGraus);
         responseUsers = await axios.get('/estudiant');
+        responseUsers.data.estudiant.map((element, index) => {
+          if (element.nomUsuari === userData.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
+        });
         setUsers(responseUsers.data.estudiant);
         setFilterData(responseUsers.data.estudiant);
         setGraus(responseGrau.data.grau);
@@ -199,7 +204,7 @@ export default function SearchScreen({ navigation }) {
         </View>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItemGrups}
+          // renderItem={renderItemGrups}
           data={filterData}
           ItemSeparatorComponent={FlatListItemSeparator}
           showsVerticalScrollIndicator={false}

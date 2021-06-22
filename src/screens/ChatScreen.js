@@ -72,7 +72,7 @@ export default function ChatScreen({ navigation }) {
       }
     }
     getMessages();
-  }, []);
+  }, [user.room]);
 
   const addMissatge = async (newMessage, part, room) => {
     newMessage = newMessage[0];
@@ -142,7 +142,7 @@ export default function ChatScreen({ navigation }) {
         user: {
           _id: part,
           name: user.nomUsuari,
-          avatar: 'https://randomuser.me/api/portraits/men/1.jpg', //           PRIORIDAD 3 // IMAGENES REALES
+          avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
         },
       };
       socket.emit('send message', giftMess, room);
@@ -151,48 +151,51 @@ export default function ChatScreen({ navigation }) {
     }
   };
 
-  const onSend = useCallback(async (newMessage = []) => {
-    if (!nouXat) {
-      addMissatge(newMessage, user.participant, user.room);
-    } else {
-      try {
-        let responseXat = await axios.post('/Xat');
-        let xatID = responseXat.data.Xat._id;
+  const onSend = useCallback(
+    async (newMessage = []) => {
+      if (!nouXat) {
+        addMissatge(newMessage, user.participant, user.room);
+      } else {
         try {
-          let responsePart1 = await axios.post(
-            '/participant',
-            {
-              estudiantID: user.nomUsuari,
-              xatID: xatID,
-              ultimaLectura: 0,
-              notificacions: 'Activat',
-              bloqueigGrup: 'Desactivat',
-            },
-            { 'Content-Type': 'application/json' },
-          );
-          let responsePart2 = await axios.post(
-            '/participant',
-            {
-              estudiantID: user.titol,
-              xatID: xatID,
-              ultimaLectura: 0,
-              notificacions: 'Activat',
-              bloqueigGrup: 'Desactivat',
-            },
-            { 'Content-Type': 'application/json' },
-          );
-          let partID = responsePart1.data.Participant._id;
-          setNouXat(false);
-          setUser({ ...user, room: xatID, participant: partID });
-          addMissatge(newMessage, partID, xatID);
+          let responseXat = await axios.post('/Xat');
+          let xatID = responseXat.data.Xat._id;
+          try {
+            let responsePart1 = await axios.post(
+              '/participant',
+              {
+                estudiantID: user.nomUsuari,
+                xatID: xatID,
+                ultimaLectura: 0,
+                notificacions: 'Activat',
+                bloqueigGrup: 'Desactivat',
+              },
+              { 'Content-Type': 'application/json' },
+            );
+            let responsePart2 = await axios.post(
+              '/participant',
+              {
+                estudiantID: user.titol,
+                xatID: xatID,
+                ultimaLectura: 0,
+                notificacions: 'Activat',
+                bloqueigGrup: 'Desactivat',
+              },
+              { 'Content-Type': 'application/json' },
+            );
+            let partID = responsePart1.data.Participant._id;
+            setUser({ ...user, room: xatID, participant: partID });
+            addMissatge(newMessage, partID, xatID);
+            setNouXat(false);
+          } catch (e) {
+            console.error(e);
+          }
         } catch (e) {
           console.error(e);
         }
-      } catch (e) {
-        console.error(e);
       }
-    }
-  }, []);
+    },
+    [nouXat],
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
