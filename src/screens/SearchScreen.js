@@ -19,7 +19,7 @@ export default function SearchScreen({ navigation }) {
   const [Graus, setGraus] = useState([]);
   const [Users, setUsers] = useState([]);
   const [filterData, setFilterData] = useState([]);
-  const [userData, setUserData] = useState(navigation.getParam('user'));
+  const [user, setUser] = useState(navigation.getParam('user'));
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -31,7 +31,7 @@ export default function SearchScreen({ navigation }) {
   useEffect(() => {
     async function fetchData() {
       // console.log('searchType: ' + searchType);
-      // console.log('user: ' + userData);
+      // console.log('user: ' + user.nomUsuari);
       let responseGrau = null;
       let responseUsers = null;
       try {
@@ -40,8 +40,17 @@ export default function SearchScreen({ navigation }) {
         responseGrau.data.grau.unshift(totGraus);
         responseUsers = await axios.get('/estudiant');
         responseUsers.data.estudiant.map((element, index) => {
-          if (element.nomUsuari === userData.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
+          if (element.nomUsuari === user.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
         });
+        if (searchType === 'privs') {
+          let responseXats = await axios.get(`/estudiant/xats/${user.nomUsuari}`);
+          responseXats = responseXats.data.xatsFinals;
+          responseUsers.data.estudiant.map((element, index) => {
+            responseXats.forEach((xat) => {
+              if (xat[2] === element.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
+            });
+          });
+        }
         setUsers(responseUsers.data.estudiant);
         setFilterData(responseUsers.data.estudiant);
         setGraus(responseGrau.data.grau);
@@ -146,14 +155,14 @@ export default function SearchScreen({ navigation }) {
   };
 
   const itemPrivPress = (receiverName) => {
-    const user = {
-      nomUsuari: userData.nomUsuari,
+    const newUser = {
+      nomUsuari: user.nomUsuari,
       room: 'none',
       participant: 'none',
       tipusXat: 'privs',
       titol: receiverName,
     };
-    navigation.replace('ChatScreen', { user });
+    navigation.replace('ChatScreen', { user: newUser });
   };
 
   const renderItemPrivs = ({ item, index }) => (
@@ -219,7 +228,8 @@ export default function SearchScreen({ navigation }) {
       <View style={styles.header}>
         <BackHeader
           onPress={() => {
-            navigation.goBack();
+            const tipusXat = user.tipusXat;
+            navigation.replace('listXatScreen', { user, tipusXat });
           }}
         ></BackHeader>
       </View>

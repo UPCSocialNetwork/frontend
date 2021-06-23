@@ -49,7 +49,7 @@ export default function ChatScreen({ navigation }) {
 
   useEffect(() => {
     async function getMessages() {
-      socket.emit('xat actiu', user.room);
+      if (user.room != 'none') socket.emit('xat actiu', user.room);
       let response = null;
       try {
         response = await axios.get('missatge/xat/' + user.room);
@@ -72,7 +72,7 @@ export default function ChatScreen({ navigation }) {
       }
     }
     getMessages();
-  }, [user.room]);
+  }, []);
 
   const addMissatge = async (newMessage, part, room) => {
     newMessage = newMessage[0];
@@ -183,6 +183,7 @@ export default function ChatScreen({ navigation }) {
               { 'Content-Type': 'application/json' },
             );
             let partID = responsePart1.data.Participant._id;
+            socket.emit('xat actiu', xatID);
             setUser({ ...user, room: xatID, participant: partID });
             addMissatge(newMessage, partID, xatID);
             setNouXat(false);
