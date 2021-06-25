@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StatusBar, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
@@ -9,7 +8,7 @@ import ModalPicker from '../components/ModalPicker';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-import MentorListItem from '../components/MentorListItem';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function SearchScreen({ navigation }) {
   const [searchType, setSearchType] = useState(navigation.getParam('listType'));
@@ -20,6 +19,20 @@ export default function SearchScreen({ navigation }) {
   const [Users, setUsers] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [user, setUser] = useState(navigation.getParam('user'));
+  const [userSelected, setUserSelected] = useState([
+    'CW',
+    'DE',
+    'JS',
+    'WF',
+    'CV',
+    'DA',
+    'JK',
+    'WY',
+    'CX',
+    'DO',
+    'JD',
+    'WS',
+  ]);
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -45,11 +58,18 @@ export default function SearchScreen({ navigation }) {
         if (searchType === 'privs') {
           let responseXats = await axios.get(`/estudiant/xats/${user.nomUsuari}`);
           responseXats = responseXats.data.xatsFinals;
-          responseUsers.data.estudiant.map((element, index) => {
+          // console.log(responseXats);
+          let index = responseUsers.data.estudiant.length - 1;
+          let element;
+          while (index >= 0) {
+            element = responseUsers.data.estudiant[index];
             responseXats.forEach((xat) => {
-              if (xat[2] === element.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
+              if (xat[2] === element.nomUsuari) {
+                responseUsers.data.estudiant.splice(index, 1);
+              }
             });
-          });
+            index -= 1;
+          }
         }
         setUsers(responseUsers.data.estudiant);
         setFilterData(responseUsers.data.estudiant);
@@ -205,15 +225,31 @@ export default function SearchScreen({ navigation }) {
     );
   };
 
+  const renderUserSelected = ({ item }) => (
+    <View style={styles.item}>
+      <Text style={styles.nomItem}>{item}</Text>
+      <View style={styles.circle}>
+        <MaterialIcons style={styles.icon} name="close" size={14} color={Colors.black} />
+      </View>
+    </View>
+  );
+
   const ListUsersGrups = () => {
     return (
       <View style={styles.flatListView}>
-        <View>
-          <Text>GRUPS</Text>
+        <View style={styles.userSelected}>
+          <FlatList
+            horizontal
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderUserSelected}
+            data={userSelected}
+            contentContainerStyle={{ paddingBottom: 5 }}
+            showsHorizontalScrollIndicator={false}
+          />
         </View>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
-          // renderItem={renderItemGrups}
+          renderItem={renderItemPrivs}
           data={filterData}
           ItemSeparatorComponent={FlatListItemSeparator}
           showsVerticalScrollIndicator={false}
@@ -328,8 +364,12 @@ const styles = StyleSheet.create({
     marginLeft: '1%',
   },
   flatListView: {
-    marginTop: Window.height * 0.02,
-    height: Window.height * 0.42,
+    flex: 1,
+  },
+  userSelected: {
+    height: 80,
+    marginLeft: 7,
+    marginRight: 7,
   },
   card: {
     height: 80,
@@ -368,5 +408,41 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.blueGrey,
     paddingTop: 2,
+  },
+  item: {
+    backgroundColor: Colors.blue,
+    height: '70%',
+    aspectRatio: 1,
+    alignSelf: 'center',
+    marginLeft: 7,
+    marginRight: 7,
+    borderRadius: 50,
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 2,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nomItem: {
+    fontSize: 17,
+  },
+  circle: {
+    height: '35%',
+    aspectRatio: 1,
+    borderRadius: 50,
+    backgroundColor: Colors.grey,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    borderColor: Colors.white,
+    justifyContent: 'center',
+  },
+  icon: {
+    alignSelf: 'center',
   },
 });
