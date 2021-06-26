@@ -34,7 +34,7 @@ export default function GrupInfoScreen({ navigation }) {
   });*/
   const [xatGrupal, setXatGrupal] = useState({});
   const [llistatParticipants, setLlistatParticipants] = useState([]);
-  const [visitUser, setVisitUser] = useState(false);
+  const [visitUser, setVisitUser] = useState('none');
 
   useEffect(() => {
     async function getData() {
@@ -74,7 +74,9 @@ export default function GrupInfoScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (visitUser) navigation.replace({ user });
+    if (visitUser !== 'none' && visitUser != user.nomUsuari) {
+      navigation.replace('ProfileInfoScreen', { user, visitUser });
+    }
   }, [visitUser]);
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
@@ -95,7 +97,7 @@ export default function GrupInfoScreen({ navigation }) {
       <View style={styles.Container}>
         <BackHeader
           onPress={() => {
-            navigation.replace({ user });
+            navigation.replace('ChatScreen', { user });
           }}
         ></BackHeader>
         <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>

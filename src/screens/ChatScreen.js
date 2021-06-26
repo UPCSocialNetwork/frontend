@@ -200,7 +200,7 @@ export default function ChatScreen({ navigation }) {
 
   const onPressProfile = () => {
     if (user.tipusXat === 'privs') {
-      navigation.replace('ProfileInfoScreen', { user });
+      navigation.replace('ProfileInfoScreen', { user, visitUser: user.titol });
     } else {
       navigation.replace('GrupInfoScreen', { user });
     }

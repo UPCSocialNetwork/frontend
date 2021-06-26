@@ -5,7 +5,7 @@ import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
-export default function ParticipantList({ id, nomUsuari, setVisitUser }) {
+export default function ParticipantList({ nomUsuari, setVisitUser }) {
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -18,7 +18,7 @@ export default function ParticipantList({ id, nomUsuari, setVisitUser }) {
   }
 
   const onPress = () => {
-    setVisitUser(true);
+    setVisitUser(nomUsuari);
   };
   var imageSrc = 'https://randomuser.me/api/portraits/men/1.jpg';
 

@@ -10,6 +10,7 @@ import BackHeader from '../components/BackHeader';
 
 function ProfileInfoScreen({ navigation }) {
   const [user, setUser] = useState(navigation.getParam('user'));
+  const [visitUser, setVisitUser] = useState(navigation.getParam('visitUser'));
   const [isAssigModalVisible, setAssigModalVisible] = useState(false);
   const [userData, setUserData] = useState([
     {
@@ -36,7 +37,7 @@ function ProfileInfoScreen({ navigation }) {
     async function getUserData() {
       let response = null;
       try {
-        response = await axios.get(`estudiant/cesar.gutierrez`);
+        response = await axios.get(`estudiant/${visitUser}`);
         let est = response.data.estudiant;
         setUserData({
           ...userData,
@@ -87,7 +88,8 @@ function ProfileInfoScreen({ navigation }) {
     <View>
       <BackHeader
         onPress={() => {
-          navigation.replace('ChatScreen', { user });
+          if (user.tipusXat === 'privs') navigation.replace('ChatScreen', { user });
+          else navigation.replace('GrupInfoScreen', { user });
         }}
       ></BackHeader>
       <View style={styles.header}>
@@ -123,6 +125,7 @@ function ProfileInfoScreen({ navigation }) {
           </View>
           <Modal
             animationType="fade"
+            presentationStyle="fullScreen"
             visible={isAssigModalVisible}
             style={styles.modal}
             onRequestClose={() => {
@@ -135,6 +138,7 @@ function ProfileInfoScreen({ navigation }) {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItemAssig}
                 data={userData.LlistaAssignatures}
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
               />
@@ -256,9 +260,6 @@ const styles = StyleSheet.create({
   assigView: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    backgroundColor: Colors.white,
-    height: '50%',
   },
   itemAssig: {
     backgroundColor: Colors.lightGrey,
