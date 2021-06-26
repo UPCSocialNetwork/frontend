@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StatusBar, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
-import * as Animatable from 'react-native-animatable';
 import BackHeader from '../components/BackHeader';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
@@ -8,7 +7,7 @@ import ModalPicker from '../components/ModalPicker';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import BaseButton from '../components/BaseButton';
 
 export default function SearchScreen({ navigation }) {
   const [searchType, setSearchType] = useState(navigation.getParam('listType'));
@@ -19,20 +18,8 @@ export default function SearchScreen({ navigation }) {
   const [Users, setUsers] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [user, setUser] = useState(navigation.getParam('user'));
-  const [userSelected, setUserSelected] = useState([
-    'CW',
-    'DE',
-    'JS',
-    'WF',
-    'CV',
-    'DA',
-    'JK',
-    'WY',
-    'CX',
-    'DO',
-    'JD',
-    'WS',
-  ]);
+  const [userSelected, setUserSelected] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
@@ -185,6 +172,21 @@ export default function SearchScreen({ navigation }) {
     navigation.replace('ChatScreen', { user: newUser });
   };
 
+  const itemGrupPress = (item) => {
+    if (userSelected.find((element) => element.id === item._id)) {
+      let index = userSelected.findIndex((element) => element.id === item._id);
+      onPressCircle(index);
+    } else {
+      let inicials = item.nomUsuari[0].toUpperCase();
+      inicials = inicials + item.nomUsuari.split('.')[1][0].toUpperCase();
+      let userSelectedAux = userSelected;
+      var data = { id: item._id, inicials: inicials, nomUsuari: item.nomUsuari };
+      userSelectedAux.push(data);
+      setUserSelected(userSelectedAux);
+      setRefresh(!refresh);
+    }
+  };
+
   const renderItemPrivs = ({ item, index }) => (
     <TouchableOpacity activeOpacity={0.6} onPress={() => itemPrivPress(item.nomUsuari)}>
       <View style={styles.card}>
@@ -210,51 +212,110 @@ export default function SearchScreen({ navigation }) {
     </TouchableOpacity>
   );
 
+  const renderItemGrups = ({ item, index }) => (
+    <TouchableOpacity
+      activeOpacity={0.6}
+      onPress={() => itemGrupPress(item)}
+      style={userSelected.find((element) => element.id === item._id) ? styles.pressed : styles.notPressed}
+    >
+      <View style={styles.card}>
+        <View style={styles.imageViewParent}>
+          <View style={styles.imageView}>
+            <Image
+              style={styles.imageChat}
+              source={{ uri: `https://randomuser.me/api/portraits/men/${index + 1}.jpg` }}
+            />
+          </View>
+        </View>
+        <View style={styles.userViewParent}>
+          <View style={styles.userView}>
+            <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
+              {item.nomUsuari}
+            </Text>
+            <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+              {item.grauID}
+            </Text>
+          </View>
+        </View>
+        {userSelected.find((element) => element.id === item._id) ? (
+          <View>
+            <View style={styles.optionsView}>
+              <MaterialIcons name="done" style={styles.optionsIcon} />
+            </View>
+          </View>
+        ) : null}
+      </View>
+    </TouchableOpacity>
+  );
+
   const ListUsersPrivs = () => {
     return (
-      <View style={styles.flatListView}>
+      <View style={styles.flatListViewPrivs}>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItemPrivs}
           data={filterData}
           ItemSeparatorComponent={FlatListItemSeparator}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
         />
       </View>
     );
   };
 
-  const renderUserSelected = ({ item }) => (
-    <View style={styles.item}>
-      <Text style={styles.nomItem}>{item}</Text>
+  const onPressCircle = (index) => {
+    let userSelectedAux = userSelected;
+    userSelectedAux.splice(index, 1);
+    setUserSelected(userSelectedAux);
+    setRefresh(!refresh);
+  };
+
+  const renderUserSelected = ({ item, index }) => (
+    <TouchableOpacity style={styles.item} onPress={() => onPressCircle(index)}>
+      <Text style={styles.nomItem}>{item.inicials}</Text>
       <View style={styles.circle}>
         <MaterialIcons style={styles.icon} name="close" size={14} color={Colors.black} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
+
+  const creaGrupHandler = () => {
+    // navigation.navigate('pantallaDani', { userSelected })
+  };
 
   const ListUsersGrups = () => {
     return (
-      <View style={styles.flatListView}>
-        <View style={styles.userSelected}>
+      <View style={styles.flatListViewGrups}>
+        {userSelected.length > 0 ? (
+          <View style={styles.userSelected}>
+            <FlatList
+              horizontal
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderUserSelected}
+              data={userSelected}
+              extraData={refresh}
+              contentContainerStyle={{ paddingBottom: 5 }}
+            />
+          </View>
+        ) : (
+          <View style={styles.userSelected0}>
+            <Text style={styles.textIntegrants}>Cap integrant</Text>
+          </View>
+        )}
+        <View style={styles.flatView}>
           <FlatList
-            horizontal
             keyExtractor={(item, index) => index.toString()}
-            renderItem={renderUserSelected}
-            data={userSelected}
-            contentContainerStyle={{ paddingBottom: 5 }}
-            showsHorizontalScrollIndicator={false}
+            renderItem={renderItemGrups}
+            data={filterData}
+            extraData={refresh}
+            ItemSeparatorComponent={FlatListItemSeparator}
           />
         </View>
-        <FlatList
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItemPrivs}
-          data={filterData}
-          ItemSeparatorComponent={FlatListItemSeparator}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        />
+        <View style={styles.buttonView}>
+          <TouchableOpacity onPress={creaGrupHandler} activeOpacity={0.5} style={styles.touchable}>
+            <View style={[styles.button, { backgroundColor: Colors.primary }]}>
+              <Text style={styles.text}>Següent</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -297,13 +358,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     flex: 1,
   },
-  header: {
-    //marginTop: StatusBar.currentHeight,
-  },
   titleView: {
     justifyContent: 'center',
     width: Window.width,
     alignItems: 'center',
+    marginTop: 5,
   },
   titleText: {
     fontFamily: 'InterSemiBold',
@@ -363,13 +422,40 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     marginLeft: '1%',
   },
-  flatListView: {
+  flatListViewPrivs: {
+    marginTop: 15,
+    flex: 1,
+  },
+  flatListViewGrups: {
     flex: 1,
   },
   userSelected: {
     height: 80,
     marginLeft: 7,
     marginRight: 7,
+    marginLeft: Window.width * 0.041,
+  },
+  flatView: {
+    height: 330,
+  },
+  flatViewEmpty: {
+    marginTop: 10,
+    height: 400,
+  },
+  userSelected0: {
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textIntegrants: {
+    fontFamily: 'InterMedium',
+    fontSize: 20,
+    color: Colors.lightBlack,
+  },
+  buttonView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
     height: 80,
@@ -409,6 +495,12 @@ const styles = StyleSheet.create({
     color: Colors.blueGrey,
     paddingTop: 2,
   },
+  itemParent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    height: '100%',
+  },
   item: {
     backgroundColor: Colors.blue,
     height: '70%',
@@ -417,13 +509,6 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     marginRight: 7,
     borderRadius: 50,
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 2,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
     elevation: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -444,5 +529,36 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: 'center',
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: Window.width * 0.85,
+    height: 55,
+    borderRadius: 8,
+  },
+  text: {
+    fontFamily: 'InterMedium',
+    fontWeight: '500',
+    fontSize: 18,
+    lineHeight: 22,
+    textAlign: 'center',
+    color: Colors.white,
+  },
+  touchable: {
+    borderRadius: 8,
+  },
+  pressed: {
+    backgroundColor: Colors.blue,
+  },
+  notPressed: {},
+  optionsView: {
+    flex: 1,
+    justifyContent: 'center',
+    marginLeft: Window.width * 0.02,
+  },
+  optionsIcon: {
+    fontSize: 25,
+    color: Colors.primary,
   },
 });
