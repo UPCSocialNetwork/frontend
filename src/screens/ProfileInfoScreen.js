@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableNativeFeedback, Image, Text, ScrollView, FlatList } from 'react-native';
+import { View, StyleSheet, Button, TouchableOpacity, Image, Modal, Text, ScrollView, FlatList } from 'react-native';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
+import ModalPicker from '../components/ModalPicker';
 import axios from '../constants/axios';
 import BackHeader from '../components/BackHeader';
 
 function ProfileInfoScreen({ navigation }) {
+  const [user, setUser] = useState(navigation.getParam('user'));
+  const [visitUser, setVisitUser] = useState(navigation.getParam('visitUser'));
+  const [isAssigModalVisible, setAssigModalVisible] = useState(false);
   const [userData, setUserData] = useState([
     {
       nomUsuari: '',
@@ -27,14 +31,13 @@ function ProfileInfoScreen({ navigation }) {
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
-  const random = Math.floor(Math.random() * 100);
-  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
+  const url = 'https://randomuser.me/api/portraits/men/1.jpg';
 
   useEffect(() => {
     async function getUserData() {
       let response = null;
       try {
-        response = await axios.get('estudiant/cesar.gutierrez');
+        response = await axios.get(`estudiant/${visitUser}`);
         let est = response.data.estudiant;
         setUserData({
           ...userData,
@@ -65,11 +68,28 @@ function ProfileInfoScreen({ navigation }) {
 
   const renderItem = ({ item }) => <Item nom={item} />;
 
+  const renderItemAssig = ({ item }) => (
+    <View style={styles.itemAssig}>
+      <Text style={styles.itemAssigText}>
+        {item.nomSigles} - {item.nomComplet}
+      </Text>
+    </View>
+  );
+
+  const onPressAssig = () => {
+    changeModalVisibility(true);
+  };
+
+  const changeModalVisibility = (bool) => {
+    setAssigModalVisible(bool);
+  };
+
   return (
-    <ScrollView>
+    <View>
       <BackHeader
         onPress={() => {
-          navigation.goBack();
+          if (user.tipusXat === 'privs') navigation.replace('ChatScreen', { user });
+          else navigation.replace('GrupInfoScreen', { user });
         }}
       ></BackHeader>
       <View style={styles.header}>
@@ -99,16 +119,37 @@ function ProfileInfoScreen({ navigation }) {
         />
       </View>
       <View style={styles.btn}>
-        <TouchableNativeFeedback>
+        <TouchableOpacity onPress={onPressAssig}>
           <View style={styles.button}>
             <Text style={styles.text}>Veure assignatures de l'estudiant</Text>
           </View>
-        </TouchableNativeFeedback>
+          <Modal
+            animationType="fade"
+            presentationStyle="fullScreen"
+            visible={isAssigModalVisible}
+            style={styles.modal}
+            onRequestClose={() => {
+              changeModalVisibility(false);
+            }}
+          >
+            <View style={styles.assigView}>
+              <Button title="Enrere" onPress={() => changeModalVisibility(false)}></Button>
+              <FlatList
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItemAssig}
+                data={userData.LlistaAssignatures}
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+          </Modal>
+        </TouchableOpacity>
       </View>
       <View style={styles.btnLast}>
         <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -136,7 +177,7 @@ const styles = StyleSheet.create({
   },
   imageProfile: {
     width: Window.width * 0.4,
-    height: Window.width * 0.4,
+    aspectRatio: 1,
     marginTop: 15,
     borderRadius: 100,
   },
@@ -211,23 +252,35 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 4,
   },
-  button: {
+  modal: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  assigView: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  itemAssig: {
+    backgroundColor: Colors.lightGrey,
+    borderRadius: 8,
+    marginVertical: 10,
+    height: 50,
+    justifyContent: 'center',
+  },
+  itemAssigText: {
+    textAlign: 'center',
+  },
+  button: {
     width: Window.width * 0.688,
     height: 37,
     borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: Colors.yellow,
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 2,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 4,
   },
   text: {
+    width: '100%',
     fontFamily: 'InterMedium',
     fontWeight: '500',
     fontSize: 14,
