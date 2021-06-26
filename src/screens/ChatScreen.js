@@ -156,42 +156,47 @@ export default function ChatScreen({ navigation }) {
       if (!nouXat) {
         addMissatge(newMessage, user.participant, user.room);
       } else {
-        try {
-          let responseXat = await axios.post('/Xat');
-          let xatID = responseXat.data.Xat._id;
+        if (user.tipusXat === 'privs') {
           try {
-            let responsePart1 = await axios.post(
-              '/participant',
-              {
-                estudiantID: user.nomUsuari,
-                xatID: xatID,
-                ultimaLectura: 0,
-                notificacions: 'Activat',
-                bloqueigGrup: 'Desactivat',
-              },
-              { 'Content-Type': 'application/json' },
-            );
-            let responsePart2 = await axios.post(
-              '/participant',
-              {
-                estudiantID: user.titol,
-                xatID: xatID,
-                ultimaLectura: 0,
-                notificacions: 'Activat',
-                bloqueigGrup: 'Desactivat',
-              },
-              { 'Content-Type': 'application/json' },
-            );
-            let partID = responsePart1.data.Participant._id;
-            socket.emit('xat actiu', xatID);
-            setUser({ ...user, room: xatID, participant: partID });
-            addMissatge(newMessage, partID, xatID);
-            setNouXat(false);
+            let responseXat = await axios.post('/Xat');
+            let xatID = responseXat.data.Xat._id;
+            try {
+              let responsePart1 = await axios.post(
+                '/participant',
+                {
+                  estudiantID: user.nomUsuari,
+                  xatID: xatID,
+                  ultimaLectura: 0,
+                  notificacions: 'Activat',
+                  bloqueigGrup: 'Desactivat',
+                },
+                { 'Content-Type': 'application/json' },
+              );
+              let responsePart2 = await axios.post(
+                '/participant',
+                {
+                  estudiantID: user.titol,
+                  xatID: xatID,
+                  ultimaLectura: 0,
+                  notificacions: 'Activat',
+                  bloqueigGrup: 'Desactivat',
+                },
+                { 'Content-Type': 'application/json' },
+              );
+              let partID = responsePart1.data.Participant._id;
+              // socket.emit('xat actiu', xatID);
+              setUser({ ...user, room: xatID, participant: partID });
+              addMissatge(newMessage, partID, xatID);
+              setNouXat(false);
+            } catch (e) {
+              console.error(e);
+            }
           } catch (e) {
             console.error(e);
           }
-        } catch (e) {
-          console.error(e);
+        } else {
+          addMissatge(newMessage, user.participant, user.room);
+          setNouXat(false);
         }
       }
     },
