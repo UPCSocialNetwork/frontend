@@ -153,7 +153,10 @@ export default function RegisterProfileScreen({ navigation }) {
         <Text style={styles.nom}>{newUser.nomUsuari}</Text>
         <Text style={styles.mail}>{newUser.mail}</Text>
         <TouchableOpacity style={styles.imageView}>
-          <Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />
+          <View style={styles.imageProfile}>
+            <Text style={styles.textImage}>GN</Text>
+          </View>
+          {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
         </TouchableOpacity>
       </View>
       <View style={styles.border}>
@@ -281,16 +284,23 @@ const styles = StyleSheet.create({
     width: Window.width * 0.8,
   },
   imageView: {
-    width: Window.width * 0.4,
-    height: Window.width * 0.4,
+    width: Window.width * 0.3,
+    height: Window.width * 0.3,
     marginTop: 30,
   },
   imageProfile: {
     width: '100%',
     height: '100%',
     borderRadius: 100,
+    justifyContent: 'center',
+    backgroundColor: Colors.grey,
     borderColor: Colors.white,
-    borderWidth: 2,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 30,
   },
   border: {
     marginTop: 30,
