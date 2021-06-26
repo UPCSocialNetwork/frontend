@@ -9,7 +9,7 @@ export default {
   green: '#2DCA8C',
   green2: '#65C36E',
   lightGrey: '#FBFBFB',
-  yellow: '#FFCB44',
+  yellow: '#FFCB54',
   warning: '#FFBB54',
   red: '#FF545E',
   test1: '#FFF733',
@@ -17,5 +17,5 @@ export default {
   blueGrey: '#58616A',
   grey: '#E5E5E5',
   blue: '#c6f2ff',
-  greySeparator: '#ebebeb',
+  greySeparator: '#F7F7F9',
 };

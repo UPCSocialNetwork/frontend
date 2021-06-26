@@ -62,13 +62,6 @@ export default function listXatScreen({ navigation }) {
     socket.on('update message', (message, roomID) => {
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
     });
-    /*if (navigation.getParam('tipusXat') != undefined) {
-      if (navigation.getParam('tipusXat') === 'privs') {
-        pressPickerPrivs();
-      } else {
-        pressPickerGrups();
-      }
-    }*/
     return () => {
       socket.removeListener('update message');
     };
@@ -155,10 +148,12 @@ export default function listXatScreen({ navigation }) {
     }
   };
 
+  const onPressProfile = () => {};
+
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.imageView}>
+        <TouchableOpacity style={styles.imageView} onPress={onPressProfile}>
           <View>
             <Image style={styles.imageProfile} source={{ uri: url_aux }} />
             <View style={styles.circle}></View>
@@ -203,7 +198,7 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity
           style={styles.plusCircle}
           onPress={() => {
-            navigation.navigate('SearchScreen', { listType });
+            navigation.replace('SearchScreen', { listType, user });
           }}
         >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>
