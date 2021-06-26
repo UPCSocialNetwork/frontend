@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
+import Config from '../constants/Config';
 
-let socket = io('http://172.28.163.229:3000');
+let socket = io(`http://${Config.SERVER_IP}:${Config.SERVER_PORT}/`);
 
 export default socket;
