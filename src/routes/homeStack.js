@@ -17,9 +17,6 @@ import SearchScreen from '../screens/SearchScreen';
 import GrupInfo from '../screens/GrupInfoScreen';
 
 const screens = {
-  GrupInfoScreen: {
-    screen: GrupInfo,
-  },
   Intro: {
     screen: Intro,
   },
@@ -58,6 +55,9 @@ const screens = {
   },
   SearchScreen: {
     screen: SearchScreen,
+  },
+  GrupInfoScreen: {
+    screen: GrupInfo,
   },
 };
 

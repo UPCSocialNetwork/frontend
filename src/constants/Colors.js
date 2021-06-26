@@ -10,6 +10,7 @@ export default {
   green2: '#65C36E',
   lightGrey: '#FBFBFB',
   yellow: '#FFCB44',
+  warning: '#FFBB54',
   red: '#FF545E',
   test1: '#FFF733',
   test2: '#33FFDB',

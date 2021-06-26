@@ -17,18 +17,24 @@ import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import axios from '../constants/axios';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
+import ParticipantList from '../components/ParticipantList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDerivedValue } from 'react-native-reanimated';
 
 export default function GrupInfoScreen({ navigation }) {
   const [userSess, setUserSess] = useState(null);
-  const [user, setUser] = useState({
+  const [user, setUser] = useState(navigation.getParam('user'));
+  /*const [user, setUser] = useState({
     nomUsuari: 'daniel.benavente', //navigation.getParam('user').nomUsuari,
-    room: 'none',
+    room: '60d7631aca477993ec206e7d', // xatid
     participant: 'none',
-    tipusXat: 'none',
-    titol: 'none',
-  });
+    tipusXat: 'XatAssignatura', //priv / XatGrupTancat / XatAssignatura / XatMentor
+    titol: 'FOMA',
+  });*/
+  const [xatGrupal, setXatGrupal] = useState({});
+  const [llistatParticipants, setLlistatParticipants] = useState([]);
+  const [visitUser, setVisitUser] = useState(false);
 
   useEffect(() => {
     async function getData() {
@@ -49,9 +55,27 @@ export default function GrupInfoScreen({ navigation }) {
           }
         }
       } catch (e) {}
+      try {
+        let xatGrupal = null;
+        if (user.tipusXat === 'XatAssignatura') xatGrupal = await axios.get(`XatAssignatura/getOneID/${user.room}`);
+        else xatGrupal = await axios.get(`${user.tipusXat}/${user.room}`);
+
+        if (user.tipusXat === 'XatAssignatura') setXatGrupal(xatGrupal.data.xatAssignatura);
+        else if (user.tipusXat === 'xatGrupTancat') setXatGrupal(xatGrupal.data.xatGrupTancat);
+        else if (user.tipusXat === 'xatMentor') setXatGrupal(xatGrupal.data.xatMentor);
+
+        let participants = await axios.get(`/estudiants/${user.room}`);
+        setLlistatParticipants(participants.data.persones);
+      } catch (e) {
+        console.log(e);
+      }
     }
     getData();
   }, []);
+
+  useEffect(() => {
+    if (visitUser) navigation.replace({ user });
+  }, [visitUser]);
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
@@ -67,57 +91,73 @@ export default function GrupInfoScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.backgroundView}>
+    <ScrollView style={styles.backgroundView}>
       <View style={styles.Container}>
         <BackHeader
           onPress={() => {
-            navigation.goBack();
+            navigation.replace({ user });
           }}
         ></BackHeader>
         <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
           <View style={styles.headerContainer}>
-            <Text style={styles.title}>NOM GRUP</Text>
+            <Text style={styles.title}>{xatGrupal.titol}</Text>
             <TouchableOpacity style={styles.imageView}>
-              <Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />
+              <View style={styles.imageProfile}>
+                <Text style={styles.textImage}>GN</Text>
+              </View>
+              {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
             </TouchableOpacity>
           </View>
           <View style={styles.mainContainer}>
             <Text style={styles.textInfo}>Informació</Text>
             <View style={styles.border1}>
-              <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+              <View style={styles.scroll}>
                 <Text
                   style={styles.textArea}
                   placeholder="Escriu la teva descripció..."
                   underlineColorAndroid="transparent"
                   multiline={true}
                 >
-                  FOMA - Fonaments de les matemàtiques Classe- I1012s
+                  {`${xatGrupal.titol} - ${xatGrupal.assignaturaID}`}
                 </Text>
-              </ScrollView>
+              </View>
             </View>
             <Text style={styles.textInfo}>Descripció</Text>
             <View style={styles.border2}>
-              <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+              <View style={styles.scroll}>
                 <Text
                   style={styles.textArea}
                   placeholder="Escriu la teva descripció..."
                   underlineColorAndroid="transparent"
                   multiline={true}
                 >
-                  FOMA - Fonaments de les matemàtiques Classe- I1012s
+                  {xatGrupal.descripcio}
                 </Text>
-              </ScrollView>
+              </View>
             </View>
             <TouchableOpacity style={styles.GuiaDocentContainer}>
               <Text style={styles.text}>Veure Guia Docent</Text>
             </TouchableOpacity>
-            <View style={styles.registerButton}>
-              <BaseButton title="Següent" btnColor={Colors.primary} />
+            <View style={styles.llistatParticipants}>
+              <Text style={styles.textLlistat}>LLISTAT PARTICIPANTS {`(${llistatParticipants.length})`}</Text>
+              <View>
+                {llistatParticipants.map((nomUsuari, index) => (
+                  <View key={index}>
+                    <ParticipantList nomUsuari={nomUsuari} setVisitUser={setVisitUser}></ParticipantList>
+                  </View>
+                ))}
+              </View>
+            </View>
+            <View style={styles.BlockButton}>
+              <BaseButton title="Bloquejar grup" btnColor={Colors.warning} />
+            </View>
+            <View style={styles.ExitButton}>
+              <BaseButton title="Sortir del grup" btnColor={Colors.red} />
             </View>
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -149,8 +189,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 100,
+    justifyContent: 'center',
+    backgroundColor: Colors.grey,
     borderColor: Colors.white,
     borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 30,
   },
   mainContainer: {
     flex: 1,
@@ -187,7 +234,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     alignSelf: 'center',
-    width: Window.width * 0.8,
+    width: Window.width * 0.85,
   },
   textArea: {
     width: '100%',
@@ -198,7 +245,7 @@ const styles = StyleSheet.create({
   GuiaDocentContainer: {
     alignSelf: 'center',
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 10,
     marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -214,6 +261,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 4,
+  },
+  llistatParticipants: {
+    marginTop: 30,
+    width: Window.width * 0.9,
+  },
+  textLlistat: {
+    fontFamily: 'InterMedium',
+    fontWeight: '500',
+    marginBottom: 10,
+    fontSize: 14,
+    color: Colors.secondary,
   },
   button: {
     justifyContent: 'center',
@@ -235,12 +293,16 @@ const styles = StyleSheet.create({
     fontFamily: 'InterMedium',
     fontWeight: '500',
     fontSize: 14,
-    lineHeight: 17,
     textAlign: 'center',
     color: Colors.white,
   },
-  registerButton: {
+  BlockButton: {
+    marginTop: 25,
     marginBottom: 20,
+    alignItems: 'center',
+  },
+  ExitButton: {
+    marginBottom: 30,
     alignItems: 'center',
   },
 });
