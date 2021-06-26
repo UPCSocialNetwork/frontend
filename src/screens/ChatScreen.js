@@ -198,6 +198,14 @@ export default function ChatScreen({ navigation }) {
     [nouXat],
   );
 
+  const onPressProfile = () => {
+    if (user.tipusXat === 'privs') {
+      navigation.replace('ProfileInfoScreen', { user });
+    } else {
+      navigation.replace('GrupInfoScreen', { user });
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
@@ -215,7 +223,7 @@ export default function ChatScreen({ navigation }) {
             <Text style={styles.textEnrere}> Enrere </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPressProfile}>
           <View style={styles.nameAndImg}>
             <View style={styles.nameView}>
               <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">

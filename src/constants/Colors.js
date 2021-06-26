@@ -8,7 +8,7 @@ export default {
   white: '#fff',
   green: '#2DCA8C',
   lightGrey: '#FBFBFB',
-  yellow: '#FFCB44',
+  yellow: '#FFCB54',
   red: '#FF545E',
   test1: '#FFF733',
   test2: '#33FFDB',
