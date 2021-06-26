@@ -259,6 +259,8 @@ const styles = StyleSheet.create({
     width: Window.width,
     marginTop: StatusBar.currentHeight,
     flexDirection: 'row',
+    borderBottomColor: Colors.grey,
+    borderBottomWidth: 1,
   },
   goBack: {
     width: Window.width * 0.3,
@@ -303,7 +305,7 @@ const styles = StyleSheet.create({
   },
   imgViewChild: {
     justifyContent: 'center',
-    height: '85%',
+    height: '75%',
     aspectRatio: 1,
     marginLeft: '30%',
   },

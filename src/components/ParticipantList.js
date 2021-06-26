@@ -18,7 +18,7 @@ export default function ParticipantList({ nomUsuari, setVisitUser }) {
   }
 
   const onPress = () => {
-    setVisitUser(nomUsuari);
+    if (setVisitUser !== 'none') setVisitUser(nomUsuari);
   };
   var imageSrc = 'https://randomuser.me/api/portraits/men/1.jpg';
 
