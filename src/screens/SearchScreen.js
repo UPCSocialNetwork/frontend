@@ -155,7 +155,8 @@ export default function SearchScreen({ navigation }) {
         style={{
           height: 1,
           width: '100%',
-          backgroundColor: Colors.lightBlack,
+          alignSelf: 'center',
+          backgroundColor: Colors.greySeparator,
         }}
       />
     );
@@ -325,7 +326,10 @@ export default function SearchScreen({ navigation }) {
       <View style={styles.header}>
         <BackHeader
           onPress={() => {
-            const tipusXat = user.tipusXat;
+            let tipusXat;
+            {
+              user.tipusXat === 'privs' ? (tipusXat = 'privs') : (tipusXat = 'grups');
+            }
             navigation.replace('listXatScreen', { user, tipusXat });
           }}
         ></BackHeader>
@@ -449,7 +453,7 @@ const styles = StyleSheet.create({
   },
   textIntegrants: {
     fontFamily: 'InterMedium',
-    fontSize: 20,
+    fontSize: 18,
     color: Colors.lightBlack,
   },
   buttonView: {
