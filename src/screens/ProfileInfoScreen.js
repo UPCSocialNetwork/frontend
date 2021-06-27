@@ -141,7 +141,6 @@ function ProfileInfoScreen({ navigation }) {
       let response = await axios.get(`Xat/Parts/${user.nomUsuari}/${visitUser}`);
       if (response.data != false) {
         let responsePart = await axios.get(`/participant/${user.nomUsuari}/${response.data[0]._id}`);
-        console.log(responsePart.data);
         const newUser = {
           nomUsuari: user.nomUsuari,
           room: response.data[0]._id,
@@ -149,7 +148,6 @@ function ProfileInfoScreen({ navigation }) {
           tipusXat: 'privs',
           titol: visitUser,
         };
-        console.log(newUser);
         navigation.replace('ChatScreen', { user: newUser });
       } else {
         const newUser = {
@@ -404,7 +402,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 30,
+    marginBottom: 50,
   },
   item: {
     backgroundColor: Colors.lightGrey,
