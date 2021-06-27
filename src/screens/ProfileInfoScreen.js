@@ -183,7 +183,18 @@ function ProfileInfoScreen({ navigation }) {
           let tipusXat = 'grups';
           if (user.titol === 'none') navigation.replace('listXatScreen', { user, tipusXat });
           else if (user.tipusXat === 'privs' && user.titol !== 'none') navigation.replace('ChatScreen', { user });
-          else navigation.replace('GrupInfoScreen', { user });
+          else if (user.tipusXat === 'XatCerca') {
+            let tipusCerca = 'all';
+            const newUser = {
+              nomUsuari: user.nomUsuari,
+              room: 'none',
+              participant: 'none',
+              tipusXat: 'privs',
+              titol: visitUser,
+            };
+            let listType = 'privs';
+            navigation.replace('SearchScreen', { listType, user: newUser, tipusCerca });
+          } else navigation.replace('GrupInfoScreen', { user });
         }}
       ></BackHeader>
       <View style={styles.header}>
@@ -257,7 +268,10 @@ function ProfileInfoScreen({ navigation }) {
           <BaseButton onPress={esborrarXat} title="Esborrar xat" btnColor={Colors.red} />
         </View>
       ) : null}
-      {user.tipusXat === 'XatAssignatura' || user.tipusXat === 'XatMentor' || user.tipusXat === 'XatGrupTancat' ? (
+      {user.tipusXat === 'XatAssignatura' ||
+      user.tipusXat === 'XatMentor' ||
+      user.tipusXat === 'XatGrupTancat' ||
+      user.tipusXat === 'XatCerca' ? (
         <View style={styles.btnLast}>
           <BaseButton onPress={enviarMissatgeHandler} title="Enviar missatge" btnColor={Colors.primary} />
         </View>
