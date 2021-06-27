@@ -50,6 +50,11 @@ function ChatList({ chatData, setUser, user, setToggle, toggle }) {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  allChats: {
+    flex: 1,
+    marginBottom: 20,
+  },
+});
 
 export default ChatList;
