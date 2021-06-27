@@ -10,9 +10,10 @@ import BackHeader from '../components/BackHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProfileInfoScreen({ navigation }) {
+  const [userSess, setUserSess] = useState();
   const [user, setUser] = useState(navigation.getParam('user'));
   const [visitUser, setVisitUser] = useState(navigation.getParam('visitUser'));
-
+  const [inicialsUser, setInicialsUser] = useState();
   const [isAssigModalVisible, setAssigModalVisible] = useState(false);
   const [userData, setUserData] = useState([
     {
@@ -53,9 +54,10 @@ function ProfileInfoScreen({ navigation }) {
             console.log(error);
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
-    getData();
     async function getUserData() {
       let response = null;
       try {
@@ -71,10 +73,15 @@ function ProfileInfoScreen({ navigation }) {
           interessos: est.interessos,
           LlistaAssignatures: est.LlistaAssignatures,
         });
+
+        let inicials = est.nomUsuari[0].toUpperCase();
+        inicials = inicials + est.nomUsuari.split('.')[1][0].toUpperCase();
+        setInicialsUser(inicials);
       } catch (err) {
         console.error(err);
       }
     }
+    getData();
     getUserData();
   }, []);
 
@@ -136,7 +143,33 @@ function ProfileInfoScreen({ navigation }) {
     }
   };
 
-  const enviarMissatgeHandler = async () => {};
+  const enviarMissatgeHandler = async () => {
+    try {
+      let response = await axios.get(`Xat/Parts/${user.nomUsuari}/${visitUser}`);
+      if (response.data != false) {
+        let responsePart = await axios.get(`/participant/${user.nomUsuari}/${response.data[0]._id}`);
+        const newUser = {
+          nomUsuari: user.nomUsuari,
+          room: response.data[0]._id,
+          participant: responsePart.data.participant._id,
+          tipusXat: 'privs',
+          titol: visitUser,
+        };
+        navigation.replace('ChatScreen', { user: newUser });
+      } else {
+        const newUser = {
+          nomUsuari: user.nomUsuari,
+          room: 'none',
+          participant: 'none',
+          tipusXat: 'privs',
+          titol: visitUser,
+        };
+        navigation.replace('ChatScreen', { user: newUser });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const FlatListItemSeparator = () => {
     return (
@@ -157,7 +190,18 @@ function ProfileInfoScreen({ navigation }) {
           let tipusXat = 'grups';
           if (user.titol === 'none') navigation.replace('listXatScreen', { user, tipusXat });
           else if (user.tipusXat === 'privs' && user.titol !== 'none') navigation.replace('ChatScreen', { user });
-          else navigation.replace('GrupInfoScreen', { user });
+          else if (user.tipusXat === 'XatCerca') {
+            let tipusCerca = 'all';
+            const newUser = {
+              nomUsuari: user.nomUsuari,
+              room: 'none',
+              participant: 'none',
+              tipusXat: 'privs',
+              titol: visitUser,
+            };
+            let listType = 'privs';
+            navigation.replace('SearchScreen', { listType, user: newUser, tipusCerca });
+          } else navigation.replace('GrupInfoScreen', { user });
         }}
       ></BackHeader>
       <View style={styles.header}>
@@ -168,7 +212,13 @@ function ProfileInfoScreen({ navigation }) {
             {userData.centreID} - {userData.grauID}
           </Text>
         </View>
-        <Image style={styles.imageProfile} source={{ uri: url }} />
+        <View style={styles.imageView}>
+          <View style={styles.imageProfile}>
+            <Text style={styles.textImage}>{inicialsUser}</Text>
+          </View>
+          {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
+        </View>
+        {/*<Image style={styles.imageProfile} source={{ uri: url }} />*/}
       </View>
       <Text style={styles.descripcioTitle}>Descripció</Text>
       <View style={styles.border}>
@@ -231,7 +281,10 @@ function ProfileInfoScreen({ navigation }) {
           <BaseButton onPress={esborrarXat} title="Esborrar xat" btnColor={Colors.red} />
         </View>
       ) : null}
-      {user.tipusXat === 'XatAssignatura' || user.tipusXat === 'XatMentor' || user.tipusXat === 'XatGrupTancat' ? (
+      {user.tipusXat === 'XatAssignatura' ||
+      user.tipusXat === 'XatMentor' ||
+      user.tipusXat === 'XatGrupTancat' ||
+      user.tipusXat === 'XatCerca' ? (
         <View style={styles.btnLast}>
           <BaseButton onPress={enviarMissatgeHandler} title="Enviar missatge" btnColor={Colors.primary} />
         </View>
@@ -307,11 +360,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  /*
   imageProfile: {
     width: Window.width * 0.33,
     aspectRatio: 1,
     marginTop: 15,
     borderRadius: 100,
+  },
+  */
+  imageView: {
+    width: Window.width * 0.3,
+    height: Window.width * 0.3,
+    marginTop: 15,
+  },
+
+  imageProfile: {
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 100,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 30,
   },
   nom: {
     fontFamily: 'InterBold',
@@ -328,11 +404,12 @@ const styles = StyleSheet.create({
     width: Window.width * 0.8,
   },
   descripcioTitle: {
-    fontFamily: 'InterSemiBold',
+    fontFamily: 'InterBold',
     fontSize: 15,
+    alignSelf: 'center',
     color: Colors.secondary,
     marginTop: 20,
-    marginLeft: Window.width * 0.08,
+    // marginLeft: Window.width * 0.08,
   },
   border: {
     marginTop: 10,
@@ -344,16 +421,15 @@ const styles = StyleSheet.create({
     height: 90,
   },
   textArea: {
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'justify',
-    paddingTop: 3,
-    paddingBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
+    padding: 10,
   },
   interessosTitle: {
     marginTop: 20,
+    fontSize: 15,
     alignSelf: 'center',
+    color: Colors.secondary,
     fontFamily: 'InterBold',
   },
   list: {
@@ -376,7 +452,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 30,
+    marginBottom: 50,
   },
   item: {
     backgroundColor: Colors.lightGrey,

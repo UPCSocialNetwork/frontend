@@ -6,6 +6,7 @@ import BackHeader from '../components/BackHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import InteresListItem from '../components/InteresListItem';
+import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
@@ -159,6 +160,9 @@ export default function RegisterProfileScreen({ navigation }) {
           {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
         </TouchableOpacity>
       </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <Text style={styles.textInfo}>Descripció</Text>
+      </View>
       <View style={styles.border}>
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
           <TextInput
@@ -175,13 +179,9 @@ export default function RegisterProfileScreen({ navigation }) {
           ></TextInput>
         </ScrollView>
       </View>
-      <View style={styles.btnInteres}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.9} style={styles.touchable}>
-          <View style={styles.button}>
-            <Text style={styles.text}>Selecciona els teus interessos</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.5} style={styles.btnInteres}>
+        <Text style={styles.textBtnInteres}>Selecciona els teus interessos</Text>
+      </TouchableOpacity>
       <Modal
         animationType="fade"
         visible={modalVisible}
@@ -212,8 +212,8 @@ export default function RegisterProfileScreen({ navigation }) {
             activeOpacity={0.9}
             style={styles.touchable}
           >
-            <View style={styles.button1}>
-              <Text style={styles.text}>Confirmar</Text>
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <BaseButton onPress={() => setModalVisible(false)} title="Continuar" btnColor={Colors.primary} />
             </View>
           </TouchableOpacity>
         </View>
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 100,
     justifyContent: 'center',
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.lightBlue,
     borderColor: Colors.white,
     borderWidth: 1,
   },
@@ -303,8 +303,21 @@ const styles = StyleSheet.create({
     color: Colors.addImageColor,
     fontSize: 14,
   },
+  textInfo: {
+    fontFamily: 'InterBold',
+    fontSize: 15,
+    alignSelf: 'center',
+    color: Colors.secondary,
+    marginTop: 20,
+  },
+  descripcioTitle: {
+    fontFamily: 'InterBold',
+    fontSize: 15,
+    alignSelf: 'center',
+    color: Colors.secondary,
+  },
   border: {
-    marginTop: 30,
+    marginTop: 10,
     alignSelf: 'center',
     borderRadius: 10,
     borderWidth: 1,
@@ -330,28 +343,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
     width: Window.width * 0.7,
-  },
-  button: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
     borderRadius: 8,
     backgroundColor: Colors.yellow,
     elevation: 1,
-    width: '100%',
-  },
-  text: {
-    fontFamily: 'InterMedium',
-    textAlign: 'center',
-    fontWeight: '500',
-    fontSize: 16,
-    lineHeight: 22,
-    color: Colors.white,
-    borderRadius: 8,
   },
   touchable: {
     borderRadius: 8,
     width: '100%',
+  },
+  textBtnInteres: {
+    fontFamily: 'InterMedium',
+    textAlign: 'center',
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 22,
+    color: Colors.white,
+    borderRadius: 8,
   },
   flatListView: {
     marginTop: Window.height * 0.03,
@@ -375,14 +385,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   interessosView: {
-    marginTop: 20,
+    marginTop: 30,
     flex: 1,
     height: Window.height * 0.1,
   },
   interessosTitle: {
+    fontSize: 15,
     alignSelf: 'center',
+    color: Colors.secondary,
     fontFamily: 'InterBold',
-    height: '25%',
+    alignSelf: 'center',
   },
   flatInteressos: {
     marginTop: 10,
@@ -411,7 +423,7 @@ const styles = StyleSheet.create({
   btnLast: {
     alignSelf: 'center',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 60,
     marginBottom: 30,
   },
 });

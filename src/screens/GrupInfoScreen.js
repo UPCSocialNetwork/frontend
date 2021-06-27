@@ -55,7 +55,9 @@ export default function GrupInfoScreen({ navigation }) {
             console.log(error);
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
       try {
         let xatGrupal = null;
         if (user.tipusXat === 'XatAssignatura') xatGrupal = await axios.get(`XatAssignatura/getOneID/${user.room}`);
@@ -212,7 +214,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 100,
     justifyContent: 'center',
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.lightBlue,
     borderColor: Colors.white,
     borderWidth: 1,
   },

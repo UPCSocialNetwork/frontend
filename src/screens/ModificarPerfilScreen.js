@@ -148,7 +148,7 @@ export default function ModificarPerfilScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.ViewTextInfo}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Text style={styles.textInfo}>Descripció</Text>
           <View style={{ justifyContent: 'center', marginLeft: 8 }}>
             <MaterialIcons style={styles.icon} name="edit" size={14} color={Colors.secondary} />
@@ -172,13 +172,9 @@ export default function ModificarPerfilScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <View style={styles.btnInteres}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.9} style={styles.touchable}>
-          <View style={styles.button}>
-            <Text style={styles.text}>Selecciona els teus interessos</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.5} style={styles.btnInteres}>
+        <Text style={styles.textBtnInteres}>Selecciona els teus interessos</Text>
+      </TouchableOpacity>
       <Modal
         animationType="fade"
         visible={modalVisible}
@@ -209,8 +205,11 @@ export default function ModificarPerfilScreen({ navigation }) {
             activeOpacity={0.9}
             style={styles.touchable}
           >
-            <View style={styles.button1}>
-              <Text style={styles.text}>Confirmar</Text>
+            {/*<TouchableOpacity style={styles.button1} activeOpacity={0.6} onPress={() => setModalVisible(false)}>
+              <Text style={styles.textBtnInteres}>Confirmar</Text>
+          </TouchableOpacity>*/}
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <BaseButton onPress={() => setModalVisible(false)} title="Continuar" btnColor={Colors.primary} />
             </View>
           </TouchableOpacity>
         </View>
@@ -306,7 +305,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 100,
     justifyContent: 'center',
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.lightBlue,
     borderColor: Colors.white,
     borderWidth: 1,
   },
@@ -322,10 +321,18 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   textInfo: {
-    fontFamily: 'InterSemiBold',
-    marginLeft: 2,
+    fontFamily: 'InterBold',
     fontSize: 15,
+    alignSelf: 'center',
     color: Colors.secondary,
+    marginLeft: 2,
+  },
+  descripcioTitle: {
+    fontFamily: 'InterBold',
+    fontSize: 15,
+    alignSelf: 'center',
+    color: Colors.secondary,
+    marginTop: 20,
   },
   border: {
     marginTop: 10,
@@ -344,38 +351,33 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 16,
     textAlign: 'justify',
-    paddingTop: 10,
-    paddingBottom: 4,
-    paddingLeft: 6,
-    paddingRight: 5,
+    padding: 10,
   },
+
   btnInteres: {
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 30,
     width: Window.width * 0.7,
-  },
-  button: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
     borderRadius: 8,
     backgroundColor: Colors.yellow,
     elevation: 1,
-    width: '100%',
-  },
-  text: {
-    fontFamily: 'InterMedium',
-    textAlign: 'center',
-    fontWeight: '500',
-    fontSize: 16,
-    lineHeight: 22,
-    color: Colors.white,
-    borderRadius: 8,
   },
   touchable: {
     borderRadius: 8,
     width: '100%',
+  },
+  textBtnInteres: {
+    fontFamily: 'InterMedium',
+    textAlign: 'center',
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 22,
+    color: Colors.white,
+    borderRadius: 8,
   },
   flatListView: {
     marginTop: Window.height * 0.03,
@@ -404,9 +406,11 @@ const styles = StyleSheet.create({
     height: Window.height * 0.1,
   },
   interessosTitle: {
+    fontSize: 15,
     alignSelf: 'center',
+    color: Colors.secondary,
     fontFamily: 'InterBold',
-    height: '25%',
+    alignSelf: 'center',
   },
   flatInteressos: {
     marginTop: 10,

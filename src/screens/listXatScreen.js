@@ -148,18 +148,15 @@ export default function listXatScreen({ navigation }) {
     return null;
   }
 
-  const logout = async () => {
-    try {
-      await AsyncStorage.removeItem('userSession');
-      navigation.replace('Login');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const onPressProfile = () => {
     let visitUser = user.nomUsuari;
     navigation.replace('ProfileInfoScreen', { user, visitUser });
+  };
+
+  const searchHandler = () => {
+    let listType = 'privs';
+    let tipusCerca = 'all';
+    navigation.replace('SearchScreen', { listType, user, tipusCerca });
   };
 
   return (
@@ -172,7 +169,7 @@ export default function listXatScreen({ navigation }) {
             <View style={styles.circle}></View>
           </View>
         </TouchableOpacity>*/}
-        <TouchableOpacity style={styles.imageView}>
+        <TouchableOpacity style={styles.imageView} onPress={onPressProfile}>
           <View>
             <View style={styles.imageProfile}>
               <Text style={styles.textImage}>{inicialsUser}</Text>
@@ -188,14 +185,17 @@ export default function listXatScreen({ navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        {/*
+        <TouchableOpacity onPress={searchHandler}>
           <View style={styles.searchView}>
             <MaterialIcons name="search" style={styles.searchIcon} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={logout}>
+        */}
+        <TouchableOpacity onPress={searchHandler}>
           <View style={styles.optionsView}>
-            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />
+            <MaterialIcons name="search" style={styles.searchIcon} />
+            {/*<SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />*/}
           </View>
         </TouchableOpacity>
       </View>
@@ -220,7 +220,8 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity
           style={styles.plusCircle}
           onPress={() => {
-            navigation.replace('SearchScreen', { listType, user });
+            let tipusCerca = 'some';
+            navigation.replace('SearchScreen', { listType, user, tipusCerca });
           }}
         >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>
@@ -291,6 +292,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginLeft: 20,
+    marginRight: 10,
   },
   searchIcon: {
     fontSize: 27,
