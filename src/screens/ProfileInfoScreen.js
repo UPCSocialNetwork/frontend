@@ -4,7 +4,7 @@ import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-import ModalPicker from '../components/ModalPicker';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from '../constants/axios';
 import BackHeader from '../components/BackHeader';
 
@@ -70,9 +70,14 @@ function ProfileInfoScreen({ navigation }) {
 
   const renderItemAssig = ({ item }) => (
     <View style={styles.itemAssig}>
-      <Text style={styles.itemAssigText}>
-        {item.nomSigles} - {item.nomComplet}
+      <Text style={styles.itemAssigTextBold}>
+        <Text style={styles.itemAssigTextBold}>{item.nomSigles}</Text>
+        <Text> - {item.nomComplet}</Text>
       </Text>
+      {item.quad === 1 || item.quad === 2 ? <Text style={styles.itemAssigText}>Curs 1 - Q{item.quad}</Text> : null}
+      {item.quad === 3 || item.quad === 4 ? <Text style={styles.itemAssigText}>Curs 2 - Q{item.quad}</Text> : null}
+      {item.quad === 5 || item.quad === 6 ? <Text style={styles.itemAssigText}>Curs 3 - Q{item.quad}</Text> : null}
+      {item.quad === 7 || item.quad === 8 ? <Text style={styles.itemAssigText}>Curs 4 - Q{item.quad}</Text> : null}
     </View>
   );
 
@@ -84,8 +89,25 @@ function ProfileInfoScreen({ navigation }) {
     setAssigModalVisible(bool);
   };
 
+  const esborrarXat = () => {
+    try {
+    } catch (e) {}
+  };
+
+  const FlatListItemSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '100%',
+          backgroundColor: Colors.greySeparator,
+        }}
+      />
+    );
+  };
+
   return (
-    <View>
+    <View style={{ backgroundColor: Colors.white, flex: 1 }}>
       <BackHeader
         onPress={() => {
           if (user.tipusXat === 'privs') navigation.replace('ChatScreen', { user });
@@ -132,13 +154,24 @@ function ProfileInfoScreen({ navigation }) {
               changeModalVisibility(false);
             }}
           >
+            <TouchableOpacity onPress={() => changeModalVisibility(false)}>
+              <View style={styles.goBack}>
+                <View style={styles.goBackView}>
+                  <Icon name="arrow-left" size={20} color={Colors.primary} />
+                </View>
+                <Text style={styles.textEnrere}> Enrere </Text>
+              </View>
+            </TouchableOpacity>
+            <View style={styles.llistatView}>
+              <Text style={styles.llistatText}>LLISTAT ASSIGNATURES</Text>
+            </View>
             <View style={styles.assigView}>
-              <Button title="Enrere" onPress={() => changeModalVisibility(false)}></Button>
               <FlatList
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItemAssig}
                 data={userData.LlistaAssignatures}
-                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+                contentContainerStyle={{ flexGrow: 1 }}
+                ItemSeparatorComponent={FlatListItemSeparator}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
               />
@@ -147,7 +180,7 @@ function ProfileInfoScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.btnLast}>
-        <BaseButton title="Enviar missatge" btnColor={Colors.primary} />
+        <BaseButton onPress={esborrarXat} title="Esborrar xat" btnColor={Colors.red} />
       </View>
     </View>
   );
@@ -157,6 +190,41 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginTop: 10,
+  },
+  goBack: {
+    height: 30,
+    flexDirection: 'row',
+    marginLeft: 15,
+    marginTop: 15,
+  },
+  goBackView: {
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 50,
+    height: '100%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 5,
+  },
+  textEnrere: {
+    fontFamily: 'InterBold',
+    fontSize: 16,
+    color: Colors.primary,
+  },
+  llistatView: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: Window.height * 0.1,
+    marginBottom: 40,
+    width: Window.width * 0.87,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.grey,
+  },
+  llistatText: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 20,
+    color: Colors.secondary,
   },
   centreGrau: {
     flexDirection: 'row',
@@ -260,16 +328,30 @@ const styles = StyleSheet.create({
   assigView: {
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    height: '100%',
   },
   itemAssig: {
-    backgroundColor: Colors.lightGrey,
     borderRadius: 8,
     marginVertical: 10,
-    height: 50,
+    width: '100%',
     justifyContent: 'center',
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  itemAssigTextBold: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    width: '96%',
+    alignSelf: 'center',
+    color: Colors.secondary,
   },
   itemAssigText: {
     textAlign: 'center',
+    width: '96%',
+    alignSelf: 'center',
+    color: Colors.secondary,
   },
   button: {
     width: Window.width * 0.688,
