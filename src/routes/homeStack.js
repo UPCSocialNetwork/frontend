@@ -16,6 +16,7 @@ import ChatScreen from '../screens/ChatScreen';
 import SearchScreen from '../screens/SearchScreen';
 import CreateGrup from '../screens/CreateGrupScreen';
 import GrupInfo from '../screens/GrupInfoScreen';
+import ModificarPerfil from '../screens/ModificarPerfilScreen';
 
 const screens = {
   Intro: {
@@ -53,6 +54,9 @@ const screens = {
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
+  },
+  ModificarPerfil: {
+    screen: ModificarPerfil,
   },
   SearchScreen: {
     screen: SearchScreen,

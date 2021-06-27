@@ -41,7 +41,7 @@ export default function CreateGrupScreen({ navigation }) {
 
   const [xatGrupTancat, setXatGrupTancat] = useState({
     titol: '',
-    descripcio: '-',
+    descripcio: 'Sense descripció',
     imatge: 'none',
     ultimMissatgeID: 'none',
   });

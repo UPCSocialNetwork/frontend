@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
+  const [inicialsUser, setInicialsUser] = useState();
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState(navigation.getParam('tipusXat'));
   const [toggle, setToggle] = useState(false);
@@ -66,6 +67,14 @@ export default function listXatScreen({ navigation }) {
       socket.removeListener('update message');
     };
   }, []);
+
+  useEffect(() => {
+    if (userSess != null) {
+      let inicials = userSess.nomUsuari[0].toUpperCase();
+      inicials = inicials + userSess.nomUsuari.split('.')[1][0].toUpperCase();
+      setInicialsUser(inicials);
+    }
+  }, [userSess]);
 
   useEffect(() => {
     if (messageUpdate.message != 'none') {
@@ -148,18 +157,31 @@ export default function listXatScreen({ navigation }) {
     }
   };
 
-  const onPressProfile = () => {};
+  const onPressProfile = () => {
+    let visitUser = user.nomUsuari;
+    navigation.replace('ProfileInfoScreen', { user, visitUser });
+  };
 
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
+        {/*}
         <TouchableOpacity style={styles.imageView} onPress={onPressProfile}>
           <View>
             <Image style={styles.imageProfile} source={{ uri: url_aux }} />
             <View style={styles.circle}></View>
           </View>
+        </TouchableOpacity>*/}
+        <TouchableOpacity style={styles.imageView}>
+          <View>
+            <View style={styles.imageProfile}>
+              <Text style={styles.textImage}>{inicialsUser}</Text>
+            </View>
+            <View style={styles.circle}></View>
+          </View>
+          {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.textView}>
+        <TouchableOpacity style={styles.textView} onPress={onPressProfile}>
           <View>
             <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
               {user.nomUsuari}
@@ -228,6 +250,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
   },
   circle: {
     width: '30%',
