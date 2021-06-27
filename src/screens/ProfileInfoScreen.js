@@ -7,10 +7,12 @@ import Window from '../constants/Layout';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from '../constants/axios';
 import BackHeader from '../components/BackHeader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProfileInfoScreen({ navigation }) {
   const [user, setUser] = useState(navigation.getParam('user'));
   const [visitUser, setVisitUser] = useState(navigation.getParam('visitUser'));
+
   const [isAssigModalVisible, setAssigModalVisible] = useState(false);
   const [userData, setUserData] = useState([
     {
@@ -34,6 +36,26 @@ function ProfileInfoScreen({ navigation }) {
   const url = 'https://randomuser.me/api/portraits/men/1.jpg';
 
   useEffect(() => {
+    async function getData() {
+      try {
+        let userSess = await AsyncStorage.getItem('userSession');
+        if (userSess != null) {
+          userSess = JSON.parse(userSess);
+          setUserSess(userSess);
+          try {
+            response = await axios.get('estudiant/auth/session', {
+              headers: {
+                Authorization: `${userSess.jwt}`,
+              },
+            });
+            if (response.data.msg != 'Success') navigation.replace('Login');
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (e) {}
+    }
+    getData();
     async function getUserData() {
       let response = null;
       try {
@@ -89,10 +111,32 @@ function ProfileInfoScreen({ navigation }) {
     setAssigModalVisible(bool);
   };
 
-  const esborrarXat = () => {
+  const esborrarXat = async () => {
     try {
-    } catch (e) {}
+      await axios.delete(`/missatge/xat/${user.room}`);
+      await axios.delete(`/participant/xat/${user.room}`);
+      await axios.delete(`/Xat/${user.room}`);
+    } catch (e) {
+      console.error(e);
+    }
+    let tipusXat = 'privs';
+    navigation.replace('listXatScreen', { user, tipusXat });
   };
+
+  const modificaHandler = () => {
+    navigation.replace('modificarPerfilScreen', { userData, user, visitUser });
+  };
+
+  const logoutHandler = async () => {
+    try {
+      await AsyncStorage.removeItem('userSession');
+      navigation.replace('Login');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const enviarMissatgeHandler = async () => {};
 
   const FlatListItemSeparator = () => {
     return (
@@ -107,10 +151,12 @@ function ProfileInfoScreen({ navigation }) {
   };
 
   return (
-    <View style={{ backgroundColor: Colors.white, flex: 1 }}>
+    <ScrollView style={{ backgroundColor: Colors.white, flex: 1 }}>
       <BackHeader
         onPress={() => {
-          if (user.tipusXat === 'privs') navigation.replace('ChatScreen', { user });
+          let tipusXat = 'grups';
+          if (user.titol === 'none') navigation.replace('listXatScreen', { user, tipusXat });
+          else if (user.tipusXat === 'privs' && user.titol !== 'none') navigation.replace('ChatScreen', { user });
           else navigation.replace('GrupInfoScreen', { user });
         }}
       ></BackHeader>
@@ -125,9 +171,9 @@ function ProfileInfoScreen({ navigation }) {
         <Image style={styles.imageProfile} source={{ uri: url }} />
       </View>
       <View style={styles.border}>
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={styles.textArea}>{userData.descripcio}</Text>
-        </ScrollView>
+        <Text style={styles.textArea} numberOfLines={4}>
+          {userData.descripcio}
+        </Text>
       </View>
       <Text style={styles.interessosTitle}>{'Interessos'}</Text>
       <View style={styles.list}>
@@ -179,10 +225,27 @@ function ProfileInfoScreen({ navigation }) {
           </Modal>
         </TouchableOpacity>
       </View>
-      <View style={styles.btnLast}>
-        <BaseButton onPress={esborrarXat} title="Esborrar xat" btnColor={Colors.red} />
-      </View>
-    </View>
+      {user.tipusXat === 'privs' && user.titol !== 'none' ? (
+        <View style={styles.btnLast}>
+          <BaseButton onPress={esborrarXat} title="Esborrar xat" btnColor={Colors.red} />
+        </View>
+      ) : null}
+      {user.tipusXat === 'XatAssignatura' || user.tipusXat === 'XatMentor' || user.tipusXat === 'XatGrupTancat' ? (
+        <View style={styles.btnLast}>
+          <BaseButton onPress={enviarMissatgeHandler} title="Enviar missatge" btnColor={Colors.primary} />
+        </View>
+      ) : null}
+      {user.titol === 'none' ? (
+        <View>
+          <View style={styles.btnLast}>
+            <BaseButton onPress={modificaHandler} title="Modificar" btnColor={Colors.primary} />
+          </View>
+          <View style={styles.btnLastLogout}>
+            <BaseButton onPress={logoutHandler} title="Tancar sessió" btnColor={Colors.red} />
+          </View>
+        </View>
+      ) : null}
+    </ScrollView>
   );
 }
 
@@ -244,7 +307,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageProfile: {
-    width: Window.width * 0.4,
+    width: Window.width * 0.33,
     aspectRatio: 1,
     marginTop: 15,
     borderRadius: 100,
@@ -270,19 +333,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.lightBlack,
     width: Window.width * 0.85,
-    height: 105,
-  },
-  scroll: {
-    alignSelf: 'center',
-    width: Window.width * 0.8,
   },
   textArea: {
     fontSize: 16,
     textAlign: 'justify',
     paddingTop: 3,
-    paddingBottom: 3,
-    paddingLeft: 6,
-    paddingRight: 7,
+    paddingBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   interessosTitle: {
     marginTop: 20,
@@ -304,6 +362,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 40,
+  },
+  btnLastLogout: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginTop: 10,
     marginBottom: 30,
   },
   item: {

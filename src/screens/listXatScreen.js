@@ -148,7 +148,10 @@ export default function listXatScreen({ navigation }) {
     }
   };
 
-  const onPressProfile = () => {};
+  const onPressProfile = () => {
+    let visitUser = user.nomUsuari;
+    navigation.replace('ProfileInfoScreen', { user, visitUser });
+  };
 
   return (
     <View style={styles.scroll}>
@@ -159,7 +162,7 @@ export default function listXatScreen({ navigation }) {
             <View style={styles.circle}></View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.textView}>
+        <TouchableOpacity style={styles.textView} onPress={onPressProfile}>
           <View>
             <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
               {user.nomUsuari}
