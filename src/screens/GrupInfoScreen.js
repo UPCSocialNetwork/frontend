@@ -60,9 +60,11 @@ export default function GrupInfoScreen({ navigation }) {
         if (user.tipusXat === 'XatAssignatura') xatGrupal = await axios.get(`XatAssignatura/getOneID/${user.room}`);
         else xatGrupal = await axios.get(`${user.tipusXat}/${user.room}`);
 
+        console.log(xatGrupal.data);
+
         if (user.tipusXat === 'XatAssignatura') setXatGrupal(xatGrupal.data.xatAssignatura);
-        else if (user.tipusXat === 'xatGrupTancat') setXatGrupal(xatGrupal.data.xatGrupTancat);
-        else if (user.tipusXat === 'xatMentor') setXatGrupal(xatGrupal.data.xatMentor);
+        else if (user.tipusXat === 'XatGrupTancat') setXatGrupal(xatGrupal.data.xatGrupTancat);
+        else if (user.tipusXat === 'XatMentor') setXatGrupal(xatGrupal.data.xatMentor);
 
         let participants = await axios.get(`/estudiants/${user.room}`);
         setLlistatParticipants(participants.data.persones);
@@ -111,19 +113,23 @@ export default function GrupInfoScreen({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={styles.mainContainer}>
-            <Text style={styles.textInfo}>Informació</Text>
-            <View style={styles.border1}>
-              <View style={styles.scroll}>
-                <Text
-                  style={styles.textArea}
-                  placeholder="Escriu la teva descripció..."
-                  underlineColorAndroid="transparent"
-                  multiline={true}
-                >
-                  {`${xatGrupal.titol} - ${xatGrupal.assignaturaID}`}
-                </Text>
+            {user.tipusXat === 'XatAssignatura' ? (
+              <View>
+                <Text style={styles.textInfo}>Informació</Text>
+                <View style={styles.border1}>
+                  <View style={styles.scroll}>
+                    <Text
+                      style={styles.textArea}
+                      placeholder="Escriu la teva descripció..."
+                      underlineColorAndroid="transparent"
+                      multiline={true}
+                    >
+                      {`${xatGrupal.titol} - ${xatGrupal.assignaturaID}`}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
+            ) : null}
             <Text style={styles.textInfo}>Descripció</Text>
             <View style={styles.border2}>
               <View style={styles.scroll}>
@@ -153,9 +159,11 @@ export default function GrupInfoScreen({ navigation }) {
             <View style={styles.BlockButton}>
               <BaseButton title="Bloquejar grup" btnColor={Colors.warning} />
             </View>
-            <View style={styles.ExitButton}>
-              <BaseButton title="Sortir del grup" btnColor={Colors.red} />
-            </View>
+            {user.tipusXat === 'XatGrupTancat' ? (
+              <View style={styles.ExitButton}>
+                <BaseButton title="Sortir del grup" btnColor={Colors.red} />
+              </View>
+            ) : null}
           </View>
         </View>
       </View>

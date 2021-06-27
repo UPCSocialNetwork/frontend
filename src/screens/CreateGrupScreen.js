@@ -23,9 +23,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CreateGrupScreen({ navigation }) {
   const [userSess, setUserSess] = useState(null);
-  const [xatGrupal, setXatGrupal] = useState({});
   const [llistatParticipants, setLlistatParticipants] = useState(navigation.getParam('llistatEstudiants'));
   const [visitUser, setVisitUser] = useState('none');
+
+  const [user, setUser] = useState({
+    nomUsuari: '',
+    room: '',
+    participant: null,
+    tipusXat: 'XatGrupTancat',
+    titol: '',
+  });
 
   const [errorText, setErrorText] = useState({
     errorMsg: `Has d'escollir un nom de Grup`,
@@ -46,6 +53,7 @@ export default function CreateGrupScreen({ navigation }) {
         if (userSess != null) {
           userSess = JSON.parse(userSess);
           setUserSess(userSess);
+
           try {
             response = await axios.get('estudiant/auth/session', {
               headers: {
@@ -62,6 +70,13 @@ export default function CreateGrupScreen({ navigation }) {
 
     getData();
   }, []);
+
+  useEffect(() => {
+    if (user.participant !== null) {
+      console.log(user);
+      navigation.replace('ChatScreen', { user });
+    }
+  }, [user.participant]);
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
@@ -90,8 +105,6 @@ export default function CreateGrupScreen({ navigation }) {
           llistatParticipants.forEach((estudiant) => {
             createParticipant(estudiant.nomUsuari, xatID);
           });
-
-          // FALTA REDIRECCION
         }
       } catch (error) {
         console.log(error);
@@ -115,6 +128,16 @@ export default function CreateGrupScreen({ navigation }) {
         },
         { 'Content-Type': 'application/json' },
       );
+
+      if (nomUsuari === userSess.nomUsuari && responseParticipant.data.message === 'Saved') {
+        setUser({
+          ...user,
+          nomUsuari: nomUsuari,
+          room: xatID,
+          titol: xatGrupTancat.titol,
+          participant: responseParticipant.data.Participant._id,
+        });
+      }
     } catch (error) {
       console.log(error);
     }

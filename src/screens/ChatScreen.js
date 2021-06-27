@@ -157,6 +157,7 @@ export default function ChatScreen({ navigation }) {
         addMissatge(newMessage, user.participant, user.room);
       } else {
         if (user.tipusXat === 'privs') {
+          console.log('inside privs');
           try {
             let responseXat = await axios.post('/Xat');
             let xatID = responseXat.data.Xat._id;
@@ -184,7 +185,7 @@ export default function ChatScreen({ navigation }) {
                 { 'Content-Type': 'application/json' },
               );
               let partID = responsePart1.data.Participant._id;
-              // socket.emit('xat actiu', xatID);
+              socket.emit('xat actiu', xatID);
               setUser({ ...user, room: xatID, participant: partID });
               addMissatge(newMessage, partID, xatID);
               setNouXat(false);
