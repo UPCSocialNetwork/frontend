@@ -136,7 +136,35 @@ function ProfileInfoScreen({ navigation }) {
     }
   };
 
-  const enviarMissatgeHandler = async () => {};
+  const enviarMissatgeHandler = async () => {
+    try {
+      let response = await axios.get(`Xat/Parts/${user.nomUsuari}/${visitUser}`);
+      if (response.data != false) {
+        let responsePart = await axios.get(`/participant/${user.nomUsuari}/${response.data[0]._id}`);
+        console.log(responsePart.data);
+        const newUser = {
+          nomUsuari: user.nomUsuari,
+          room: response.data[0]._id,
+          participant: responsePart.data.participant._id,
+          tipusXat: 'privs',
+          titol: visitUser,
+        };
+        console.log(newUser);
+        navigation.replace('ChatScreen', { user: newUser });
+      } else {
+        const newUser = {
+          nomUsuari: user.nomUsuari,
+          room: 'none',
+          participant: 'none',
+          tipusXat: 'privs',
+          titol: visitUser,
+        };
+        navigation.replace('ChatScreen', { user: newUser });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const FlatListItemSeparator = () => {
     return (
