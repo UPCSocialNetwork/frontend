@@ -14,6 +14,7 @@ import listXatScreen from '../screens/listXatScreen';
 import RegisterProfile from '../screens/RegisterProfileScreen';
 import ChatScreen from '../screens/ChatScreen';
 import SearchScreen from '../screens/SearchScreen';
+import CreateGrup from '../screens/CreateGrupScreen';
 import GrupInfo from '../screens/GrupInfoScreen';
 
 const screens = {
@@ -55,6 +56,9 @@ const screens = {
   },
   SearchScreen: {
     screen: SearchScreen,
+  },
+  CreateGrup: {
+    screen: CreateGrup,
   },
   GrupInfoScreen: {
     screen: GrupInfo,

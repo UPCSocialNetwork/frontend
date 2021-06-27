@@ -14,27 +14,37 @@ import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
+import * as Animatable from 'react-native-animatable';
 import axios from '../constants/axios';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
 import ParticipantList from '../components/ParticipantList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDerivedValue } from 'react-native-reanimated';
 
-export default function GrupInfoScreen({ navigation }) {
+export default function CreateGrupScreen({ navigation }) {
   const [userSess, setUserSess] = useState(null);
-  const [user, setUser] = useState(navigation.getParam('user'));
-  /*const [user, setUser] = useState({
-    nomUsuari: 'daniel.benavente', //navigation.getParam('user').nomUsuari,
-    room: '60d7631aca477993ec206e7d', // xatid
-    participant: 'none',
-    tipusXat: 'XatAssignatura', //priv / XatGrupTancat / XatAssignatura / XatMentor
-    titol: 'FOMA',
-  });*/
-  const [xatGrupal, setXatGrupal] = useState({});
-  const [llistatParticipants, setLlistatParticipants] = useState([]);
+  const [llistatParticipants, setLlistatParticipants] = useState(navigation.getParam('llistatEstudiants'));
   const [visitUser, setVisitUser] = useState('none');
+
+  const [user, setUser] = useState({
+    nomUsuari: '',
+    room: '',
+    participant: null,
+    tipusXat: 'XatGrupTancat',
+    titol: '',
+  });
+
+  const [errorText, setErrorText] = useState({
+    errorMsg: `Has d'escollir un nom de Grup`,
+    errorStatus: false,
+  });
+
+  const [xatGrupTancat, setXatGrupTancat] = useState({
+    titol: '',
+    descripcio: '-',
+    imatge: 'none',
+    ultimMissatgeID: 'none',
+  });
 
   useEffect(() => {
     async function getData() {
@@ -43,6 +53,7 @@ export default function GrupInfoScreen({ navigation }) {
         if (userSess != null) {
           userSess = JSON.parse(userSess);
           setUserSess(userSess);
+
           try {
             response = await axios.get('estudiant/auth/session', {
               headers: {
@@ -55,31 +66,17 @@ export default function GrupInfoScreen({ navigation }) {
           }
         }
       } catch (e) {}
-      try {
-        let xatGrupal = null;
-        if (user.tipusXat === 'XatAssignatura') xatGrupal = await axios.get(`XatAssignatura/getOneID/${user.room}`);
-        else xatGrupal = await axios.get(`${user.tipusXat}/${user.room}`);
-
-        console.log(xatGrupal.data);
-
-        if (user.tipusXat === 'XatAssignatura') setXatGrupal(xatGrupal.data.xatAssignatura);
-        else if (user.tipusXat === 'XatGrupTancat') setXatGrupal(xatGrupal.data.xatGrupTancat);
-        else if (user.tipusXat === 'XatMentor') setXatGrupal(xatGrupal.data.xatMentor);
-
-        let participants = await axios.get(`/estudiants/${user.room}`);
-        setLlistatParticipants(participants.data.persones);
-      } catch (e) {
-        console.log(e);
-      }
     }
+
     getData();
   }, []);
 
   useEffect(() => {
-    if (visitUser !== 'none' && visitUser != user.nomUsuari) {
-      navigation.replace('ProfileInfoScreen', { user, visitUser });
+    if (user.participant !== null) {
+      console.log(user);
+      navigation.replace('ChatScreen', { user });
     }
-  }, [visitUser]);
+  }, [user.participant]);
 
   const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
@@ -94,76 +91,134 @@ export default function GrupInfoScreen({ navigation }) {
     return null;
   }
 
+  async function crearGrupHandler() {
+    if (xatGrupTancat.titol !== '') {
+      setErrorText({ ...errorText, errorStatus: false });
+      let responseCrearGrup = null;
+      try {
+        // CREAR GRUP
+        responseCrearGrup = await axios.post('/XatGrupTancat', xatGrupTancat, { 'Content-Type': 'application/json' });
+
+        if (responseCrearGrup.data.message === 'Saved') {
+          let xatID = responseCrearGrup.data.XatGrupTancat._id;
+          // CREAR PARTICIPANTS
+          llistatParticipants.forEach((estudiant) => {
+            createParticipant(estudiant.nomUsuari, xatID);
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setErrorText({ ...errorText, errorStatus: true });
+    }
+  }
+
+  async function createParticipant(nomUsuari, xatID) {
+    let responseParticipant = null;
+    try {
+      responseParticipant = await axios.post(
+        '/participant',
+        {
+          estudiantID: nomUsuari,
+          xatID: xatID,
+          ultimaLectura: 0,
+          notificacions: 'Activat',
+          bloqueigGrup: 'Desactivat',
+        },
+        { 'Content-Type': 'application/json' },
+      );
+
+      if (nomUsuari === userSess.nomUsuari && responseParticipant.data.message === 'Saved') {
+        setUser({
+          ...user,
+          nomUsuari: nomUsuari,
+          room: xatID,
+          titol: xatGrupTancat.titol,
+          participant: responseParticipant.data.Participant._id,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <ScrollView style={styles.backgroundView}>
       <View style={styles.Container}>
         <BackHeader
           onPress={() => {
-            navigation.replace('ChatScreen', { user });
+            navigation.goBack();
           }}
         ></BackHeader>
         <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
           <View style={styles.headerContainer}>
-            <Text style={styles.title}>{xatGrupal.titol}</Text>
+            <View style={styles.textInputView}>
+              <TextInput
+                style={styles.title}
+                placeholder="Nom del Grup"
+                placeholderTextColor={Colors.secondary}
+                autoCorrect={false}
+                autoCapitalize="none"
+                onChangeText={(val) => {
+                  setErrorText({ ...errorText, errorStatus: false });
+                  setXatGrupTancat({
+                    ...xatGrupTancat,
+                    titol: val,
+                  });
+                }}
+              ></TextInput>
+              {xatGrupTancat.titol !== '' ? null : (
+                <View style={{ justifyContent: 'center' }}>
+                  <MaterialIcons style={styles.icon} name="edit" size={14} color={Colors.secondary} />
+                </View>
+              )}
+            </View>
             <TouchableOpacity style={styles.imageView}>
               <View style={styles.imageProfile}>
-                <Text style={styles.textImage}>GN</Text>
+                <Text style={styles.textImage}>Afegeix una foto</Text>
               </View>
               {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
             </TouchableOpacity>
           </View>
           <View style={styles.mainContainer}>
-            {user.tipusXat === 'XatAssignatura' ? (
-              <View>
-                <Text style={styles.textInfo}>Informació</Text>
-                <View style={styles.border1}>
-                  <View style={styles.scroll}>
-                    <Text
-                      style={styles.textArea}
-                      placeholder="Escriu la teva descripció..."
-                      underlineColorAndroid="transparent"
-                      multiline={true}
-                    >
-                      {`${xatGrupal.titol} - ${xatGrupal.assignaturaID}`}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            ) : null}
+            <View style={styles.textErrorInputs}>
+              {!errorText.errorStatus ? null : (
+                <Animatable.View animation="fadeInLeft" duration={500}>
+                  <Text style={styles.errorText}>{errorText.errorMsg}</Text>
+                </Animatable.View>
+              )}
+            </View>
             <Text style={styles.textInfo}>Descripció</Text>
             <View style={styles.border2}>
               <View style={styles.scroll}>
-                <Text
+                <TextInput
                   style={styles.textArea}
                   placeholder="Escriu la teva descripció..."
                   underlineColorAndroid="transparent"
                   multiline={true}
-                >
-                  {xatGrupal.descripcio}
-                </Text>
+                  onChangeText={(val) => {
+                    setXatGrupTancat({
+                      ...xatGrupTancat,
+                      descripcio: val,
+                    });
+                  }}
+                ></TextInput>
               </View>
             </View>
-            <TouchableOpacity style={styles.GuiaDocentContainer}>
-              <Text style={styles.text}>Veure Guia Docent</Text>
-            </TouchableOpacity>
             <View style={styles.llistatParticipants}>
               <Text style={styles.textLlistat}>LLISTAT PARTICIPANTS {`(${llistatParticipants.length})`}</Text>
               <View>
-                {llistatParticipants.map((nomUsuari, index) => (
+                {llistatParticipants.map((estudiant, index) => (
                   <View key={index}>
-                    <ParticipantList nomUsuari={nomUsuari} setVisitUser={setVisitUser}></ParticipantList>
+                    <ParticipantList nomUsuari={estudiant.nomUsuari} setVisitUser="none"></ParticipantList>
                   </View>
                 ))}
               </View>
             </View>
-            <View style={styles.BlockButton}>
-              <BaseButton title="Bloquejar grup" btnColor={Colors.warning} />
+            <View style={styles.CreateGrup}>
+              <BaseButton title="Crear Grup" btnColor={Colors.primary} onPress={crearGrupHandler} />
             </View>
-            {user.tipusXat === 'XatGrupTancat' ? (
-              <View style={styles.ExitButton}>
-                <BaseButton title="Sortir del grup" btnColor={Colors.red} />
-              </View>
-            ) : null}
           </View>
         </View>
       </View>
@@ -183,11 +238,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: Window.width * 0.9,
   },
+  textInputView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  icon: {
+    alignSelf: 'center',
+  },
   title: {
     fontFamily: 'InterSemiBold',
     fontWeight: 'bold',
+    textAlign: 'center',
     fontSize: 20,
-    marginLeft: 5,
+    marginRight: 8,
     color: Colors.secondary,
   },
   imageView: {
@@ -206,14 +269,28 @@ const styles = StyleSheet.create({
   },
   textImage: {
     textAlign: 'center',
-    fontFamily: 'InterSemiBold',
-    fontSize: 30,
+    fontFamily: 'InterMedium',
+    color: Colors.addImageColor,
+    fontSize: 14,
   },
   mainContainer: {
     flex: 1,
+    marginTop: 10,
     width: Window.width * 0.9,
     flexDirection: 'column',
     alignContent: 'center',
+  },
+  textErrorInputs: {
+    alignItems: 'center',
+    paddingRight: 20,
+    paddingLeft: 20,
+  },
+  errorText: {
+    fontFamily: 'InterMedium',
+    fontSize: 13,
+    marginTop: 6,
+    alignSelf: 'center',
+    color: Colors.red,
   },
   textInfo: {
     fontFamily: 'InterSemiBold',
@@ -221,16 +298,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 15,
     color: Colors.secondary,
-  },
-  border1: {
-    marginTop: 8,
-    marginBottom: 10,
-    alignSelf: 'center',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.lightBlack,
-    width: Window.width * 0.9,
-    height: 60,
   },
   border2: {
     marginTop: 8,
@@ -240,7 +307,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.lightBlack,
     width: Window.width * 0.9,
-    height: 100,
+    height: 130,
   },
   scroll: {
     alignSelf: 'center',
@@ -250,30 +317,11 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 15,
     textAlign: 'justify',
-    padding: 5,
-  },
-  GuiaDocentContainer: {
-    alignSelf: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Window.width * 0.688,
-    height: 37,
-    borderRadius: 8,
-    backgroundColor: Colors.green2,
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 2,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 4,
+    padding: 10,
   },
   llistatParticipants: {
-    marginTop: 30,
+    flex: 1,
+    marginTop: 40,
     width: Window.width * 0.9,
   },
   textLlistat: {
@@ -283,35 +331,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.secondary,
   },
-  button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Window.width * 0.688,
-    height: 37,
-    borderRadius: 8,
-    backgroundColor: Colors.green2,
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 2,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  text: {
-    fontFamily: 'InterMedium',
-    fontWeight: '500',
-    fontSize: 14,
-    textAlign: 'center',
-    color: Colors.white,
-  },
-  BlockButton: {
-    marginTop: 25,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  ExitButton: {
+  CreateGrup: {
+    marginTop: 60,
     marginBottom: 30,
     alignItems: 'center',
   },
