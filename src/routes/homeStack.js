@@ -19,9 +19,6 @@ import GrupInfo from '../screens/GrupInfoScreen';
 import ModificarPerfil from '../screens/ModificarPerfilScreen';
 
 const screens = {
-  ModificarPerfil: {
-    screen: ModificarPerfil,
-  },
   Intro: {
     screen: Intro,
   },
@@ -57,6 +54,9 @@ const screens = {
   },
   ProfileInfoScreen: {
     screen: ProfileInfoScreen,
+  },
+  ModificarPerfil: {
+    screen: ModificarPerfil,
   },
   SearchScreen: {
     screen: SearchScreen,
