@@ -154,7 +154,7 @@ export default function RegisterProfileScreen({ navigation }) {
         <Text style={styles.mail}>{newUser.mail}</Text>
         <TouchableOpacity style={styles.imageView}>
           <View style={styles.imageProfile}>
-            <Text style={styles.textImage}>GN</Text>
+            <Text style={styles.textImage}>Afegeix una foto</Text>
           </View>
           {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
         </TouchableOpacity>
@@ -299,8 +299,9 @@ const styles = StyleSheet.create({
   },
   textImage: {
     textAlign: 'center',
-    fontFamily: 'InterSemiBold',
-    fontSize: 30,
+    fontFamily: 'InterMedium',
+    color: Colors.addImageColor,
+    fontSize: 14,
   },
   border: {
     marginTop: 30,

@@ -35,6 +35,7 @@ export default function GrupInfoScreen({ navigation }) {
   const [xatGrupal, setXatGrupal] = useState({});
   const [llistatParticipants, setLlistatParticipants] = useState([]);
   const [visitUser, setVisitUser] = useState('none');
+  const [inicialsUser, setInicialsUser] = useState();
 
   useEffect(() => {
     async function getData() {
@@ -60,8 +61,6 @@ export default function GrupInfoScreen({ navigation }) {
         if (user.tipusXat === 'XatAssignatura') xatGrupal = await axios.get(`XatAssignatura/getOneID/${user.room}`);
         else xatGrupal = await axios.get(`${user.tipusXat}/${user.room}`);
 
-        console.log(xatGrupal.data);
-
         if (user.tipusXat === 'XatAssignatura') setXatGrupal(xatGrupal.data.xatAssignatura);
         else if (user.tipusXat === 'XatGrupTancat') setXatGrupal(xatGrupal.data.xatGrupTancat);
         else if (user.tipusXat === 'XatMentor') setXatGrupal(xatGrupal.data.xatMentor);
@@ -73,6 +72,19 @@ export default function GrupInfoScreen({ navigation }) {
       }
     }
     getData();
+
+    if (user.tipusXat === 'XatMentor') {
+      /*
+      Inicials del mentor
+      let inicials = user.titol.split(' ')[1];
+      inicials = inicials[0].toUpperCase() + inicials.split('.')[1][0].toUpperCase();
+      */
+      setInicialsUser('XM');
+    } else {
+      let inicials = user.titol[0].toUpperCase();
+      if (user.titol.length > 1) inicials = inicials + user.titol[1].toUpperCase();
+      setInicialsUser(inicials);
+    }
   }, []);
 
   useEffect(() => {
@@ -107,7 +119,7 @@ export default function GrupInfoScreen({ navigation }) {
             <Text style={styles.title}>{xatGrupal.titol}</Text>
             <TouchableOpacity style={styles.imageView}>
               <View style={styles.imageProfile}>
-                <Text style={styles.textImage}>GN</Text>
+                <Text style={styles.textImage}>{inicialsUser}</Text>
               </View>
               {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
             </TouchableOpacity>

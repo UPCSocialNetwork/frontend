@@ -124,7 +124,7 @@ function ProfileInfoScreen({ navigation }) {
   };
 
   const modificaHandler = () => {
-    navigation.replace('modificarPerfilScreen', { userData, user, visitUser });
+    navigation.replace('ModificarPerfil', { userData, user, visitUser });
   };
 
   const logoutHandler = async () => {
@@ -170,6 +170,7 @@ function ProfileInfoScreen({ navigation }) {
         </View>
         <Image style={styles.imageProfile} source={{ uri: url }} />
       </View>
+      <Text style={styles.descripcioTitle}>Descripció</Text>
       <View style={styles.border}>
         <Text style={styles.textArea} numberOfLines={4}>
           {userData.descripcio}
@@ -326,13 +327,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: Window.width * 0.8,
   },
-  border: {
+  descripcioTitle: {
+    fontFamily: 'InterSemiBold',
+    fontSize: 15,
+    color: Colors.secondary,
     marginTop: 20,
+    marginLeft: Window.width * 0.08,
+  },
+  border: {
+    marginTop: 10,
     alignSelf: 'center',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: Colors.lightBlack,
     width: Window.width * 0.85,
+    height: 90,
   },
   textArea: {
     fontSize: 16,

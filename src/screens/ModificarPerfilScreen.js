@@ -7,15 +7,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import InteresListItem from '../components/InteresListItem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 
 export default function ModificarPerfilScreen({ navigation }) {
-  const [userSess, setUserSess] = useState({
-    nomUsuari: 'dile.galan',
-  });
+  const [userSess, setUserSess] = useState(null);
   const [user, setUser] = useState(navigation.getParam('user'));
   const [userData, setUserData] = useState(navigation.getParam('userData'));
   /*
@@ -30,7 +29,7 @@ export default function ModificarPerfilScreen({ navigation }) {
   */
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [inteSelect, setInteSelect] = useState(['Cuina', 'Esports', 'Mascotes']);
+  const [inteSelect, setInteSelect] = useState(navigation.getParam('userData').interessos);
   const [inicialsUser, setInicialsUser] = useState();
 
   // Fonts
@@ -79,14 +78,20 @@ export default function ModificarPerfilScreen({ navigation }) {
             console.log(error);
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
-    //getData();
-
-    let inicials = userSess.nomUsuari[0].toUpperCase();
-    inicials = inicials + userSess.nomUsuari.split('.')[1][0].toUpperCase();
-    setInicialsUser(inicials);
+    getData();
   }, []);
+
+  useEffect(() => {
+    if (userSess != null) {
+      let inicials = userSess.nomUsuari[0].toUpperCase();
+      inicials = inicials + userSess.nomUsuari.split('.')[1][0].toUpperCase();
+      setInicialsUser(inicials);
+    }
+  }, [userSess]);
 
   if (!loaded) {
     return null;
@@ -124,7 +129,7 @@ export default function ModificarPerfilScreen({ navigation }) {
     <ScrollView style={styles.backgroundView}>
       <BackHeader
         onPress={() => {
-          navigation.goBack();
+          navigation.replace('ProfileInfoScreen', { user, visitUser: userSess.nomUsuari });
         }}
       ></BackHeader>
       <View style={styles.header}>

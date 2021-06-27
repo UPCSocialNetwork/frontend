@@ -13,6 +13,7 @@ export default function ChatScreen({ navigation }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(navigation.getParam('user'));
+  const [inicialsUser, setInicialsUser] = useState();
   const [nouXat, setNouXat] = useState(false);
 
   const formatMsg = (msg, sender) => {
@@ -72,6 +73,16 @@ export default function ChatScreen({ navigation }) {
       }
     }
     getMessages();
+
+    if (user.tipusXat === 'privs') {
+      let inicials = user.titol[0].toUpperCase();
+      inicials = inicials + user.titol.split('.')[1][0].toUpperCase();
+      setInicialsUser(inicials);
+    } else {
+      let inicials = user.titol[0].toUpperCase();
+      if (user.titol.length > 1) inicials = inicials + user.titol[1].toUpperCase();
+      setInicialsUser(inicials);
+    }
   }, []);
 
   const addMissatge = async (newMessage, part, room) => {
@@ -157,7 +168,6 @@ export default function ChatScreen({ navigation }) {
         addMissatge(newMessage, user.participant, user.room);
       } else {
         if (user.tipusXat === 'privs') {
-          console.log('inside privs');
           try {
             let responseXat = await axios.post('/Xat');
             let xatID = responseXat.data.Xat._id;
@@ -236,11 +246,18 @@ export default function ChatScreen({ navigation }) {
                 {user.titol}
               </Text>
             </View>
+
             <View style={styles.imgView}>
+              <View style={styles.imageProfile}>
+                <Text style={styles.textImage}>{inicialsUser}</Text>
+                <View style={styles.circle}></View>
+              </View>
+              {/*
               <View style={styles.imgViewChild}>
                 <Image style={styles.image} source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} />
                 <View style={styles.circle}></View>
               </View>
+              */}
             </View>
           </View>
         </TouchableOpacity>
@@ -308,6 +325,21 @@ const styles = StyleSheet.create({
     width: Window.width * 0.3,
     height: '100%',
     justifyContent: 'center',
+  },
+  imageProfile: {
+    height: '85%',
+    marginLeft: '33%',
+    aspectRatio: 1,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
   },
   imgViewChild: {
     justifyContent: 'center',
