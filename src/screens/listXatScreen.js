@@ -162,6 +162,12 @@ export default function listXatScreen({ navigation }) {
     navigation.replace('ProfileInfoScreen', { user, visitUser });
   };
 
+  const searchHandler = () => {
+    let listType = 'privs';
+    let tipusCerca = 'all';
+    navigation.replace('SearchScreen', { listType, user, tipusCerca });
+  };
+
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
@@ -188,7 +194,7 @@ export default function listXatScreen({ navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={searchHandler}>
           <View style={styles.searchView}>
             <MaterialIcons name="search" style={styles.searchIcon} />
           </View>
@@ -220,7 +226,8 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity
           style={styles.plusCircle}
           onPress={() => {
-            navigation.replace('SearchScreen', { listType, user });
+            let tipusCerca = 'some';
+            navigation.replace('SearchScreen', { listType, user, tipusCerca });
           }}
         >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>

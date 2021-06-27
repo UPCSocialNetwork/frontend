@@ -11,6 +11,7 @@ import BaseButton from '../components/BaseButton';
 
 export default function SearchScreen({ navigation }) {
   const [searchType, setSearchType] = useState(navigation.getParam('listType'));
+  const [tipusCerca, setTipusCerca] = useState(navigation.getParam('tipusCerca'));
   const [search, setSearch] = useState('');
   const [actualGrau, setActualGrau] = useState('Tots els graus');
   const [isGrauModalVisible, setGrauModalVisible] = useState(false);
@@ -30,8 +31,6 @@ export default function SearchScreen({ navigation }) {
 
   useEffect(() => {
     async function fetchData() {
-      // console.log('searchType: ' + searchType);
-      // console.log('user: ' + user.nomUsuari);
       let responseGrau = null;
       let responseUsers = null;
       try {
@@ -42,25 +41,30 @@ export default function SearchScreen({ navigation }) {
         responseUsers.data.estudiant.map((element, index) => {
           if (element.nomUsuari === user.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
         });
-        if (searchType === 'privs') {
-          let responseXats = await axios.get(`/estudiant/xats/${user.nomUsuari}`);
-          responseXats = responseXats.data.xatsFinals;
-          // console.log(responseXats);
-          let index = responseUsers.data.estudiant.length - 1;
-          let element;
-          while (index >= 0) {
-            element = responseUsers.data.estudiant[index];
-            responseXats.forEach((xat) => {
-              if (xat[2] === element.nomUsuari) {
-                responseUsers.data.estudiant.splice(index, 1);
-              }
-            });
-            index -= 1;
+        if (tipusCerca === 'all') {
+          setUsers(responseUsers.data.estudiant);
+          setFilterData(responseUsers.data.estudiant);
+          setGraus(responseGrau.data.grau);
+        } else {
+          if (searchType === 'privs') {
+            let responseXats = await axios.get(`/estudiant/xats/${user.nomUsuari}`);
+            responseXats = responseXats.data.xatsFinals;
+            let index = responseUsers.data.estudiant.length - 1;
+            let element;
+            while (index >= 0) {
+              element = responseUsers.data.estudiant[index];
+              responseXats.forEach((xat) => {
+                if (xat[2] === element.nomUsuari) {
+                  responseUsers.data.estudiant.splice(index, 1);
+                }
+              });
+              index -= 1;
+            }
           }
+          setUsers(responseUsers.data.estudiant);
+          setFilterData(responseUsers.data.estudiant);
+          setGraus(responseGrau.data.grau);
         }
-        setUsers(responseUsers.data.estudiant);
-        setFilterData(responseUsers.data.estudiant);
-        setGraus(responseGrau.data.grau);
       } catch (error) {
         console.error(error);
       }
@@ -163,14 +167,26 @@ export default function SearchScreen({ navigation }) {
   };
 
   const itemPrivPress = (receiverName) => {
-    const newUser = {
-      nomUsuari: user.nomUsuari,
-      room: 'none',
-      participant: 'none',
-      tipusXat: 'privs',
-      titol: receiverName,
-    };
-    navigation.replace('ChatScreen', { user: newUser });
+    if (tipusCerca === 'all') {
+      const newUser = {
+        nomUsuari: user.nomUsuari,
+        room: 'none',
+        participant: 'none',
+        tipusXat: 'XatAssignatura',
+        titol: receiverName,
+      };
+      let visitUser = receiverName;
+      navigation.replace('ProfileInfoScreen', { user: newUser, visitUser });
+    } else {
+      const newUser = {
+        nomUsuari: user.nomUsuari,
+        room: 'none',
+        participant: 'none',
+        tipusXat: 'privs',
+        titol: receiverName,
+      };
+      navigation.replace('ChatScreen', { user: newUser });
+    }
   };
 
   const itemGrupPress = (item) => {
