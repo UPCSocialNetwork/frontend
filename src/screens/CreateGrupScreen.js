@@ -189,8 +189,8 @@ export default function CreateGrupScreen({ navigation }) {
                 </Animatable.View>
               )}
             </View>
-            <Text style={styles.textInfo}>Descripció</Text>
             <View style={styles.border2}>
+              <Text style={styles.textInfo}>Descripció</Text>
               <View style={styles.scroll}>
                 <TextInput
                   style={styles.textArea}
