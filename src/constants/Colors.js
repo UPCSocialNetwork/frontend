@@ -18,4 +18,5 @@ export default {
   grey: '#E5E5E5',
   blue: '#c6f2ff',
   greySeparator: '#F7F7F9',
+  addImageColor: '#797979',
 };

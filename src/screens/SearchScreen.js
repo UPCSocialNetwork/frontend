@@ -279,7 +279,14 @@ export default function SearchScreen({ navigation }) {
   );
 
   const creaGrupHandler = () => {
-    // navigation.navigate('pantallaDani', { userSelected })
+    let me = {
+      id: '0',
+      inicials: 'ME',
+      nomUsuari: user.nomUsuari,
+    };
+    let llistatEstudiants = userSelected;
+    if (!userSelected.find((item) => (item.nomUsuari === me.nomUsuari ? true : false))) llistatEstudiants.push(me);
+    navigation.navigate('CreateGrup', { llistatEstudiants });
   };
 
   const ListUsersGrups = () => {
