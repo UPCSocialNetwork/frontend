@@ -172,7 +172,7 @@ export default function listXatScreen({ navigation }) {
             <View style={styles.circle}></View>
           </View>
         </TouchableOpacity>*/}
-        <TouchableOpacity style={styles.imageView}>
+        <TouchableOpacity style={styles.imageView} onPress={onPressProfile}>
           <View>
             <View style={styles.imageProfile}>
               <Text style={styles.textImage}>{inicialsUser}</Text>
