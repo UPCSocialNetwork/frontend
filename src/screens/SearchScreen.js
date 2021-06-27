@@ -172,7 +172,7 @@ export default function SearchScreen({ navigation }) {
         nomUsuari: user.nomUsuari,
         room: 'none',
         participant: 'none',
-        tipusXat: 'XatAssignatura',
+        tipusXat: 'XatCerca',
         titol: receiverName,
       };
       let visitUser = receiverName;
