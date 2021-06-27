@@ -11,7 +11,7 @@ import Window from '../constants/Layout';
 
 export default function RegisterPasswordScreen({ navigation }) {
   const [data, setData] = useState({
-    errorMsg: 'Please follow the rules.',
+    errorMsg: 'Revisa les teves dades',
     repeatPassword: '',
     isValidPassword: true,
     matchPassword: true,
