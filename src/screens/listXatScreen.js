@@ -148,15 +148,6 @@ export default function listXatScreen({ navigation }) {
     return null;
   }
 
-  const logout = async () => {
-    try {
-      await AsyncStorage.removeItem('userSession');
-      navigation.replace('Login');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const onPressProfile = () => {
     let visitUser = user.nomUsuari;
     navigation.replace('ProfileInfoScreen', { user, visitUser });
@@ -194,14 +185,17 @@ export default function listXatScreen({ navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
+        {/*
         <TouchableOpacity onPress={searchHandler}>
           <View style={styles.searchView}>
             <MaterialIcons name="search" style={styles.searchIcon} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={logout}>
+        */}
+        <TouchableOpacity onPress={searchHandler}>
           <View style={styles.optionsView}>
-            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />
+            <MaterialIcons name="search" style={styles.searchIcon} />
+            {/*<SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />*/}
           </View>
         </TouchableOpacity>
       </View>
@@ -298,6 +292,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginLeft: 20,
+    marginRight: 10,
   },
   searchIcon: {
     fontSize: 27,
