@@ -13,6 +13,14 @@ function MentorListItem({ mentorActiu, setMentorActiu, mentor, setErrorMentor, i
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
+  const [inicialsUser, setInicialsUser] = useState();
+
+  useEffect(() => {
+    let inicials = mentor.nomUsuari[0].toUpperCase();
+    inicials = inicials + mentor.nomUsuari.split('.')[1][0].toUpperCase();
+    setInicialsUser(inicials);
+  }, []);
+
   if (!loaded) {
     return null;
   }
@@ -45,8 +53,13 @@ function MentorListItem({ mentorActiu, setMentorActiu, mentor, setErrorMentor, i
       >
         <View style={styles.card}>
           <View style={styles.imageViewParent}>
+            {/*
             <View style={styles.imageView}>
               <Image style={styles.imageChat} source={{ uri: imageSrc }} />
+            </View>
+            */}
+            <View style={styles.imageProfile}>
+              <Text style={styles.textImage}>{inicialsUser}</Text>
             </View>
           </View>
           <View style={styles.userViewParent}>
@@ -86,6 +99,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: Window.width * 0.06,
     width: Window.width * 0.1333,
+  },
+  imageProfile: {
+    width: Window.width * 0.1333,
+    height: Window.width * 0.1333,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
   },
   imageView: {
     height: Window.width * 0.1333,
