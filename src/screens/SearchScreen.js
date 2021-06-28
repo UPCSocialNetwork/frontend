@@ -22,6 +22,8 @@ export default function SearchScreen({ navigation }) {
   const [userSelected, setUserSelected] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
+  const [inicialsUser, setInicialsUser] = useState();
+
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -208,12 +210,19 @@ export default function SearchScreen({ navigation }) {
     <TouchableOpacity activeOpacity={0.6} onPress={() => itemPrivPress(item.nomUsuari)}>
       <View style={styles.card}>
         <View style={styles.imageViewParent}>
+          <View style={styles.imageProfile}>
+            <Text style={styles.textImage}>
+              {item.nomUsuari[0].toUpperCase() + item.nomUsuari.split('.')[1][0].toUpperCase()}
+            </Text>
+          </View>
+          {/*
           <View style={styles.imageView}>
             <Image
               style={styles.imageChat}
               source={{ uri: `https://randomuser.me/api/portraits/men/${index + 1}.jpg` }}
             />
           </View>
+          */}
         </View>
         <View style={styles.userViewParent}>
           <View style={styles.userView}>
@@ -237,12 +246,19 @@ export default function SearchScreen({ navigation }) {
     >
       <View style={styles.card}>
         <View style={styles.imageViewParent}>
+          <View style={styles.imageProfile}>
+            <Text style={styles.textImage}>
+              {item.nomUsuari[0].toUpperCase() + item.nomUsuari.split('.')[1][0].toUpperCase()}
+            </Text>
+          </View>
+          {/*
           <View style={styles.imageView}>
             <Image
               style={styles.imageChat}
               source={{ uri: `https://randomuser.me/api/portraits/men/${index + 1}.jpg` }}
             />
           </View>
+          */}
         </View>
         <View style={styles.userViewParent}>
           <View style={styles.userView}>
@@ -493,6 +509,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: Window.width * 0.06,
     width: Window.width * 0.1333,
+  },
+  imageProfile: {
+    width: Window.width * 0.1333,
+    height: Window.width * 0.1333,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
   },
   imageView: {
     height: Window.width * 0.1333,
