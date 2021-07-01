@@ -157,9 +157,11 @@ export default function GrupInfoScreen({ navigation }) {
                 </Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.GuiaDocentContainer}>
-              <Text style={styles.text}>Veure Guia Docent</Text>
-            </TouchableOpacity>
+            {user.tipusXat === 'XatAssignatura' ? (
+              <TouchableOpacity style={styles.GuiaDocentContainer}>
+                <Text style={styles.text}>Veure Guia Docent</Text>
+              </TouchableOpacity>
+            ) : null}
             <View style={styles.llistatParticipants}>
               <Text style={styles.textLlistat}>LLISTAT PARTICIPANTS {`(${llistatParticipants.length})`}</Text>
               <View>
@@ -173,7 +175,7 @@ export default function GrupInfoScreen({ navigation }) {
             <View style={styles.BlockButton}>
               <BaseButton title="Bloquejar grup" btnColor={Colors.warning} />
             </View>
-            {user.tipusXat === 'XatGrupTancat' ? (
+            {user.tipusXat === 'XatGrupTancat' || user.tipusXat === 'XatMentor' ? (
               <View style={styles.ExitButton}>
                 <BaseButton title="Sortir del grup" btnColor={Colors.red} />
               </View>
