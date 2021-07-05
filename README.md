@@ -1,6 +1,6 @@
-# Express Typescript Backend
+# Express Typescript Frontend
 
-En aquest repositori es troba el backend de l'aplicació OnCampus.
+En aquest repositori es troba el frontend de l'aplicació OnCampus.
 
 ### Estructura de directoris
 
