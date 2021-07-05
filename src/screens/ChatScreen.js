@@ -13,10 +13,8 @@ export default function ChatScreen({ navigation }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(navigation.getParam('user'));
-  /*const [user, setUser] = useState({
-    name: 'cesar',
-    room: 'room1',
-  });*/
+  const [inicialsUser, setInicialsUser] = useState();
+  const [nouXat, setNouXat] = useState(false);
 
   const formatMsg = (msg, sender) => {
     let giftMess = {
@@ -52,19 +50,21 @@ export default function ChatScreen({ navigation }) {
 
   useEffect(() => {
     async function getMessages() {
-      socket.emit('xat actiu', user.room);
+      if (user.room != 'none') socket.emit('xat actiu', user.room);
       let response = null;
       try {
         response = await axios.get('missatge/xat/' + user.room);
         let missatges = response.data.missatges;
         let giftedMessages = [];
-        if (missatges) {
+        if (missatges && missatges.length > 0) {
           missatges.map(function (element) {
             element[1].map(function (msg) {
               msg = formatMsg(msg, element[0]);
               giftedMessages.push(msg);
             });
           });
+        } else {
+          setNouXat(true);
         }
         giftedMessages.sort((a, b) => b.createdAt - a.createdAt);
         setMessages(giftedMessages);
@@ -73,16 +73,26 @@ export default function ChatScreen({ navigation }) {
       }
     }
     getMessages();
+
+    if (user.tipusXat === 'privs') {
+      let inicials = user.titol[0].toUpperCase();
+      inicials = inicials + user.titol.split('.')[1][0].toUpperCase();
+      setInicialsUser(inicials);
+    } else {
+      let inicials = user.titol[0].toUpperCase();
+      if (user.titol.length > 1) inicials = inicials + user.titol[1].toUpperCase();
+      setInicialsUser(inicials);
+    }
   }, []);
 
-  const onSend = useCallback(async (newMessage = []) => {
+  const addMissatge = async (newMessage, part, room) => {
     newMessage = newMessage[0];
     try {
       let response = await axios.post(
         '/missatge/add',
         {
           text: newMessage.text,
-          participantID: user.participant,
+          participantID: part,
         },
         { 'Content-Type': 'application/json' },
       );
@@ -90,7 +100,7 @@ export default function ChatScreen({ navigation }) {
       if (user.tipusXat === 'privs') {
         try {
           await axios.put(
-            `/Xat/${user.room}`,
+            `/Xat/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -102,7 +112,7 @@ export default function ChatScreen({ navigation }) {
       } else if (user.tipusXat === 'XatGrupTancat') {
         try {
           await axios.put(
-            `/XatGrupTancat/${user.room}`,
+            `/XatGrupTancat/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -114,7 +124,7 @@ export default function ChatScreen({ navigation }) {
       } else if (user.tipusXat === 'XatAssignatura') {
         try {
           await axios.put(
-            `/XatAssignatura/${user.room}`,
+            `/XatAssignatura/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -126,7 +136,7 @@ export default function ChatScreen({ navigation }) {
       } else {
         try {
           await axios.put(
-            `/XatMentor/${user.room}`,
+            `/XatMentor/${room}`,
             {
               ultimMissatgeID: missatgeDB._id,
             },
@@ -141,16 +151,76 @@ export default function ChatScreen({ navigation }) {
         text: missatgeDB.text,
         createdAt: missatgeDB.createdAt,
         user: {
-          _id: user.participant,
+          _id: part,
           name: user.nomUsuari,
-          avatar: 'https://randomuser.me/api/portraits/men/1.jpg', //           PRIORIDAD 3 // IMAGENES REALES
+          avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
         },
       };
-      socket.emit('send message', giftMess, user.room);
+      socket.emit('send message', giftMess, room);
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  };
+
+  const onSend = useCallback(
+    async (newMessage = []) => {
+      if (!nouXat) {
+        addMissatge(newMessage, user.participant, user.room);
+      } else {
+        if (user.tipusXat === 'privs') {
+          try {
+            let responseXat = await axios.post('/Xat');
+            let xatID = responseXat.data.Xat._id;
+            try {
+              let responsePart1 = await axios.post(
+                '/participant',
+                {
+                  estudiantID: user.nomUsuari,
+                  xatID: xatID,
+                  ultimaLectura: 0,
+                  notificacions: 'Activat',
+                  bloqueigGrup: 'Desactivat',
+                },
+                { 'Content-Type': 'application/json' },
+              );
+              let responsePart2 = await axios.post(
+                '/participant',
+                {
+                  estudiantID: user.titol,
+                  xatID: xatID,
+                  ultimaLectura: 0,
+                  notificacions: 'Activat',
+                  bloqueigGrup: 'Desactivat',
+                },
+                { 'Content-Type': 'application/json' },
+              );
+              let partID = responsePart1.data.Participant._id;
+              socket.emit('xat actiu', xatID);
+              setUser({ ...user, room: xatID, participant: partID });
+              addMissatge(newMessage, partID, xatID);
+              setNouXat(false);
+            } catch (e) {
+              console.error(e);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          addMissatge(newMessage, user.participant, user.room);
+          setNouXat(false);
+        }
+      }
+    },
+    [nouXat],
+  );
+
+  const onPressProfile = () => {
+    if (user.tipusXat === 'privs') {
+      navigation.replace('ProfileInfoScreen', { user, visitUser: user.titol });
+    } else {
+      navigation.replace('GrupInfoScreen', { user });
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
@@ -169,18 +239,25 @@ export default function ChatScreen({ navigation }) {
             <Text style={styles.textEnrere}> Enrere </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPressProfile}>
           <View style={styles.nameAndImg}>
             <View style={styles.nameView}>
               <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">
                 {user.titol}
               </Text>
             </View>
+
             <View style={styles.imgView}>
+              <View style={styles.imageProfile}>
+                <Text style={styles.textImage}>{inicialsUser}</Text>
+                <View style={styles.circle}></View>
+              </View>
+              {/*
               <View style={styles.imgViewChild}>
                 <Image style={styles.image} source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} />
                 <View style={styles.circle}></View>
               </View>
+              */}
             </View>
           </View>
         </TouchableOpacity>
@@ -205,6 +282,8 @@ const styles = StyleSheet.create({
     width: Window.width,
     marginTop: StatusBar.currentHeight,
     flexDirection: 'row',
+    borderBottomColor: Colors.grey,
+    borderBottomWidth: 1,
   },
   goBack: {
     width: Window.width * 0.3,
@@ -247,9 +326,24 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
   },
+  imageProfile: {
+    height: '85%',
+    marginLeft: '33%',
+    aspectRatio: 1,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
+  },
   imgViewChild: {
     justifyContent: 'center',
-    height: '85%',
+    height: '75%',
     aspectRatio: 1,
     marginLeft: '30%',
   },

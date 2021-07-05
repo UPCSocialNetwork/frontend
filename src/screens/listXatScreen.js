@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function listXatScreen({ navigation }) {
   const [userSess, setUserSess] = useState(navigation.getParam('user'));
+  const [inicialsUser, setInicialsUser] = useState();
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState(navigation.getParam('tipusXat'));
   const [toggle, setToggle] = useState(false);
@@ -62,17 +63,18 @@ export default function listXatScreen({ navigation }) {
     socket.on('update message', (message, roomID) => {
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
     });
-    /*if (navigation.getParam('tipusXat') != undefined) {
-      if (navigation.getParam('tipusXat') === 'privs') {
-        pressPickerPrivs();
-      } else {
-        pressPickerGrups();
-      }
-    }*/
     return () => {
       socket.removeListener('update message');
     };
   }, []);
+
+  useEffect(() => {
+    if (userSess != null) {
+      let inicials = userSess.nomUsuari[0].toUpperCase();
+      inicials = inicials + userSess.nomUsuari.split('.')[1][0].toUpperCase();
+      setInicialsUser(inicials);
+    }
+  }, [userSess]);
 
   useEffect(() => {
     if (messageUpdate.message != 'none') {
@@ -107,6 +109,9 @@ export default function listXatScreen({ navigation }) {
         try {
           response = await axios.get('estudiant/xats/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
+          chats.sort(function (a, b) {
+            return b[4] - a[4];
+          });
           setChatData(chats);
         } catch (e) {
           console.error(e);
@@ -115,6 +120,9 @@ export default function listXatScreen({ navigation }) {
         try {
           response = await axios.get('estudiant/grups/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
+          chats.sort(function (a, b) {
+            return b[4] - a[4];
+          });
           setChatData(chats);
         } catch (e) {
           console.error(e);
@@ -146,39 +154,54 @@ export default function listXatScreen({ navigation }) {
     return null;
   }
 
-  const logout = async () => {
-    try {
-      await AsyncStorage.removeItem('userSession');
-      navigation.replace('Login');
-    } catch (e) {
-      console.log(e);
-    }
+  const onPressProfile = () => {
+    let visitUser = user.nomUsuari;
+    navigation.replace('ProfileInfoScreen', { user, visitUser });
+  };
+
+  const searchHandler = () => {
+    let listType = 'privs';
+    let tipusCerca = 'all';
+    navigation.replace('SearchScreen', { listType, user, tipusCerca });
   };
 
   return (
     <View style={styles.scroll}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.imageView}>
+        {/*}
+        <TouchableOpacity style={styles.imageView} onPress={onPressProfile}>
           <View>
             <Image style={styles.imageProfile} source={{ uri: url_aux }} />
             <View style={styles.circle}></View>
           </View>
+        </TouchableOpacity>*/}
+        <TouchableOpacity style={styles.imageView} onPress={onPressProfile}>
+          <View>
+            <View style={styles.imageProfile}>
+              <Text style={styles.textImage}>{inicialsUser}</Text>
+            </View>
+            <View style={styles.circle}></View>
+          </View>
+          {/*<Image style={styles.imageProfile} source={require('../assets/images/addimage.png')} />*/}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.textView}>
+        <TouchableOpacity style={styles.textView} onPress={onPressProfile}>
           <View>
             <Text style={styles.textHeader} numberOfLines={1} ellipsizeMode="tail">
               {user.nomUsuari}
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        {/*
+        <TouchableOpacity onPress={searchHandler}>
           <View style={styles.searchView}>
             <MaterialIcons name="search" style={styles.searchIcon} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={logout}>
+        */}
+        <TouchableOpacity onPress={searchHandler}>
           <View style={styles.optionsView}>
-            <SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />
+            <MaterialIcons name="search" style={styles.searchIcon} />
+            {/*<SimpleLineIcons name="options-vertical" style={styles.optionsIcon} />*/}
           </View>
         </TouchableOpacity>
       </View>
@@ -203,7 +226,8 @@ export default function listXatScreen({ navigation }) {
         <TouchableOpacity
           style={styles.plusCircle}
           onPress={() => {
-            navigation.navigate('SearchScreen', { listType });
+            let tipusCerca = 'some';
+            navigation.replace('SearchScreen', { listType, user, tipusCerca });
           }}
         >
           <MaterialIcons name="add" style={styles.plusStyle}></MaterialIcons>
@@ -233,6 +257,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
   },
   circle: {
     width: '30%',
@@ -265,6 +298,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginLeft: 20,
+    marginRight: 10,
   },
   searchIcon: {
     fontSize: 27,

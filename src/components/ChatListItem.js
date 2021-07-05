@@ -26,6 +26,20 @@ function ChatListItem({
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
+  const [inicialsUser, setInicialsUser] = useState();
+
+  useEffect(() => {
+    if (tipusXat === 'privs') {
+      let inicials = titol[0].toUpperCase();
+      inicials = inicials + titol.split('.')[1][0].toUpperCase();
+      setInicialsUser(inicials);
+    } else {
+      let inicials = titol[0].toUpperCase();
+      if (titol.length > 1) inicials = inicials + titol[1].toUpperCase();
+      setInicialsUser(inicials);
+    }
+  }, []);
+
   if (!loaded) {
     return null;
   }
@@ -96,8 +110,13 @@ function ChatListItem({
       <TouchableOpacity onPress={onPress}>
         <View style={styles.card}>
           <View style={styles.imageViewParent}>
+            {/*
             <View style={styles.imageView}>
               <Image style={styles.imageChat} source={{ uri: imageSrc }} />
+            </View>
+            */}
+            <View style={styles.imageProfile}>
+              <Text style={styles.textImage}>{inicialsUser}</Text>
             </View>
           </View>
           <View style={styles.userViewParent}>
@@ -142,6 +161,20 @@ const styles = StyleSheet.create({
   },
   imageView: {
     height: Window.width * 0.1333,
+  },
+  imageProfile: {
+    width: Window.width * 0.1333,
+    height: Window.width * 0.1333,
+    borderRadius: 50,
+    justifyContent: 'center',
+    backgroundColor: Colors.lightBlue,
+    borderColor: Colors.white,
+    borderWidth: 1,
+  },
+  textImage: {
+    textAlign: 'center',
+    fontFamily: 'InterSemiBold',
+    fontSize: 16,
   },
   imageChat: {
     width: '100%',

@@ -11,7 +11,7 @@ import Window from '../constants/Layout';
 
 export default function RegisterMailScreen({ navigation }) {
   const [data, setData] = useState({
-    errorMsg: 'Please provide a correct mail',
+    errorMsg: 'Proporciona un correu vàlid',
     isValidMail: true,
   });
 
@@ -23,7 +23,7 @@ export default function RegisterMailScreen({ navigation }) {
     nomUsuari: '',
     mail: '',
     contrasenya: '',
-    descripcio: 'none',
+    descripcio: 'Sense descripció',
     centreID: '',
     grauID: '',
     xatMentorID: 'none',
