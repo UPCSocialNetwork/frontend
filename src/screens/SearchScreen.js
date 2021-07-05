@@ -43,6 +43,9 @@ export default function SearchScreen({ navigation }) {
         responseUsers.data.estudiant.map((element, index) => {
           if (element.nomUsuari === user.nomUsuari) responseUsers.data.estudiant.splice(index, 1);
         });
+        responseUsers.data.estudiant.sort(function (a, b) {
+          return b.nomUsuari < a.nomUsuari;
+        });
         if (tipusCerca === 'all') {
           setUsers(responseUsers.data.estudiant);
           setFilterData(responseUsers.data.estudiant);

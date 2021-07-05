@@ -73,7 +73,6 @@ export default function CreateGrupScreen({ navigation }) {
 
   useEffect(() => {
     if (user.participant !== null) {
-      console.log(user);
       navigation.replace('ChatScreen', { user });
     }
   }, [user.participant]);

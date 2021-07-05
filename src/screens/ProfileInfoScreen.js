@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from '../constants/axios';
 import BackHeader from '../components/BackHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import socket from '../components/Socket';
 
 function ProfileInfoScreen({ navigation }) {
   const [userSess, setUserSess] = useState();
@@ -137,6 +138,7 @@ function ProfileInfoScreen({ navigation }) {
   const logoutHandler = async () => {
     try {
       await AsyncStorage.removeItem('userSession');
+      socket.emit('leave', user.nomUsuari);
       navigation.replace('Login');
     } catch (e) {
       console.log(e);

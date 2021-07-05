@@ -109,6 +109,9 @@ export default function listXatScreen({ navigation }) {
         try {
           response = await axios.get('estudiant/xats/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
+          chats.sort(function (a, b) {
+            return b[4] - a[4];
+          });
           setChatData(chats);
         } catch (e) {
           console.error(e);
@@ -117,6 +120,9 @@ export default function listXatScreen({ navigation }) {
         try {
           response = await axios.get('estudiant/grups/' + user.nomUsuari);
           let chats = response.data.xatsFinals;
+          chats.sort(function (a, b) {
+            return b[4] - a[4];
+          });
           setChatData(chats);
         } catch (e) {
           console.error(e);
