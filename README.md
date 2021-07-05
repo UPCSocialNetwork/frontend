@@ -1,4 +1,4 @@
-# Express Typescript Frontend
+# React Native Frontend
 
 En aquest repositori es troba el frontend de l'aplicació OnCampus.
 
