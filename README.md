@@ -4,6 +4,7 @@ En aquest repositori es troba el backend de l'aplicació OnCampus.
 
 ### Estructura de directoris
 
+```
 +-- .expo
 +-- .expo-shared
 +-- .vscode
@@ -34,3 +35,4 @@ En aquest repositori es troba el backend de l'aplicació OnCampus.
 +-- package.json
 +-- react-native-config.json
 +-- README.md
+```
