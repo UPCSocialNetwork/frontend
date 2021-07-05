@@ -36,3 +36,4 @@ En aquest repositori es troba el backend de l'aplicació OnCampus.
 +-- react-native-config.json
 +-- README.md
 ```
+
