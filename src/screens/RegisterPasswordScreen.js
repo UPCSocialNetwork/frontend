@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Text, TextInput, BackHandler } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
@@ -28,6 +28,10 @@ export default function RegisterPasswordScreen({ navigation }) {
   if (!loaded) {
     return null;
   }
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => true);
+  }, []);
 
   const passwordInputChange1 = (val) => {
     if (!(val.indexOf(' ') >= 0) && val.length >= 8) {

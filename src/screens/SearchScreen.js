@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StatusBar, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput, BackHandler } from 'react-native';
 import BackHeader from '../components/BackHeader';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
@@ -7,7 +7,6 @@ import ModalPicker from '../components/ModalPicker';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
-import BaseButton from '../components/BaseButton';
 
 export default function SearchScreen({ navigation }) {
   const [searchType, setSearchType] = useState(navigation.getParam('listType'));
@@ -33,6 +32,7 @@ export default function SearchScreen({ navigation }) {
 
   useEffect(() => {
     async function fetchData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       let responseGrau = null;
       let responseUsers = null;
       try {

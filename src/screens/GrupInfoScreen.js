@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
-  StatusBar,
+  BackHandler,
   TextInput,
   Image,
   Text,
@@ -39,6 +39,7 @@ export default function GrupInfoScreen({ navigation }) {
 
   useEffect(() => {
     async function getData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, StatusBar, Image, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet, StatusBar, BackHandler, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
@@ -40,6 +40,7 @@ export default function listXatScreen({ navigation }) {
 
   useEffect(() => {
     async function getData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null) {

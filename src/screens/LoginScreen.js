@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
@@ -36,6 +36,7 @@ export default function LoginScreen({ navigation }) {
 
   useEffect(() => {
     async function getData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       try {
         let user = await AsyncStorage.getItem('userSession');
         if (user != null) {

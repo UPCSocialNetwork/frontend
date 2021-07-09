@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button, TouchableOpacity, Image, Modal, Text, ScrollView, FlatList } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  BackHandler,
+  Modal,
+  Text,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import BaseButton from '../components/BaseButton';
 import { useFonts } from 'expo-font';
 import Colors from '../constants/Colors';
@@ -39,6 +49,7 @@ function ProfileInfoScreen({ navigation }) {
 
   useEffect(() => {
     async function getData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null) {
@@ -505,7 +516,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: Window.width * 0.688,
-    height: 37,
+    height: 40,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -516,7 +527,6 @@ const styles = StyleSheet.create({
     fontFamily: 'InterMedium',
     fontWeight: '500',
     fontSize: 14,
-    lineHeight: 17,
     textAlign: 'center',
     color: Colors.secondary,
   },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, ScrollView, BackHandler } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -37,16 +37,7 @@ export default function RegisterMentor2Screen({ navigation }) {
   });
 
   useEffect(() => {
-    /*
-    async function fetchData() {
-      let response = null;
-      try {
-      } catch (error) {
-      }
-      return response;
-    }
-    fetchData();
-    */
+    BackHandler.addEventListener('hardwareBackPress', () => true);
   }, []);
 
   if (!loaded) {

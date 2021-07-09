@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Image, StyleSheet, Text, TouchableOpacity, Modal, FlatList, ScrollView } from 'react-native';
+import {
+  View,
+  TextInput,
+  BackHandler,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -62,6 +72,7 @@ export default function ModificarPerfilScreen({ navigation }) {
 
   useEffect(() => {
     async function getData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null) {

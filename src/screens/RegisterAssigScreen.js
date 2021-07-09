@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, BackHandler } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import DropDownPicker from 'react-native-dropdown-picker';
-
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
@@ -38,6 +37,10 @@ export default function RegisterAssigScreen({ navigation }) {
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => true);
+  }, []);
 
   useEffect(() => {
     // Consultas

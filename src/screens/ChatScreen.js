@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Image, TouchableOpacity, StatusBar, View, StyleSheet, Text, TextInput } from 'react-native';
+import { Image, TouchableOpacity, StatusBar, View, StyleSheet, Text, BackHandler } from 'react-native';
 import { useFonts } from 'expo-font';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import socket from '../components/Socket';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 
 export default function ChatScreen({ navigation }) {
-  //socket.emit('conectado');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(navigation.getParam('user'));
@@ -31,25 +30,8 @@ export default function ChatScreen({ navigation }) {
   };
 
   useEffect(() => {
-    socket.on('send message', async (message, roomID) => {
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
-      try {
-        let response = await axios.get(`estudiants/${roomID}`);
-        let noms = response.data.persones;
-        noms.forEach((element) => {
-          socket.emit('refresh list', message, element, roomID);
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    });
-    return () => {
-      socket.removeListener('send message');
-    };
-  }, []);
-
-  useEffect(() => {
     async function getMessages() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       if (user.room != 'none') socket.emit('xat actiu', user.room);
       let response = null;
       try {
@@ -83,6 +65,26 @@ export default function ChatScreen({ navigation }) {
       if (user.titol.length > 1) inicials = inicials + user.titol[1].toUpperCase();
       setInicialsUser(inicials);
     }
+  }, []);
+
+  useEffect(() => {
+    socket.on('send message', async (message, roomID) => {
+      if (message.user.name != user.nomUsuari) {
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
+        try {
+          let response = await axios.get(`estudiants/${roomID}`);
+          let noms = response.data.persones;
+          noms.forEach((element) => {
+            socket.emit('refresh list', message, element, roomID);
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    });
+    return () => {
+      socket.removeListener('send message');
+    };
   }, []);
 
   const addMissatge = async (newMessage, part, room) => {
@@ -156,6 +158,7 @@ export default function ChatScreen({ navigation }) {
           avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
         },
       };
+      setMessages((previousMessages) => GiftedChat.append(previousMessages, giftMess));
       socket.emit('send message', giftMess, room);
     } catch (e) {
       console.error(e);
@@ -267,6 +270,39 @@ export default function ChatScreen({ navigation }) {
         renderUsernameOnMessage={true}
         placeholder={'Escriu un missatge'}
         alwaysShowSend={true}
+        renderAvatar={null}
+        renderBubble={(props) => {
+          return (
+            <Bubble
+              {...props}
+              textStyle={{
+                right: {
+                  color: Colors.white,
+                  fontFamily: 'InterMedium',
+                },
+                left: {
+                  color: Colors.secondary,
+                  fontFamily: 'InterMedium',
+                },
+              }}
+              wrapperStyle={{
+                left: {
+                  backgroundColor: Colors.lightBlue,
+                },
+                right: {
+                  backgroundColor: Colors.primary,
+                },
+              }}
+            />
+          );
+        }}
+        renderSend={(props) => {
+          return (
+            <TouchableOpacity onPress={() => props.onSend({ text: props.text }, true)} style={styles.sendButtonView}>
+              <Text style={styles.sendButton}>Enviar</Text>
+            </TouchableOpacity>
+          );
+        }}
         onSend={(newMessage) => onSend(newMessage)}
         user={{
           _id: user.participant,
@@ -362,5 +398,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderColor: Colors.white,
     borderWidth: 2,
+  },
+  sendButtonView: {
+    justifyContent: 'center',
+    width: Window.width * 0.15,
+    height: '100%',
+  },
+  sendButton: {
+    alignSelf: 'center',
+    textAlign: 'center',
+    color: Colors.primary,
+    fontSize: 16,
   },
 });

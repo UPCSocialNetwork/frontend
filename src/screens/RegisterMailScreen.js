@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Text, TextInput, BackHandler } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
@@ -39,9 +39,14 @@ export default function RegisterMailScreen({ navigation }) {
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
+
   if (!loaded) {
     return null;
   }
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => true);
+  }, []);
 
   const mailInputChange = (val) => {
     if (!(val.indexOf(' ') >= 0)) {

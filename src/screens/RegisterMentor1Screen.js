@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput, BackHandler } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -44,6 +44,7 @@ export default function RegisterMentor1Screen({ navigation }) {
 
   useEffect(() => {
     async function fetchData() {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
       let responseMentors = null;
       let responseGrau = null;
       try {

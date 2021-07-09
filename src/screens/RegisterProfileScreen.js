@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Image, StyleSheet, Text, TouchableOpacity, Modal, FlatList, ScrollView } from 'react-native';
+import {
+  View,
+  TextInput,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  ScrollView,
+  BackHandler,
+} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
@@ -49,6 +60,10 @@ export default function RegisterProfileScreen({ navigation }) {
   useEffect(() => {
     if (register) createUser();
   }, [newUser]);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => true);
+  }, []);
 
   if (!loaded) {
     return null;
