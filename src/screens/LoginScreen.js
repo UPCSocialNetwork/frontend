@@ -132,12 +132,12 @@ export default function LoginScreen({ navigation }) {
       setData({
         ...data,
         isnotEmpty: false,
-        errorMsg: 'Please provide username and password.',
+        errorMsg: 'Cal proporcionar nom i contrasenya',
       });
     } else if (!data.isValidSignIn) {
       setData({
         ...data,
-        errorMsg: 'That username and password combination is incorrect.',
+        errorMsg: 'La combinació de nom i contrasenya és incorrecta.',
       });
     } else {
       setData({
@@ -159,7 +159,7 @@ export default function LoginScreen({ navigation }) {
         setData({
           ...data,
           isValidSignIn: false,
-          errorMsg: 'That username and password combination is incorrect.',
+          errorMsg: 'La combinació de nom i contrasenya és incorrecta.',
         });
       }
     }
@@ -210,12 +210,6 @@ export default function LoginScreen({ navigation }) {
           <BaseButton
             onPress={() => {
               LoginHandler();
-              /*
-              let newUser = {
-                nomUsuari: 'cesar.guti',
-              };
-              navigation.navigate('listXatScreen', { newUser });
-              */
             }}
             title="Accedeix"
             btnColor={Colors.primary}

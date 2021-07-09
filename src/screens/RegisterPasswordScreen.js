@@ -25,13 +25,14 @@ export default function RegisterPasswordScreen({ navigation }) {
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
-  if (!loaded) {
-    return null;
-  }
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => true);
   }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   const passwordInputChange1 = (val) => {
     if (!(val.indexOf(' ') >= 0) && val.length >= 8) {

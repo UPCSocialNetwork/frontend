@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TextInput, BackHandler } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
+import axios from '../constants/axios';
 import BackHeader from '../components/BackHeader';
 import { useFonts } from 'expo-font';
 
@@ -13,6 +14,11 @@ export default function RegisterMailScreen({ navigation }) {
   const [data, setData] = useState({
     errorMsg: 'Proporciona un correu vàlid',
     isValidMail: true,
+  });
+
+  const [userExists, setUserExists] = useState({
+    errorMsg: 'Aquest usuari ja existeix',
+    isValidUser: true,
   });
 
   const validMail = {
@@ -40,19 +46,23 @@ export default function RegisterMailScreen({ navigation }) {
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
 
-  if (!loaded) {
-    return null;
-  }
-
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => true);
   }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   const mailInputChange = (val) => {
     if (!(val.indexOf(' ') >= 0)) {
       setData({
         ...data,
         isValidMail: true,
+      });
+      setUserExists({
+        ...userExists,
+        isValidUser: true,
       });
       setNewUser({
         ...newUser,
@@ -63,6 +73,10 @@ export default function RegisterMailScreen({ navigation }) {
       setData({
         ...data,
         isValidMail: false,
+      });
+      setUserExists({
+        ...userExists,
+        isValidUser: false,
       });
       setNewUser({
         ...newUser,
@@ -72,14 +86,26 @@ export default function RegisterMailScreen({ navigation }) {
     }
   };
 
-  const registerMailHandler = () => {
+  const registerMailHandler = async () => {
     if (newUser.mail == '' || !data.isValidMail || newUser.mail.split('@')[1] != validMail.upc) {
       setData({
         ...data,
         isValidMail: false,
       });
     } else {
-      navigation.navigate('RegisterPassword', { newUser });
+      try {
+        response = await axios.get(`estudiant/${newUser.mail.split('@')[0]}`);
+        if (response.data.message !== 'Estudiant not found') {
+          setUserExists({
+            ...userExists,
+            isValidUser: false,
+          });
+        } else {
+          navigation.navigate('RegisterPassword', { newUser });
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -100,6 +126,11 @@ export default function RegisterMailScreen({ navigation }) {
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.textErrorInputs}>
+          {userExists.isValidUser ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorText}>{userExists.errorMsg}</Text>
+            </Animatable.View>
+          )}
           {data.isValidMail ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorText}>{data.errorMsg}</Text>

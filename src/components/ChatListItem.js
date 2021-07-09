@@ -64,8 +64,8 @@ function ChatListItem({
     var diff_hora = diff_minuts / 60;
     var diff_dies = diff_hora / 24;
     if (diff_minuts < 60) {
-      var recent = Math.round(diff_minuts);
-      if (recent === 0) {
+      var recent = Math.round(diff_minuts) + 1;
+      if (recent < 1) {
         recent = 'Ara mateix';
         return recent;
       } else if (recent === 1) {
