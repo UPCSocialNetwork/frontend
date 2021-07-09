@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   imageProfile: {
     width: '100%',
-    height: '100%',
+    aspectRatio: 1,
     borderRadius: 50,
     justifyContent: 'center',
     backgroundColor: Colors.lightBlue,
