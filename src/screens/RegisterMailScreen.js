@@ -21,6 +21,11 @@ export default function RegisterMailScreen({ navigation }) {
     isValidUser: true,
   });
 
+  const [puntNom, setPuntNom] = useState({
+    errorMsg: `El nom i cognoms s'han de separar amb un punt`,
+    isValidPunt: true,
+  });
+
   const validMail = {
     upc: 'estudiant.upc.edu',
   };
@@ -64,6 +69,10 @@ export default function RegisterMailScreen({ navigation }) {
         ...userExists,
         isValidUser: true,
       });
+      setPuntNom({
+        ...puntNom,
+        isValidPunt: true,
+      });
       setNewUser({
         ...newUser,
         mail: val,
@@ -78,12 +87,21 @@ export default function RegisterMailScreen({ navigation }) {
         ...userExists,
         isValidUser: false,
       });
+      setPuntNom({
+        ...puntNom,
+        isValidPunt: false,
+      });
       setNewUser({
         ...newUser,
         mail: val,
         nomUsuari: val.split('@')[0],
       });
     }
+  };
+
+  const noPoint = (mail) => {
+    if (mail.indexOf('.') !== -1) return true;
+    else return false;
   };
 
   const registerMailHandler = async () => {
@@ -101,7 +119,14 @@ export default function RegisterMailScreen({ navigation }) {
             isValidUser: false,
           });
         } else {
-          navigation.navigate('RegisterPassword', { newUser });
+          if (noPoint(newUser.mail.split('@')[0])) {
+            navigation.navigate('RegisterPassword', { newUser });
+          } else {
+            setUserExists({
+              ...puntNom,
+              isValidPunt: false,
+            });
+          }
         }
       } catch (err) {
         console.error(err);
