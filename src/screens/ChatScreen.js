@@ -69,17 +69,16 @@ export default function ChatScreen({ navigation }) {
 
   useEffect(() => {
     socket.on('send message', async (message, roomID) => {
-      if (message.user.name != user.nomUsuari) {
+      if (message.user.name != user.nomUsuari)
         setMessages((previousMessages) => GiftedChat.append(previousMessages, message));
-        try {
-          let response = await axios.get(`estudiants/${roomID}`);
-          let noms = response.data.persones;
-          noms.forEach((element) => {
-            socket.emit('refresh list', message, element, roomID);
-          });
-        } catch (e) {
-          console.log(e);
-        }
+      try {
+        let response = await axios.get(`estudiants/${roomID}`);
+        let noms = response.data.persones;
+        noms.forEach((element) => {
+          socket.emit('refresh list', message, element, roomID);
+        });
+      } catch (e) {
+        console.log(e);
       }
     });
     return () => {
@@ -99,6 +98,18 @@ export default function ChatScreen({ navigation }) {
         { 'Content-Type': 'application/json' },
       );
       let missatgeDB = response.data.Missatge;
+      let giftMess = {
+        _id: missatgeDB._id,
+        text: missatgeDB.text,
+        createdAt: missatgeDB.createdAt,
+        user: {
+          _id: part,
+          name: user.nomUsuari,
+          avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+        },
+      };
+      setMessages((previousMessages) => GiftedChat.append(previousMessages, giftMess));
+      socket.emit('send message', giftMess, room);
       if (user.tipusXat === 'privs') {
         try {
           await axios.put(
@@ -148,18 +159,6 @@ export default function ChatScreen({ navigation }) {
           console.error(e);
         }
       }
-      let giftMess = {
-        _id: missatgeDB._id,
-        text: missatgeDB.text,
-        createdAt: missatgeDB.createdAt,
-        user: {
-          _id: part,
-          name: user.nomUsuari,
-          avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-        },
-      };
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, giftMess));
-      socket.emit('send message', giftMess, room);
     } catch (e) {
       console.error(e);
     }
