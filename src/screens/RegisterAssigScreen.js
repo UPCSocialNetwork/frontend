@@ -38,8 +38,14 @@ export default function RegisterAssigScreen({ navigation }) {
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
 
+  const goBackHandler = () => {
+    navigation.goBack();
+    return true;
+  };
+
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => true);
+    BackHandler.addEventListener('hardwareBackPress', goBackHandler);
+    return () => BackHandler.removeEventListener('hardwareBackPress', goBackHandler);
   }, []);
 
   useEffect(() => {
@@ -264,6 +270,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignContent: 'center',
     alignItems: 'center',
+    zIndex: -5,
   },
   ListAssig: {
     paddingTop: 20,

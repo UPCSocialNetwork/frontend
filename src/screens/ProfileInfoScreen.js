@@ -45,11 +45,32 @@ function ProfileInfoScreen({ navigation }) {
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
-  const url = 'https://randomuser.me/api/portraits/men/1.jpg';
+  // const url = 'https://randomuser.me/api/portraits/men/1.jpg';
+
+  const goBackButton = () => {
+    let tipusXat = 'grups';
+    if (user.titol === 'none') navigation.replace('listXatScreen', { user, tipusXat });
+    else if (user.tipusXat === 'privs' && user.titol !== 'none') navigation.replace('ChatScreen', { user });
+    else if (user.tipusXat === 'XatCerca') {
+      let tipusCerca = 'all';
+      const newUser = {
+        nomUsuari: user.nomUsuari,
+        room: 'none',
+        participant: 'none',
+        tipusXat: 'privs',
+        titol: visitUser,
+      };
+      let listType = 'privs';
+      navigation.replace('SearchScreen', { listType, user: newUser, tipusCerca });
+    } else {
+      navigation.replace('GrupInfoScreen', { user });
+    }
+    return true;
+  };
 
   useEffect(() => {
     async function getData() {
-      BackHandler.addEventListener('hardwareBackPress', () => true);
+      BackHandler.addEventListener('hardwareBackPress', goBackButton);
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null) {
@@ -95,6 +116,9 @@ function ProfileInfoScreen({ navigation }) {
     }
     getData();
     getUserData();
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', goBackButton);
+    };
   }, []);
 
   if (!loaded) {
@@ -198,25 +222,7 @@ function ProfileInfoScreen({ navigation }) {
 
   return (
     <ScrollView style={{ backgroundColor: Colors.white, flex: 1 }}>
-      <BackHeader
-        onPress={() => {
-          let tipusXat = 'grups';
-          if (user.titol === 'none') navigation.replace('listXatScreen', { user, tipusXat });
-          else if (user.tipusXat === 'privs' && user.titol !== 'none') navigation.replace('ChatScreen', { user });
-          else if (user.tipusXat === 'XatCerca') {
-            let tipusCerca = 'all';
-            const newUser = {
-              nomUsuari: user.nomUsuari,
-              room: 'none',
-              participant: 'none',
-              tipusXat: 'privs',
-              titol: visitUser,
-            };
-            let listType = 'privs';
-            navigation.replace('SearchScreen', { listType, user: newUser, tipusCerca });
-          } else navigation.replace('GrupInfoScreen', { user });
-        }}
-      ></BackHeader>
+      <BackHeader onPress={goBackButton}></BackHeader>
       <View style={styles.header}>
         <Text style={styles.nom}>{userData.nomUsuari}</Text>
         <Text style={styles.mail}>{userData.mail}</Text>

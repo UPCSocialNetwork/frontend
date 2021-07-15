@@ -10,15 +10,12 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import * as Animatable from 'react-native-animatable';
 import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import InteresListItem from '../components/InteresListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import axios from '../constants/axios';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
@@ -27,17 +24,6 @@ export default function ModificarPerfilScreen({ navigation }) {
   const [userSess, setUserSess] = useState(null);
   const [user, setUser] = useState(navigation.getParam('user'));
   const [userData, setUserData] = useState(navigation.getParam('userData'));
-  /*
-  const [userData, setUserData] = useState({
-    nomUsuari: 'dile.galan',
-    mail: 'dile.galan@estudiantat.upc.edu',
-    descripcio: "M'agrada beure cervesa i tinc 22 anys crec",
-    centreID: 'EPSEVG',
-    grauID: 'GRAU EN ENGINYERIA ELÈCTRICA',
-    interessos: ['Cuina', 'Esports', 'Mascotes'],
-  });
-  */
-
   const [modalVisible, setModalVisible] = useState(false);
   const [inteSelect, setInteSelect] = useState(navigation.getParam('userData').interessos);
   const [inicialsUser, setInicialsUser] = useState();
@@ -50,8 +36,8 @@ export default function ModificarPerfilScreen({ navigation }) {
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
-  const random = Math.floor(Math.random() * 100);
-  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';
+  /*const random = Math.floor(Math.random() * 100);
+  const url = 'https://randomuser.me/api/portraits/men/' + random + '.jpg';*/
 
   const dataFlatlist = [
     'Cuina',
@@ -70,9 +56,14 @@ export default function ModificarPerfilScreen({ navigation }) {
     'Moda',
   ];
 
+  const goBackHandler = () => {
+    navigation.replace('ProfileInfoScreen', { user, visitUser: userData.nomUsuari });
+    return true;
+  };
+
   useEffect(() => {
     async function getData() {
-      BackHandler.addEventListener('hardwareBackPress', () => true);
+      BackHandler.addEventListener('hardwareBackPress', goBackHandler);
       try {
         let userSess = await AsyncStorage.getItem('userSession');
         if (userSess != null) {
@@ -94,6 +85,9 @@ export default function ModificarPerfilScreen({ navigation }) {
       }
     }
     getData();
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', goBackHandler);
+    };
   }, []);
 
   useEffect(() => {
@@ -138,11 +132,7 @@ export default function ModificarPerfilScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.backgroundView}>
-      <BackHeader
-        onPress={() => {
-          navigation.replace('ProfileInfoScreen', { user, visitUser: userSess.nomUsuari });
-        }}
-      ></BackHeader>
+      <BackHeader onPress={goBackHandler}></BackHeader>
       <View style={styles.header}>
         <Text style={styles.nom}>{userData.nomUsuari}</Text>
         <Text style={styles.mail}>{userData.mail}</Text>
@@ -205,24 +195,17 @@ export default function ModificarPerfilScreen({ navigation }) {
           />
         </View>
         <View style={styles.btnModalView}>
-          <TouchableOpacity
+          <BaseButton
             onPress={() => {
-              setModalVisible(false);
               setUserData({
                 ...userData,
                 interessos: inteSelect,
               });
+              setModalVisible(false);
             }}
-            activeOpacity={0.9}
-            style={styles.touchable}
-          >
-            {/*<TouchableOpacity style={styles.button1} activeOpacity={0.6} onPress={() => setModalVisible(false)}>
-              <Text style={styles.textBtnInteres}>Confirmar</Text>
-          </TouchableOpacity>*/}
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              <BaseButton onPress={() => setModalVisible(false)} title="Continuar" btnColor={Colors.primary} />
-            </View>
-          </TouchableOpacity>
+            title="Continuar"
+            btnColor={Colors.primary}
+          />
         </View>
       </Modal>
       {inteSelect.length > 0 ? (
@@ -399,6 +382,7 @@ const styles = StyleSheet.create({
   btnModalView: {
     height: Window.height * 0.12,
     alignContent: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
   },
   button1: {

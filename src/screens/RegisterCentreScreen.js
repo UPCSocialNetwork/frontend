@@ -32,6 +32,11 @@ export default function RegisterCentreScreen({ navigation }) {
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
 
+  const goBackHandler = () => {
+    navigation.goBack();
+    return true;
+  };
+
   useEffect(() => {
     // Init centre and grau
     setNewUser({
@@ -42,7 +47,7 @@ export default function RegisterCentreScreen({ navigation }) {
 
     // Consultes
     async function fetchData() {
-      BackHandler.addEventListener('hardwareBackPress', () => true);
+      BackHandler.addEventListener('hardwareBackPress', goBackHandler);
       let responseCentre = null;
       let responseGrau = null;
       try {
@@ -56,6 +61,7 @@ export default function RegisterCentreScreen({ navigation }) {
       return responseCentre + responseGrau;
     }
     fetchData();
+    return () => BackHandler.removeEventListener('hardwareBackPress', goBackHandler);
   }, []);
 
   if (!loaded) {

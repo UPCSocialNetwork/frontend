@@ -61,8 +61,14 @@ export default function RegisterProfileScreen({ navigation }) {
     if (register) createUser();
   }, [newUser]);
 
+  const goBackHandler = () => {
+    navigation.goBack();
+    return true;
+  };
+
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => true);
+    BackHandler.addEventListener('hardwareBackPress', goBackHandler);
+    return () => BackHandler.removeEventListener('hardwareBackPress', goBackHandler);
   }, []);
 
   if (!loaded) {
@@ -123,7 +129,6 @@ export default function RegisterProfileScreen({ navigation }) {
       responseXatAssig.data.xatAssignatura.forEach((Xatassig) => {
         createParticipant(Xatassig._id);
       });
-
       navigation.navigate('Login');
     } catch (error) {
       console.log('USUARI HANDLER:', error);
@@ -216,21 +221,17 @@ export default function RegisterProfileScreen({ navigation }) {
           />
         </View>
         <View style={styles.btnModalView}>
-          <TouchableOpacity
+          <BaseButton
             onPress={() => {
-              setModalVisible(false);
               setNewUser({
                 ...newUser,
                 interessos: inteSelect,
               });
+              setModalVisible(false);
             }}
-            activeOpacity={0.9}
-            style={styles.touchable}
-          >
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              <BaseButton onPress={() => setModalVisible(false)} title="Continuar" btnColor={Colors.primary} />
-            </View>
-          </TouchableOpacity>
+            title="Continuar"
+            btnColor={Colors.primary}
+          />
         </View>
       </Modal>
       {inteSelect.length > 0 ? (
@@ -368,6 +369,7 @@ const styles = StyleSheet.create({
   touchable: {
     borderRadius: 8,
     width: '100%',
+    alignItems: 'center',
   },
   textBtnInteres: {
     fontFamily: 'InterMedium',
@@ -387,6 +389,7 @@ const styles = StyleSheet.create({
   btnModalView: {
     height: Window.height * 0.12,
     alignContent: 'center',
+    justifyContent: 'center',
     flexDirection: 'row',
   },
   button1: {

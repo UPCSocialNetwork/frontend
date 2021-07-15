@@ -20,9 +20,6 @@ export default function SearchScreen({ navigation }) {
   const [user, setUser] = useState(navigation.getParam('user'));
   const [userSelected, setUserSelected] = useState([]);
   const [refresh, setRefresh] = useState(false);
-
-  const [inicialsUser, setInicialsUser] = useState();
-
   const [loaded] = useFonts({
     InterBold: require('../assets/fonts/Inter-Bold.ttf'),
     InterMedium: require('../assets/fonts/Inter-Medium.ttf'),
@@ -30,9 +27,18 @@ export default function SearchScreen({ navigation }) {
     InterRegular: require('../assets/fonts/Inter-Regular.ttf'),
   });
 
+  const goBackHandler = () => {
+    let tipusXat;
+    {
+      user.tipusXat === 'privs' ? (tipusXat = 'privs') : (tipusXat = 'grups');
+    }
+    navigation.replace('listXatScreen', { user, tipusXat });
+    return true;
+  };
+
   useEffect(() => {
     async function fetchData() {
-      BackHandler.addEventListener('hardwareBackPress', () => true);
+      BackHandler.addEventListener('hardwareBackPress', goBackHandler);
       let responseGrau = null;
       let responseUsers = null;
       try {
@@ -76,6 +82,7 @@ export default function SearchScreen({ navigation }) {
       return responseGrau + responseUsers;
     }
     fetchData();
+    return () => BackHandler.removeEventListener('hardwareBackPress', goBackHandler);
   }, []);
 
   // Filter Grau
@@ -93,7 +100,7 @@ export default function SearchScreen({ navigation }) {
     return null;
   }
 
-  const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
+  // const url_aux = 'https://randomuser.me/api/portraits/men/1.jpg';
 
   const changeModalVisibility = (bool) => {
     setGrauModalVisible(bool);
@@ -366,15 +373,7 @@ export default function SearchScreen({ navigation }) {
   return (
     <View style={styles.backgroundView}>
       <View style={styles.header}>
-        <BackHeader
-          onPress={() => {
-            let tipusXat;
-            {
-              user.tipusXat === 'privs' ? (tipusXat = 'privs') : (tipusXat = 'grups');
-            }
-            navigation.replace('listXatScreen', { user, tipusXat });
-          }}
-        ></BackHeader>
+        <BackHeader onPress={goBackHandler}></BackHeader>
       </View>
       <View style={styles.titleView}>
         {searchType === 'privs' ? (

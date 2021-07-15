@@ -51,8 +51,14 @@ export default function RegisterMailScreen({ navigation }) {
     InterSemiBold: require('../assets/fonts/Inter-SemiBold.ttf'),
   });
 
+  const goBackHandler = () => {
+    navigation.goBack();
+    return true;
+  };
+
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', () => true);
+    BackHandler.addEventListener('hardwareBackPress', goBackHandler);
+    return () => BackHandler.removeEventListener('hardwareBackPress', goBackHandler);
   }, []);
 
   if (!loaded) {
