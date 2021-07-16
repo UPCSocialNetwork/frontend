@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   header: {
     height: Window.height * 0.09,
     width: Window.width,
-    marginTop: StatusBar.currentHeight + Window.height * 0.01,
+    marginTop: StatusBar.currentHeight + Window.height * 0.02,
     flexDirection: 'row',
     borderBottomColor: Colors.grey,
     borderBottomWidth: 1,

@@ -253,7 +253,6 @@ export default function ModificarPerfilScreen({ navigation }) {
 const styles = StyleSheet.create({
   backgroundView: {
     backgroundColor: Colors.white,
-    marginTop: Window.height * 0.01,
   },
   header: {
     alignItems: 'center',

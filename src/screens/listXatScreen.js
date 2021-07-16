@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: Colors.primary,
     justifyContent: 'center',
-    elevation: 3,
+    elevation: 5,
   },
   plusStyle: {
     color: Colors.white,

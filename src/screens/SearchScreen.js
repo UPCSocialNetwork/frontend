@@ -412,7 +412,6 @@ const styles = StyleSheet.create({
   backgroundView: {
     backgroundColor: Colors.white,
     flex: 1,
-    marginTop: Window.height * 0.01,
   },
   titleView: {
     justifyContent: 'center',
@@ -461,18 +460,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.grey,
     borderRadius: 8,
     paddingLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textBtn: {
     borderRadius: 8,
     fontFamily: 'InterMedium',
     fontSize: 16,
     backgroundColor: Colors.grey,
-    height: '100%',
     width: '90%',
-    textAlignVertical: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    paddingLeft: 5,
   },
   textFilter: {
     textAlignVertical: 'center',

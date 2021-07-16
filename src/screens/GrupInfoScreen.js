@@ -193,10 +193,10 @@ const styles = StyleSheet.create({
   backgroundView: {
     backgroundColor: Colors.white,
     flex: 1,
-    marginTop: Window.height * 0.01,
   },
   Container: {
     flex: 1,
+    // marginTop: Window.height * 0.01,
   },
   headerContainer: {
     alignItems: 'center',

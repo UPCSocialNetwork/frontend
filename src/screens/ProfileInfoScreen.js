@@ -221,7 +221,7 @@ function ProfileInfoScreen({ navigation }) {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: Colors.white, flex: 1, marginTop: Window.height * 0.01 }}>
+    <ScrollView style={{ backgroundColor: Colors.white, flex: 1 }}>
       <BackHeader onPress={goBackButton}></BackHeader>
       <View style={styles.header}>
         <Text style={styles.nom}>{userData.nomUsuari}</Text>
@@ -325,7 +325,6 @@ function ProfileInfoScreen({ navigation }) {
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    marginTop: 10,
   },
   goBack: {
     height: 30,

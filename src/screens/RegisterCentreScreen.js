@@ -190,7 +190,10 @@ export default function RegisterCentreScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  backgroundView: { backgroundColor: Colors.white, flex: 1 },
+  backgroundView: {
+    backgroundColor: Colors.white,
+    flex: 1,
+  },
   headerContainer: {
     flex: 0.4,
     flexDirection: 'column',

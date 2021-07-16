@@ -30,7 +30,7 @@ function BackHeader({ onPress }) {
 
 const styles = StyleSheet.create({
   backgroundView: {
-    marginTop: StatusBar.currentHeight + 10,
+    marginTop: StatusBar.currentHeight + 10 + Window.height * 0.01,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
