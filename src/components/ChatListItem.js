@@ -186,9 +186,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: Window.width * 0.46,
   },
-  userView: {
-    height: '80%',
-  },
   nom: {
     fontFamily: 'InterSemiBold',
     fontSize: 16,

@@ -295,13 +295,13 @@ export default function ChatScreen({ navigation }) {
             />
           );
         }}
-        renderSend={(props) => {
+        /*renderSend={(props) => {
           return (
             <TouchableOpacity onPress={() => props.onSend({ text: props.text }, true)} style={styles.sendButtonView}>
               <Text style={styles.sendButton}>Enviar</Text>
             </TouchableOpacity>
           );
-        }}
+        }}*/
         onSend={(newMessage) => onSend(newMessage)}
         user={{
           _id: user.participant,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   header: {
     height: Window.height * 0.09,
     width: Window.width,
-    marginTop: StatusBar.currentHeight,
+    marginTop: StatusBar.currentHeight + Window.height * 0.01,
     flexDirection: 'row',
     borderBottomColor: Colors.grey,
     borderBottomWidth: 1,

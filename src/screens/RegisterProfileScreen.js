@@ -249,18 +249,8 @@ export default function RegisterProfileScreen({ navigation }) {
           </View>
         </View>
       ) : (
-        <View style={styles.interessosView}>
-          <Text style={styles.interessosTitle}></Text>
-          <View style={styles.flatInteressos}>
-            <FlatList
-              horizontal
-              keyExtractor={(index) => index.toString()}
-              renderItem={renderItemInt}
-              data={inteSelect}
-              contentContainerStyle={{ paddingBottom: 5 }}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
+        <View style={styles.interessosView2}>
+          <Text style={styles.interessosTitle2}>Cap interés seleccionat</Text>
         </View>
       )}
       <View style={styles.btnLast}>
@@ -283,7 +273,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginTop: 30,
+    marginTop: 10,
   },
   nom: {
     fontFamily: 'InterBold',
@@ -407,11 +397,23 @@ const styles = StyleSheet.create({
     flex: 1,
     height: Window.height * 0.1,
   },
+  interessosView2: {
+    marginTop: 30,
+    flex: 1,
+    height: Window.height * 0.1,
+  },
   interessosTitle: {
     fontSize: 15,
     alignSelf: 'center',
     color: Colors.secondary,
     fontFamily: 'InterBold',
+    alignSelf: 'center',
+  },
+  interessosTitle2: {
+    fontSize: 15,
+    alignSelf: 'center',
+    color: Colors.secondary,
+    fontFamily: 'InterMedium',
     alignSelf: 'center',
   },
   flatInteressos: {

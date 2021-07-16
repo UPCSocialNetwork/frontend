@@ -12,19 +12,6 @@ import Window from '../constants/Layout';
 
 export default function RegisterMentor2Screen({ navigation }) {
   const [newUser, setNewUser] = useState(navigation.getParam('newUser'));
-  // const [newUser, setNewUser] = useState({
-  //   nomUsuari: '',
-  //   mail: '',
-  //   contrasenya: '',
-  //   descripcio: '',
-  //   centreID: '',
-  //   grauID: '',
-  //   xatMentorID: '',
-  //   esMentor: false,
-  //   interessos: '',
-  //   LlistaAssignatures: [],
-  //   LlistaXatGrupTancat: [],
-  // });
   const [textMentor, setTextMentor] = useState(
     'Si acceptes es crearà un grup de tipus mentor amb el teu usuari com a administrador i apareixeràs a la llista de mentors de la teva universitat.',
   );

@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal, FlatList, TextInput, BackHandler } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  StatusBar,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  TextInput,
+  BackHandler,
+} from 'react-native';
 import BackHeader from '../components/BackHeader';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
@@ -402,6 +412,7 @@ const styles = StyleSheet.create({
   backgroundView: {
     backgroundColor: Colors.white,
     flex: 1,
+    marginTop: Window.height * 0.01,
   },
   titleView: {
     justifyContent: 'center',
@@ -481,14 +492,14 @@ const styles = StyleSheet.create({
     marginLeft: Window.width * 0.041,
   },
   flatView: {
-    height: 330,
+    height: Window.height * 0.4,
   },
   flatViewEmpty: {
     marginTop: 10,
     height: 400,
   },
   userSelected0: {
-    height: 80,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -538,9 +549,6 @@ const styles = StyleSheet.create({
     marginLeft: Window.width * 0.032,
     justifyContent: 'center',
     width: Window.width * 0.64,
-  },
-  userView: {
-    height: '80%',
   },
   nom: {
     fontFamily: 'InterSemiBold',

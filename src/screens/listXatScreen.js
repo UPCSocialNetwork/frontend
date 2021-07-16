@@ -345,7 +345,6 @@ const styles = StyleSheet.create({
   btnGrups: {
     width: '47%',
     height: '70%',
-    backgroundColor: Colors.grey,
     alignSelf: 'center',
     borderRadius: 8,
     justifyContent: 'center',
@@ -380,14 +379,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: Colors.primary,
     justifyContent: 'center',
-    shadowColor: Colors.black,
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.9,
-    shadowRadius: 8,
-    elevation: 7,
+    elevation: 3,
   },
   plusStyle: {
     color: Colors.white,

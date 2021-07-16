@@ -302,18 +302,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.grey,
     borderRadius: 8,
     paddingLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textBtn: {
     borderRadius: 8,
     fontFamily: 'InterMedium',
     fontSize: 16,
     backgroundColor: Colors.grey,
-    height: '100%',
     width: '90%',
-    textAlignVertical: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    paddingLeft: 5,
   },
   textFilter: {
     textAlignVertical: 'center',
@@ -321,13 +318,7 @@ const styles = StyleSheet.create({
   },
   flatListView: {
     marginTop: Window.height * 0.02,
-    height: Window.height * 0.42,
-  },
-  card: {
-    height: 50,
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'center',
+    height: Window.height * 0.41,
   },
   nomItem: {
     marginLeft: 10,
