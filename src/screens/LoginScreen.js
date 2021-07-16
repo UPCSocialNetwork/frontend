@@ -278,7 +278,6 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 20,
     fontSize: 14,
-    lineHeight: 23,
     marginTop: 25,
   },
   forgetPasswordText: {

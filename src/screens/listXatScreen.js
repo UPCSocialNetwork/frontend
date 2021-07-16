@@ -192,13 +192,6 @@ export default function listXatScreen({ navigation }) {
             </Text>
           </View>
         </TouchableOpacity>
-        {/*
-        <TouchableOpacity onPress={searchHandler}>
-          <View style={styles.searchView}>
-            <MaterialIcons name="search" style={styles.searchIcon} />
-          </View>
-        </TouchableOpacity>
-        */}
         <TouchableOpacity onPress={searchHandler}>
           <View style={styles.optionsView}>
             <MaterialIcons name="search" style={styles.searchIcon} />
@@ -245,7 +238,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    marginTop: Window.height * 0.02 + StatusBar.currentHeight,
+    marginTop: Window.height * 0.03 + StatusBar.currentHeight,
     height: 58,
     width: Window.width * 0.88,
     alignSelf: 'center',

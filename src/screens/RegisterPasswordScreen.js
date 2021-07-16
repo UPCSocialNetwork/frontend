@@ -53,7 +53,7 @@ export default function RegisterPasswordScreen({ navigation }) {
     } else {
       setData({
         ...data,
-        isValidPassword: false,
+        isValidPassword: true,
       });
       setNewUser({
         ...newUser,
@@ -73,7 +73,7 @@ export default function RegisterPasswordScreen({ navigation }) {
       setData({
         ...data,
         repeatPassword: val,
-        isValidPassword: false,
+        isValidPassword: true,
       });
     }
   };
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 20,
     fontSize: 14,
-    lineHeight: 23,
     marginTop: 30,
   },
   infoMailText: {

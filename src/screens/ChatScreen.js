@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Image, TouchableOpacity, StatusBar, View, StyleSheet, Text, BackHandler } from 'react-native';
+import { Image, TouchableOpacity, Platform, StatusBar, View, StyleSheet, Text, BackHandler } from 'react-native';
 import { useFonts } from 'expo-font';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from '../constants/axios';
@@ -267,7 +267,7 @@ export default function ChatScreen({ navigation }) {
       <GiftedChat
         messages={messages}
         renderUsernameOnMessage={true}
-        placeholder={'Escriu un missatge'}
+        placeholder={Platform.OS !== 'ios' ? 'Escriu un missatge' : null}
         alwaysShowSend={true}
         renderAvatar={null}
         renderBubble={(props) => {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   header: {
     height: Window.height * 0.09,
     width: Window.width,
-    marginTop: StatusBar.currentHeight + Window.height * 0.02,
+    marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight + Window.height * 0.03 : StatusBar.currentHeight,
     flexDirection: 'row',
     borderBottomColor: Colors.grey,
     borderBottomWidth: 1,
