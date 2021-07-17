@@ -78,29 +78,6 @@ export default function listXatScreen({ navigation }) {
   }, [userSess]);
 
   useEffect(() => {
-    async function updateMessage() {
-      if (messageUpdate.message != 'none') {
-        let chatDataAux = [];
-        let xatAux;
-        for (let i = 0; i < chatData.length; i++) {
-          const element = chatData[i];
-          if (element[0] === messageUpdate.roomID) {
-            xatAux = element;
-            xatAux[3] = messageUpdate.message.text;
-            xatAux[4] = messageUpdate.message.createdAt;
-            xatAux[5] = messageUpdate.message.user.name;
-            chatDataAux.unshift(xatAux);
-          } else {
-            chatDataAux.push(element);
-          }
-        }
-        setChatData(chatDataAux);
-      }
-    }
-    updateMessage();
-  }, [messageUpdate]);
-
-  useEffect(() => {
     async function getChatData() {
       let response = null;
       if (listType === 'privs') {
@@ -129,6 +106,29 @@ export default function listXatScreen({ navigation }) {
     }
     getChatData();
   }, [listType]);
+
+  useEffect(() => {
+    async function updateMessage() {
+      if (messageUpdate.message != 'none') {
+        let chatDataAux = [];
+        let xatAux;
+        for (let i = 0; i < chatData.length; i++) {
+          const element = chatData[i];
+          if (element[0] === messageUpdate.roomID) {
+            xatAux = element;
+            xatAux[3] = messageUpdate.message.text;
+            xatAux[4] = messageUpdate.message.createdAt;
+            xatAux[5] = messageUpdate.message.user.name;
+            chatDataAux.unshift(xatAux);
+          } else {
+            chatDataAux.push(element);
+          }
+        }
+        setChatData(chatDataAux);
+      }
+    }
+    updateMessage();
+  }, [messageUpdate]);
 
   useEffect(() => {
     function navigateRoom() {
