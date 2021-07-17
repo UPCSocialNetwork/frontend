@@ -98,40 +98,6 @@ export default function listXatScreen({ navigation }) {
     }
   };
 
-  // message y roomID
-  useEffect(() => {
-    async function updateMessage() {
-      if (messageUpdate.message != 'none') {
-        let response = await axios.get(`participant/${user.nomUsuari}/${messageUpdate.roomID}`);
-        let participant = response.data.participant;
-        let chatDataAux = [];
-        let xatAux;
-        for (let i = 0; i < chatData.length; i++) {
-          const element = chatData[i];
-          if (element[0] === messageUpdate.roomID) {
-            if (
-              element[3] != messageUpdate.message.text ||
-              element[4] != messageUpdate.message.createdAt ||
-              element[5] != messageUpdate.message.user.name
-            ) {
-              // updateParticipant(element[0], 1);
-              xatAux = element;
-              xatAux[3] = messageUpdate.message.text;
-              xatAux[4] = messageUpdate.message.createdAt;
-              xatAux[5] = messageUpdate.message.user.name;
-              xatAux[7] = participant.ultimaLectura;
-              chatDataAux.unshift(xatAux);
-            }
-          } else {
-            chatDataAux.push(element);
-          }
-        }
-        setChatData(chatDataAux);
-      }
-    }
-    updateMessage();
-  }, [messageUpdate]);
-
   useEffect(() => {
     async function getChatData() {
       let response = null;
@@ -161,6 +127,30 @@ export default function listXatScreen({ navigation }) {
     }
     getChatData();
   }, [listType, toggleRefresh]);
+
+  useEffect(() => {
+    async function updateMessage() {
+      if (messageUpdate.message != 'none') {
+        let chatDataAux = [];
+        let xatAux;
+        for (let i = 0; i < chatData.length; i++) {
+          const element = chatData[i];
+          if (element[0] === messageUpdate.roomID) {
+            // IF
+            xatAux = element;
+            xatAux[3] = messageUpdate.message.text;
+            xatAux[4] = messageUpdate.message.createdAt;
+            xatAux[5] = messageUpdate.message.user.name;
+            chatDataAux.unshift(xatAux);
+          } else {
+            chatDataAux.push(element);
+          }
+        }
+        setChatData(chatDataAux);
+      }
+    }
+    updateMessage();
+  }, [messageUpdate]);
 
   useEffect(() => {
     function navigateRoom() {
