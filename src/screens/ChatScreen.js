@@ -88,7 +88,6 @@ export default function ChatScreen({ navigation }) {
 
   const addMissatge = async (newMessage, part, room) => {
     newMessage = newMessage[0];
-    var noms;
     try {
       let response = await axios.post(
         '/missatge/add',
@@ -110,33 +109,6 @@ export default function ChatScreen({ navigation }) {
         },
       };
       setMessages((previousMessages) => GiftedChat.append(previousMessages, giftMess));
-      try {
-        let response = await axios.get(`estudiants/${room}`);
-        noms = response.data.persones;
-        noms.forEach(async (element) => {
-          if (element != user.nomUsuari) {
-            let updatePart = {
-              estudiantID: element,
-              xatID: room,
-              ultimaLectura: 1,
-              notificacions: 'Activat',
-              bloqueigGrup: 'Desactivat',
-            };
-            await axios.put(`participant`, updatePart, {
-              'Content-Type': 'application/json',
-            });
-          }
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      /*if (user.tipusXat !== 'privs') {
-        noms.forEach((element) => {
-          if (element != user.nomUsuari) {
-            socket.emit('new chat', element);
-          }
-        });
-      }*/
       socket.emit('send message', giftMess, room);
       if (user.tipusXat === 'privs') {
         try {
@@ -147,13 +119,6 @@ export default function ChatScreen({ navigation }) {
             },
             { 'Content-Type': 'application/json' },
           );
-          /*.then(() => {
-              noms.forEach((element) => {
-                if (element != user.nomUsuari) {
-                  socket.emit('new chat', element);
-                }
-              });
-            });*/
         } catch (e) {
           console.error(e);
         }
@@ -197,13 +162,6 @@ export default function ChatScreen({ navigation }) {
     } catch (e) {
       console.error(e);
     }
-    /*if (user.tipusXat === 'privs') {
-      noms.forEach((element) => {
-        if (element != user.nomUsuari) {
-          socket.emit('new chat', element);
-        }
-      });
-    }*/
   };
 
   const onSend = useCallback(
@@ -243,7 +201,6 @@ export default function ChatScreen({ navigation }) {
               setUser({ ...user, room: xatID, participant: partID });
               addMissatge(newMessage, partID, xatID);
               setNouXat(false);
-              // socket.emit('new chat', responsePart2.data.Participant.estudiantID);
             } catch (e) {
               console.error(e);
             }
@@ -271,24 +228,10 @@ export default function ChatScreen({ navigation }) {
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={async () => {
-            try {
-              socket.emit('leave', user.room);
-              let updatePart = {
-                estudiantID: user.nomUsuari,
-                xatID: user.room,
-                ultimaLectura: 0,
-                notificacions: 'Activat',
-                bloqueigGrup: 'Desactivat',
-              };
-              await axios.put(`participant`, updatePart, {
-                'Content-Type': 'application/json',
-              });
-              let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
-              navigation.replace('listXatScreen', { user, tipusXat });
-            } catch (e) {
-              console.error(e);
-            }
+          onPress={() => {
+            socket.emit('leave', user.room);
+            let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
+            navigation.replace('listXatScreen', { user, tipusXat });
           }}
         >
           <View style={styles.goBack}>

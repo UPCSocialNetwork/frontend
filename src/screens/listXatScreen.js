@@ -15,7 +15,6 @@ export default function listXatScreen({ navigation }) {
   const [inicialsUser, setInicialsUser] = useState();
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState(navigation.getParam('tipusXat'));
-  const [toggleRefresh, setToggleRefresh] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [messageUpdate, setMessageUpdate] = useState({
     message: 'none',
@@ -65,9 +64,6 @@ export default function listXatScreen({ navigation }) {
     socket.on('update message', (message, roomID) => {
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
     });
-    /*socket.on('new chat', (arg1, arg2) => {
-      setToggleRefresh(!toggleRefresh);
-    });*/
     return () => {
       socket.removeListener('update message');
     };
@@ -81,55 +77,30 @@ export default function listXatScreen({ navigation }) {
     }
   }, [userSess]);
 
-  const updateParticipant = async (roomID, read) => {
-    try {
-      let updatePart = {
-        estudiantID: user.nomUsuari,
-        xatID: roomID,
-        ultimaLectura: read,
-        notificacions: 'Activat',
-        bloqueigGrup: 'Desactivat',
-      };
-      await axios.put(`participant`, updatePart, {
-        'Content-Type': 'application/json',
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  // message y roomID
   useEffect(() => {
-    async function updateMessage() {
-      if (messageUpdate.message != 'none') {
-        let response = await axios.get(`participant/${user.nomUsuari}/${messageUpdate.roomID}`);
-        let participant = response.data.participant;
-        let chatDataAux = [];
-        let xatAux;
-        for (let i = 0; i < chatData.length; i++) {
-          const element = chatData[i];
-          if (element[0] === messageUpdate.roomID) {
-            if (
-              element[3] != messageUpdate.message.text ||
-              element[4] != messageUpdate.message.createdAt ||
-              element[5] != messageUpdate.message.user.name
-            ) {
-              // updateParticipant(element[0], 1);
-              xatAux = element;
-              xatAux[3] = messageUpdate.message.text;
-              xatAux[4] = messageUpdate.message.createdAt;
-              xatAux[5] = messageUpdate.message.user.name;
-              xatAux[7] = participant.ultimaLectura;
-              chatDataAux.unshift(xatAux);
-            }
-          } else {
-            chatDataAux.push(element);
+    if (messageUpdate.message != 'none') {
+      let chatDataAux = [];
+      let xatAux;
+      for (let i = 0; i < chatData.length; i++) {
+        const element = chatData[i];
+        if (element[0] === messageUpdate.roomID) {
+          if (
+            element[3] != messageUpdate.message.text ||
+            element[4] != messageUpdate.message.createdAt ||
+            element[5] != messageUpdate.message.user.name
+          ) {
+            xatAux = element;
+            xatAux[3] = messageUpdate.message.text;
+            xatAux[4] = messageUpdate.message.createdAt;
+            xatAux[5] = messageUpdate.message.user.name;
+            chatDataAux.unshift(xatAux);
           }
+        } else {
+          chatDataAux.push(element);
         }
-        setChatData(chatDataAux);
       }
+      setChatData(chatDataAux);
     }
-    updateMessage();
   }, [messageUpdate]);
 
   useEffect(() => {
@@ -160,12 +131,11 @@ export default function listXatScreen({ navigation }) {
       }
     }
     getChatData();
-  }, [listType, toggleRefresh]);
+  }, [listType]);
 
   useEffect(() => {
     function navigateRoom() {
       if (user.room != 'none') {
-        updateParticipant(user.room, 0);
         navigation.replace('ChatScreen', { user });
       }
     }
