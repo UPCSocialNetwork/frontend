@@ -115,6 +115,7 @@ export default function listXatScreen({ navigation }) {
         for (let i = 0; i < chatData.length; i++) {
           const element = chatData[i];
           if (element[0] === messageUpdate.roomID) {
+            // IF
             xatAux = element;
             xatAux[3] = messageUpdate.message.text;
             xatAux[4] = messageUpdate.message.createdAt;
