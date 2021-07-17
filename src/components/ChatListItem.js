@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 import Window from '../constants/Layout';
 import { useFonts } from 'expo-font';
+import axios from '../constants/axios';
 import { MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
 function ChatListItem({
@@ -13,6 +14,7 @@ function ChatListItem({
   time,
   nom,
   tipusXat,
+  llegit,
   imageSrc,
   setUser,
   user,
@@ -95,14 +97,27 @@ function ChatListItem({
     }
   };
 
-  const onPress = () => {
-    //console.log('hi' + nom + '-' + titol);
-    if (user.room === roomID) {
-      setUser({ ...user, room: roomID, participant: participantID, titol: titol, tipusXat: tipusXat });
-      setToggle(!toggle);
-    } else {
-      setUser({ ...user, room: roomID, participant: participantID, titol: titol, tipusXat: tipusXat });
+  const updateParticipant = async (roomID, read) => {
+    try {
+      let updatePart = {
+        estudiantID: user.nomUsuari,
+        xatID: roomID,
+        ultimaLectura: read,
+        notificacions: 'Activat',
+        bloqueigGrup: 'Desactivat',
+      };
+      await axios.put(`participant`, updatePart, {
+        'Content-Type': 'application/json',
+      });
+    } catch (e) {
+      console.error(e);
     }
+  };
+
+  const onPress = () => {
+    // updateParticipant(roomID, 0);
+    setUser({ ...user, room: roomID, participant: participantID, titol: titol, tipusXat: tipusXat });
+    if (user.room === roomID) setToggle(!toggle);
   };
 
   if (roomID && participantID && titol && message && time) {
@@ -124,16 +139,19 @@ function ChatListItem({
               <Text style={styles.nom} numberOfLines={1} ellipsizeMode="tail">
                 {titol}
               </Text>
-              <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-                {formatNom(nom)}
-                {message}
-              </Text>
             </View>
+            <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+              {formatNom(nom)}
+              {message}
+            </Text>
           </View>
           <View style={styles.tempsViewParent}>
-            <View style={styles.tempsView}>
-              <Text style={styles.temps}>{formatTime(time)}</Text>
-            </View>
+            <Text style={styles.temps}>{formatTime(time)}</Text>
+            {llegit > 0 ? (
+              <View style={styles.notisOn}>
+                <Text style={styles.notisNum}>{llegit}</Text>
+              </View>
+            ) : null}
           </View>
           <View>
             <View style={styles.optionsView}>
@@ -186,11 +204,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: Window.width * 0.46,
   },
+  userView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   nom: {
     fontFamily: 'InterSemiBold',
     fontSize: 16,
     color: Colors.secondary,
-    width: '95%',
+  },
+  notisOn: {
+    backgroundColor: Colors.primary,
+    marginTop: '10%',
+    alignSelf: 'flex-end',
+    borderRadius: 50,
+    borderColor: Colors.black,
+    borderWidth: 1,
+    width: 20,
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notisNum: {
+    fontFamily: 'InterRegular',
+    color: Colors.white,
   },
   message: {
     fontFamily: 'InterRegular',
@@ -203,18 +240,17 @@ const styles = StyleSheet.create({
     width: Window.width * 0.19,
     justifyContent: 'center',
   },
-  tempsView: {
-    height: '70%',
-  },
+  tempsView: {},
   temps: {
     fontFamily: 'InterMedium',
     fontSize: 12,
     color: Colors.blueGrey,
+    alignSelf: 'flex-end',
   },
   optionsView: {
     flex: 1,
     justifyContent: 'center',
-    marginLeft: Window.width * 0.02,
+    marginLeft: Window.width * 0.03,
   },
   optionsIcon: {
     fontSize: 15,

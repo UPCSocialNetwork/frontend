@@ -15,6 +15,7 @@ export default function listXatScreen({ navigation }) {
   const [inicialsUser, setInicialsUser] = useState();
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState(navigation.getParam('tipusXat'));
+  const [toggleRefresh, setToggleRefresh] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [messageUpdate, setMessageUpdate] = useState({
     message: 'none',
@@ -54,7 +55,7 @@ export default function listXatScreen({ navigation }) {
             });
             if (response.data.msg != 'Success') navigation.replace('Login');
           } catch (error) {
-            console.error(error);
+            console.log(error);
           }
         }
       } catch (e) {}
@@ -64,6 +65,9 @@ export default function listXatScreen({ navigation }) {
     socket.on('update message', (message, roomID) => {
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
     });
+    /*socket.on('new chat', (arg1, arg2) => {
+      setToggleRefresh(!toggleRefresh);
+    });*/
     return () => {
       socket.removeListener('update message');
     };
@@ -76,6 +80,23 @@ export default function listXatScreen({ navigation }) {
       setInicialsUser(inicials);
     }
   }, [userSess]);
+
+  const updateParticipant = async (roomID, read) => {
+    try {
+      let updatePart = {
+        estudiantID: user.nomUsuari,
+        xatID: roomID,
+        ultimaLectura: read,
+        notificacions: 'Activat',
+        bloqueigGrup: 'Desactivat',
+      };
+      await axios.put(`participant`, updatePart, {
+        'Content-Type': 'application/json',
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     async function getChatData() {
@@ -105,7 +126,7 @@ export default function listXatScreen({ navigation }) {
       }
     }
     getChatData();
-  }, [listType]);
+  }, [listType, toggleRefresh]);
 
   useEffect(() => {
     async function updateMessage() {
@@ -134,6 +155,7 @@ export default function listXatScreen({ navigation }) {
   useEffect(() => {
     function navigateRoom() {
       if (user.room != 'none') {
+        updateParticipant(user.room, 0);
         navigation.replace('ChatScreen', { user });
       }
     }
