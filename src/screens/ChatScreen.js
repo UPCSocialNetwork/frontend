@@ -271,10 +271,24 @@ export default function ChatScreen({ navigation }) {
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => {
-            socket.emit('leave', user.room);
-            let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
-            navigation.replace('listXatScreen', { user, tipusXat });
+          onPress={async () => {
+            try {
+              socket.emit('leave', user.room);
+              let updatePart = {
+                estudiantID: user.nomUsuari,
+                xatID: user.room,
+                ultimaLectura: 0,
+                notificacions: 'Activat',
+                bloqueigGrup: 'Desactivat',
+              };
+              await axios.put(`participant`, updatePart, {
+                'Content-Type': 'application/json',
+              });
+              let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
+              navigation.replace('listXatScreen', { user, tipusXat });
+            } catch (e) {
+              console.error(e);
+            }
           }}
         >
           <View style={styles.goBack}>
