@@ -75,7 +75,7 @@ export default function ChatScreen({ navigation }) {
         let response = await axios.get(`estudiants/${roomID}`);
         let noms = response.data.persones;
         noms.forEach((element) => {
-          socket.emit('refresh list', message, element, roomID);
+          if (element != user.nomUsuari) socket.emit('refresh list', message, element, roomID);
         });
       } catch (e) {
         console.log(e);
