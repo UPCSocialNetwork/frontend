@@ -20,7 +20,6 @@ import BaseButton from '../components/BaseButton';
 import BackHeader from '../components/BackHeader';
 import ParticipantList from '../components/ParticipantList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import socket from '../components/Socket';
 
 export default function CreateGrupScreen({ navigation }) {
   const [userSess, setUserSess] = useState(null);
@@ -99,6 +98,7 @@ export default function CreateGrupScreen({ navigation }) {
       try {
         // CREAR GRUP
         responseCrearGrup = await axios.post('/XatGrupTancat', xatGrupTancat, { 'Content-Type': 'application/json' });
+
         if (responseCrearGrup.data.message === 'Saved') {
           let xatID = responseCrearGrup.data.XatGrupTancat._id;
           // CREAR PARTICIPANTS
@@ -106,9 +106,6 @@ export default function CreateGrupScreen({ navigation }) {
             createParticipant(estudiant.nomUsuari, xatID);
           });
         }
-        /*llistatParticipants.forEach((estudiant) => {
-          if (estudiant.nomUsuari !== user.nomUsuari) socket.emit('new chat', estudiant.nomUsuari);
-        });*/
       } catch (error) {
         console.log(error);
       }

@@ -120,7 +120,7 @@ export default function ModificarPerfilScreen({ navigation }) {
         descripcio: userData.descripcio,
         interessos: userData.interessos,
       };
-      await axios.put(`/estudiant/${userData.nomUsuari}`, updateUser, {
+      let responseEstudiant = await axios.put(`/estudiant/${userData.nomUsuari}`, updateUser, {
         'Content-Type': 'application/json',
       });
 
