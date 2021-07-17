@@ -105,10 +105,10 @@ export default function CreateGrupScreen({ navigation }) {
           llistatParticipants.forEach((estudiant) => {
             createParticipant(estudiant.nomUsuari, xatID);
           });
+          llistatParticipants.forEach((estudiant) => {
+            if (estudiant.nomUsuari !== userSess.nomUsuari) socket.emit('new chat', estudiant.nomUsuari, xatID);
+          });
         }
-        /*llistatParticipants.forEach((estudiant) => {
-          if (estudiant.nomUsuari !== user.nomUsuari) socket.emit('new chat', estudiant.nomUsuari);
-        });*/
       } catch (error) {
         console.log(error);
       }

@@ -31,7 +31,7 @@ export default function ChatScreen({ navigation }) {
 
   useEffect(() => {
     async function getMessages() {
-      BackHandler.addEventListener('hardwareBackPress', () => true);
+      BackHandler.addEventListener('hardwareBackPress', goBack);
       if (user.room != 'none') socket.emit('xat actiu', user.room);
       let response = null;
       try {
@@ -75,7 +75,7 @@ export default function ChatScreen({ navigation }) {
         let response = await axios.get(`estudiants/${roomID}`);
         let noms = response.data.persones;
         noms.forEach((element) => {
-          socket.emit('refresh list', message, element, roomID);
+          if (element != user.nomUsuari) socket.emit('refresh list', message, element, roomID);
         });
       } catch (e) {
         console.log(e);
@@ -86,7 +86,7 @@ export default function ChatScreen({ navigation }) {
     };
   }, []);
 
-  const addMissatge = async (newMessage, part, room) => {
+  const addMissatge = async (newMessage, part, room, esNouXat) => {
     newMessage = newMessage[0];
     var noms;
     try {
@@ -130,14 +130,7 @@ export default function ChatScreen({ navigation }) {
       } catch (e) {
         console.log(e);
       }
-      /*if (user.tipusXat !== 'privs') {
-        noms.forEach((element) => {
-          if (element != user.nomUsuari) {
-            socket.emit('new chat', element);
-          }
-        });
-      }*/
-      socket.emit('send message', giftMess, room);
+      if (user.tipusXat !== 'privs' || esNouXat !== true) socket.emit('send message', giftMess, room);
       if (user.tipusXat === 'privs') {
         try {
           await axios.put(
@@ -147,13 +140,13 @@ export default function ChatScreen({ navigation }) {
             },
             { 'Content-Type': 'application/json' },
           );
-          /*.then(() => {
-              noms.forEach((element) => {
-                if (element != user.nomUsuari) {
-                  socket.emit('new chat', element);
-                }
-              });
-            });*/
+          if (esNouXat === true) {
+            noms.forEach((element) => {
+              if (element != user.nomUsuari) {
+                socket.emit('new chat', element, room);
+              }
+            });
+          }
         } catch (e) {
           console.error(e);
         }
@@ -197,19 +190,12 @@ export default function ChatScreen({ navigation }) {
     } catch (e) {
       console.error(e);
     }
-    /*if (user.tipusXat === 'privs') {
-      noms.forEach((element) => {
-        if (element != user.nomUsuari) {
-          socket.emit('new chat', element);
-        }
-      });
-    }*/
   };
 
   const onSend = useCallback(
     async (newMessage = []) => {
       if (!nouXat) {
-        addMissatge(newMessage, user.participant, user.room);
+        addMissatge(newMessage, user.participant, user.room, false);
       } else {
         if (user.tipusXat === 'privs') {
           try {
@@ -241,7 +227,7 @@ export default function ChatScreen({ navigation }) {
               let partID = responsePart1.data.Participant._id;
               socket.emit('xat actiu', xatID);
               setUser({ ...user, room: xatID, participant: partID });
-              addMissatge(newMessage, partID, xatID);
+              addMissatge(newMessage, partID, xatID, true);
               setNouXat(false);
               // socket.emit('new chat', responsePart2.data.Participant.estudiantID);
             } catch (e) {
@@ -251,7 +237,7 @@ export default function ChatScreen({ navigation }) {
             console.error(e);
           }
         } else {
-          addMissatge(newMessage, user.participant, user.room);
+          addMissatge(newMessage, user.participant, user.room, true);
           setNouXat(false);
         }
       }
@@ -267,30 +253,30 @@ export default function ChatScreen({ navigation }) {
     }
   };
 
+  const goBack = async () => {
+    try {
+      socket.emit('leave', user.room);
+      let updatePart = {
+        estudiantID: user.nomUsuari,
+        xatID: user.room,
+        ultimaLectura: 0,
+        notificacions: 'Activat',
+        bloqueigGrup: 'Desactivat',
+      };
+      await axios.put(`participant`, updatePart, {
+        'Content-Type': 'application/json',
+      });
+      let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
+      navigation.replace('listXatScreen', { user, tipusXat });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={async () => {
-            try {
-              socket.emit('leave', user.room);
-              let updatePart = {
-                estudiantID: user.nomUsuari,
-                xatID: user.room,
-                ultimaLectura: 0,
-                notificacions: 'Activat',
-                bloqueigGrup: 'Desactivat',
-              };
-              await axios.put(`participant`, updatePart, {
-                'Content-Type': 'application/json',
-              });
-              let tipusXat = user.tipusXat === 'privs' ? 'privs' : 'grups';
-              navigation.replace('listXatScreen', { user, tipusXat });
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        >
+        <TouchableOpacity onPress={goBack}>
           <View style={styles.goBack}>
             <View style={styles.goBackView}>
               <Icon name="arrow-left" size={20} color={Colors.primary} />

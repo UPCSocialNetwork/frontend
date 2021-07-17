@@ -15,7 +15,7 @@ export default function listXatScreen({ navigation }) {
   const [inicialsUser, setInicialsUser] = useState();
   const [chatData, setChatData] = useState([]);
   const [listType, setListType] = useState(navigation.getParam('tipusXat'));
-  const [toggleRefresh, setToggleRefresh] = useState(false);
+  const [toggleRefresh, setToggleRefresh] = useState();
   const [toggle, setToggle] = useState(false);
   const [messageUpdate, setMessageUpdate] = useState({
     message: 'none',
@@ -65,11 +65,12 @@ export default function listXatScreen({ navigation }) {
     socket.on('update message', (message, roomID) => {
       setMessageUpdate({ ...messageUpdate, message: message, roomID: roomID });
     });
-    /*socket.on('new chat', (arg1, arg2) => {
-      setToggleRefresh(!toggleRefresh);
-    });*/
+    socket.on('new chat', (xatID, arg2) => {
+      setToggleRefresh(xatID);
+    });
     return () => {
       socket.removeListener('update message');
+      socket.removeListener('new chat');
     };
   }, []);
 
@@ -131,6 +132,8 @@ export default function listXatScreen({ navigation }) {
   useEffect(() => {
     async function updateMessage() {
       if (messageUpdate.message != 'none') {
+        let response = await axios.get(`participant/${user.nomUsuari}/${messageUpdate.roomID}`);
+        let participant = response.data.participant;
         let chatDataAux = [];
         let xatAux;
         for (let i = 0; i < chatData.length; i++) {
@@ -140,6 +143,7 @@ export default function listXatScreen({ navigation }) {
             xatAux[3] = messageUpdate.message.text;
             xatAux[4] = messageUpdate.message.createdAt;
             xatAux[5] = messageUpdate.message.user.name;
+            xatAux[7] = participant.ultimaLectura;
             chatDataAux.unshift(xatAux);
           } else {
             chatDataAux.push(element);

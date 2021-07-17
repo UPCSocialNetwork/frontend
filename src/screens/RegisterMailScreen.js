@@ -22,7 +22,7 @@ export default function RegisterMailScreen({ navigation }) {
   });
 
   const [puntNom, setPuntNom] = useState({
-    errorMsg: `El nom i cognoms s'han de separar amb un punt`,
+    errorMsg: 'El nom i cognoms han de separar-se amb un punt',
     isValidPunt: true,
   });
 
@@ -89,14 +89,6 @@ export default function RegisterMailScreen({ navigation }) {
         ...data,
         isValidMail: false,
       });
-      setUserExists({
-        ...userExists,
-        isValidUser: false,
-      });
-      setPuntNom({
-        ...puntNom,
-        isValidPunt: false,
-      });
       setNewUser({
         ...newUser,
         mail: val,
@@ -128,7 +120,7 @@ export default function RegisterMailScreen({ navigation }) {
           if (noPoint(newUser.mail.split('@')[0])) {
             navigation.navigate('RegisterPassword', { newUser });
           } else {
-            setUserExists({
+            setPuntNom({
               ...puntNom,
               isValidPunt: false,
             });
@@ -165,6 +157,11 @@ export default function RegisterMailScreen({ navigation }) {
           {data.isValidMail ? null : (
             <Animatable.View animation="fadeInLeft" duration={500}>
               <Text style={styles.errorText}>{data.errorMsg}</Text>
+            </Animatable.View>
+          )}
+          {puntNom.isValidPunt ? null : (
+            <Animatable.View animation="fadeInLeft" duration={500}>
+              <Text style={styles.errorText}>{puntNom.errorMsg}</Text>
             </Animatable.View>
           )}
         </View>

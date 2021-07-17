@@ -156,9 +156,14 @@ function ProfileInfoScreen({ navigation }) {
 
   const esborrarXat = async () => {
     try {
+      let response = await axios.get(`estudiants/${user.room}`);
+      let noms = response.data.persones;
       await axios.delete(`/missatge/xat/${user.room}`);
       await axios.delete(`/participant/xat/${user.room}`);
       await axios.delete(`/Xat/${user.room}`);
+      noms.forEach((element) => {
+        if (element != user.nomUsuari) socket.emit('new chat', element, user.room + element);
+      });
     } catch (e) {
       console.error(e);
     }

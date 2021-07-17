@@ -148,7 +148,7 @@ function ChatListItem({
           <View style={styles.tempsViewParent}>
             <Text style={styles.temps}>{formatTime(time)}</Text>
             {llegit > 0 ? (
-              <View style={styles.notisOn}>
+              <View style={llegit < 100 ? styles.notisOnUnder100 : styles.notisOnOver100}>
                 <Text style={styles.notisNum}>{llegit}</Text>
               </View>
             ) : null}
@@ -213,19 +213,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.secondary,
   },
-  notisOn: {
+  notisOnOver100: {
     backgroundColor: Colors.primary,
-    marginTop: '10%',
+    marginTop: '5%',
     alignSelf: 'flex-end',
     borderRadius: 50,
-    width: 20,
-    aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  notisOnUnder100: {
+    backgroundColor: Colors.primary,
+    marginTop: '5%',
+    alignSelf: 'flex-end',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    aspectRatio: 1,
+  },
   notisNum: {
     fontFamily: 'InterRegular',
+    fontSize: 12,
     color: Colors.white,
+    padding: 2,
   },
   message: {
     fontFamily: 'InterRegular',
@@ -235,10 +244,9 @@ const styles = StyleSheet.create({
   },
   tempsViewParent: {
     marginLeft: Window.width * 0.02,
-    width: Window.width * 0.19,
+    width: Window.width * 0.2,
     justifyContent: 'center',
   },
-  tempsView: {},
   temps: {
     fontFamily: 'InterMedium',
     fontSize: 12,
