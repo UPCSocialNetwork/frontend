@@ -79,7 +79,13 @@ export default function RegisterPasswordScreen({ navigation }) {
   };
 
   const registerPasswordHandler = () => {
-    if (newUser.contrasenya == '' || newUser.contrasenya != data.repeatPassword || !data.isValidPassword) {
+    if (
+      newUser.contrasenya == '' ||
+      newUser.contrasenya != data.repeatPassword ||
+      !data.isValidPassword ||
+      newUser.contrasenya.length < 8 ||
+      data.repeatPassword.length < 8
+    ) {
       setData({
         ...data,
         isValidPassword: false,
