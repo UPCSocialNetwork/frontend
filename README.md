@@ -2,7 +2,7 @@
 
 In this repository we can find the frontend of the OnCampus application.
 
-### Files Structure
+### Directory Structure
 
 ```
 +-- .expo
