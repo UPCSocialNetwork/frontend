@@ -1,8 +1,8 @@
 # React Native Frontend
 
-En aquest repositori es troba el frontend de l'aplicació OnCampus.
+In this repository we can find the frontend of the OnCampus application.
 
-### Estructura de directoris
+### Files Structure
 
 ```
 +-- .expo
